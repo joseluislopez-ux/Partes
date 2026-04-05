@@ -6,13 +6,21 @@
 <title>Industria Urbana</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#111;--surface:#1c1c1c;--surface2:#252525;--border:#333;--orange:#f97316;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--text:#f0f0f0;--muted:#888;--dim:#555;}
+:root{--bg:#111;--surface:#1c1c1c;--surface2:#252525;--border:#333;--orange:#f97316;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--yellow:#eab308;--text:#f0f0f0;--muted:#888;--dim:#555;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;}
 body{background:var(--bg);color:var(--text);font-family:"Barlow",sans-serif;min-height:100vh;overscroll-behavior:none;}
 .screen{display:none;flex-direction:column;min-height:100vh;}
 .screen.active{display:flex;}
-#main-screen.active,#admin-screen.active{display:block;}
+#main-screen.active,#admin-screen.active,#history-screen.active{display:block;}
+
+/* LOPD */
+#lopd-screen{background:var(--bg);padding:2rem;justify-content:center;}
+.lopd-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem;max-width:420px;margin:auto;}
+.lopd-title{font-family:"Barlow Condensed",sans-serif;font-size:1.3rem;font-weight:900;color:var(--orange);margin-bottom:1rem;text-transform:uppercase;}
+.lopd-text{font-size:0.8rem;color:var(--muted);line-height:1.7;margin-bottom:1.25rem;}
+.lopd-text b{color:var(--text);}
+.lopd-btn{width:100%;background:var(--orange);border:none;border-radius:12px;color:#000;font-family:"Barlow Condensed",sans-serif;font-size:1.1rem;font-weight:900;padding:1rem;cursor:pointer;text-transform:uppercase;}
 
 /* WORKER SELECT */
 .ws-header{padding:3rem 2rem 1.5rem;text-align:center;}
@@ -22,7 +30,7 @@ body{background:var(--bg);color:var(--text);font-family:"Barlow",sans-serif;min-
 .logo-img{width:44px;height:44px;object-fit:contain;}
 .ws-sub{font-size:0.75rem;color:var(--dim);margin-top:0.5rem;text-transform:uppercase;letter-spacing:0.15em;}
 .ws-body{flex:1;padding:0 1.5rem 3rem;display:flex;flex-direction:column;gap:0.75rem;justify-content:center;}
-.worker-btn{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.1rem 1.5rem;font-family:"Barlow Condensed",sans-serif;font-size:1.4rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;text-align:center;color:var(--text);transition:all .1s;}
+.worker-btn{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.1rem 1.5rem;font-family:"Barlow Condensed",sans-serif;font-size:1.4rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;text-align:center;color:var(--text);}
 .worker-btn:active{background:var(--surface2);transform:scale(.97);border-color:var(--orange);color:var(--orange);}
 
 /* PIN */
@@ -35,10 +43,22 @@ body{background:var(--bg);color:var(--text);font-family:"Barlow",sans-serif;min-
 .pin-dot.filled{background:var(--orange);border-color:var(--orange);transform:scale(1.15);}
 .pin-error{color:var(--red);font-size:.85rem;margin-bottom:1.25rem;min-height:1.1rem;text-align:center;}
 .pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;width:100%;max-width:280px;}
-.pin-btn{background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--text);font-family:"Barlow Condensed",sans-serif;font-size:1.8rem;font-weight:700;padding:1.1rem;cursor:pointer;user-select:none;transition:all .1s;}
+.pin-btn{background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--text);font-family:"Barlow Condensed",sans-serif;font-size:1.8rem;font-weight:700;padding:1.1rem;cursor:pointer;user-select:none;}
 .pin-btn:active{background:var(--surface2);transform:scale(.93);}
 .pin-btn.delete{font-size:1.3rem;color:var(--muted);}
 .pin-btn.empty{background:transparent;border-color:transparent;cursor:default;}
+
+/* GPS INSTRUCTIONS */
+#gps-screen{background:var(--bg);padding:2rem;justify-content:center;align-items:center;}
+.gps-box{background:var(--surface);border:2px solid var(--orange);border-radius:16px;padding:1.5rem;max-width:380px;text-align:center;}
+.gps-icon{font-size:3rem;margin-bottom:1rem;}
+.gps-title{font-family:"Barlow Condensed",sans-serif;font-size:1.3rem;font-weight:900;color:var(--orange);margin-bottom:0.75rem;text-transform:uppercase;}
+.gps-text{font-size:0.82rem;color:var(--muted);line-height:1.7;margin-bottom:1.25rem;text-align:left;}
+.gps-text b{color:var(--text);}
+.gps-steps{background:var(--surface2);border-radius:10px;padding:1rem;margin-bottom:1rem;text-align:left;font-size:0.8rem;color:var(--muted);line-height:2;}
+.gps-steps b{color:var(--orange);}
+.gps-retry{width:100%;background:var(--orange);border:none;border-radius:12px;color:#000;font-family:"Barlow Condensed",sans-serif;font-size:1.1rem;font-weight:900;padding:0.875rem;cursor:pointer;text-transform:uppercase;}
+.gps-skip{width:100%;background:none;border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:0.85rem;padding:0.75rem;cursor:pointer;margin-top:0.5rem;}
 
 /* HEADER */
 .header{background:var(--surface);border-bottom:1px solid var(--border);padding:.875rem 1.25rem;position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;}
@@ -48,7 +68,12 @@ body{background:var(--bg);color:var(--text);font-family:"Barlow",sans-serif;min-
 .header-date{font-size:.7rem;color:var(--muted);text-transform:capitalize;}
 .header-right{display:flex;align-items:center;gap:.5rem;}
 .logout-btn{background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:.75rem;padding:.4rem .75rem;cursor:pointer;}
-.admin-btn{background:var(--blue);border:none;border-radius:8px;color:#fff;font-family:"Barlow Condensed",sans-serif;font-size:.75rem;font-weight:700;padding:.4rem .75rem;cursor:pointer;text-transform:uppercase;}
+.history-btn{background:none;border:1px solid var(--border);border-radius:8px;color:var(--blue);font-size:.75rem;padding:.4rem .75rem;cursor:pointer;}
+
+/* AVISO AYER */
+.aviso-ayer{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);border-radius:10px;padding:.875rem 1.25rem;margin:.75rem 1.25rem 0;display:flex;justify-content:space-between;align-items:center;gap:.75rem;}
+.aviso-ayer-text{font-size:.82rem;color:var(--red);line-height:1.4;}
+.aviso-ayer-btn{flex-shrink:0;background:var(--red);border:none;border-radius:8px;color:#fff;font-family:"Barlow Condensed",sans-serif;font-size:.8rem;font-weight:700;padding:.4rem .75rem;cursor:pointer;text-transform:uppercase;white-space:nowrap;}
 
 /* OBRA BANNER */
 .obra-banner{background:var(--surface2);border-bottom:2px solid var(--border);padding:.75rem 1.25rem;display:flex;justify-content:space-between;align-items:center;gap:.75rem;}
@@ -64,19 +89,23 @@ body{background:var(--bg);color:var(--text);font-family:"Barlow",sans-serif;min-
 
 /* FICHAJE */
 .fichaje-row{display:flex;gap:.625rem;align-items:stretch;}
-.fichaje-btn{flex:1;border:none;border-radius:12px;font-family:"Barlow Condensed",sans-serif;font-size:1rem;font-weight:800;padding:.9rem .5rem;cursor:pointer;text-transform:uppercase;letter-spacing:.04em;transition:all .1s;}
+.fichaje-btn{flex:1;border:none;border-radius:12px;font-family:"Barlow Condensed",sans-serif;font-size:1rem;font-weight:800;padding:.9rem .5rem;cursor:pointer;text-transform:uppercase;letter-spacing:.04em;}
 .fichaje-btn.start{background:var(--green);color:#000;}
 .fichaje-btn.end{background:var(--red);color:#fff;}
+.fichaje-btn.pause{background:var(--yellow);color:#000;}
 .fichaje-btn:disabled{opacity:.28;cursor:not-allowed;}
 .fichaje-btn:active:not(:disabled){transform:scale(.97);}
 .timer-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:.6rem .875rem;text-align:center;min-width:84px;display:flex;flex-direction:column;justify-content:center;}
 .timer-value{font-family:"Barlow Condensed",sans-serif;font-size:1.5rem;font-weight:900;color:var(--orange);letter-spacing:.04em;line-height:1;}
+.timer-value.overtime{color:var(--red);}
 .timer-label{font-size:.6rem;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
 .fichaje-times{display:none;gap:1rem;margin-top:.875rem;padding-top:.75rem;border-top:1px solid var(--border);flex-wrap:wrap;}
 .fichaje-times.visible{display:flex;}
 .time-item-label{font-size:.63rem;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;}
 .time-item-value{font-family:"Barlow Condensed",sans-serif;font-size:1rem;font-weight:700;color:var(--text);}
 .maps-link{font-size:.72rem;color:var(--blue);text-decoration:none;display:inline-block;margin-top:.2rem;}
+.pausa-aviso{background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.3);border-radius:8px;padding:.75rem;margin-top:.75rem;font-size:.78rem;color:var(--yellow);line-height:1.5;display:none;}
+.pausa-aviso.visible{display:block;}
 
 /* TAREAS */
 .tareas-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.75rem;}
@@ -101,7 +130,7 @@ body{background:var(--bg);color:var(--text);font-family:"Barlow",sans-serif;min-
 .form-field.grow{flex:1;}
 .form-field.w80{width:80px;flex-shrink:0;}
 .field-label{font-size:.63rem;color:var(--dim);text-transform:uppercase;letter-spacing:.12em;font-weight:600;}
-select,input[type="text"],input[type="number"],textarea{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:"Barlow",sans-serif;font-size:.9rem;padding:.625rem .75rem;width:100%;-webkit-appearance:none;appearance:none;outline:none;transition:border-color .15s;}
+select,input[type="text"],input[type="number"],textarea{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:"Barlow",sans-serif;font-size:.9rem;padding:.625rem .75rem;width:100%;-webkit-appearance:none;appearance:none;outline:none;}
 select:focus,input:focus,textarea:focus{border-color:var(--orange);}
 textarea{resize:none;height:68px;line-height:1.4;}
 .mb{margin-bottom:.625rem;}
@@ -111,38 +140,47 @@ textarea{resize:none;height:68px;line-height:1.4;}
 .check-item label{font-size:.85rem;color:var(--muted);cursor:pointer;user-select:none;}
 .compras-extra{display:none;background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.2);border-radius:10px;padding:.875rem;margin-bottom:.625rem;}
 .compras-extra.visible{display:block;}
-.submit-btn{width:100%;background:var(--orange);border:none;border-radius:12px;color:#000;font-family:"Barlow Condensed",sans-serif;font-size:1.25rem;font-weight:900;padding:1rem;cursor:pointer;text-transform:uppercase;letter-spacing:.1em;margin-top:.5rem;transition:all .1s;}
+.submit-btn{width:100%;background:var(--orange);border:none;border-radius:12px;color:#000;font-family:"Barlow Condensed",sans-serif;font-size:1.25rem;font-weight:900;padding:1rem;cursor:pointer;text-transform:uppercase;letter-spacing:.1em;margin-top:.5rem;}
 .submit-btn:active{transform:scale(.98);opacity:.9;}
 .submit-btn:disabled{opacity:.45;cursor:not-allowed;}
+.horas-restantes{font-size:.75rem;color:var(--muted);margin-top:.3rem;}
+.horas-restantes.alerta{color:var(--red);}
 
 /* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:100;align-items:flex-end;}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--surface);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:1.25rem 1.25rem 2rem;width:100%;max-height:80vh;overflow-y:auto;}
+.modal{background:var(--surface);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:1.25rem 1.25rem 2rem;width:100%;max-height:85vh;overflow-y:auto;}
 .modal-title{font-family:"Barlow Condensed",sans-serif;font-size:1.1rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.875rem;}
-.obra-option{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.875rem 1rem;margin-bottom:.45rem;font-family:"Barlow Condensed",sans-serif;font-size:.95rem;font-weight:700;text-transform:uppercase;cursor:pointer;transition:all .1s;}
+.obra-option{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.875rem 1rem;margin-bottom:.45rem;font-family:"Barlow Condensed",sans-serif;font-size:.95rem;font-weight:700;text-transform:uppercase;cursor:pointer;}
 .obra-option.selected{border-color:var(--orange);background:rgba(249,115,22,.1);color:var(--orange);}
 .obra-option:active{transform:scale(.98);}
 .modal-close{width:100%;background:none;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:"Barlow",sans-serif;font-size:.9rem;padding:.875rem;cursor:pointer;margin-top:.5rem;}
+.modal-action-btn{width:100%;border:none;border-radius:10px;font-family:"Barlow Condensed",sans-serif;font-size:1rem;font-weight:800;padding:.875rem;cursor:pointer;text-transform:uppercase;margin-bottom:.45rem;}
+.modal-action-btn.primary{background:var(--orange);color:#000;}
+.modal-action-btn.secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+
+/* HISTORY */
+#history-screen .header{position:sticky;top:0;}
+.history-content{padding:1.25rem;}
+.hist-section-title{font-family:"Barlow Condensed",sans-serif;font-size:.75rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.15em;margin:1.25rem 0 .75rem;}
+.hist-row{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.75rem;margin-bottom:.4rem;}
+.hist-row-top{display:flex;justify-content:space-between;align-items:baseline;}
+.hist-fecha{font-family:"Barlow Condensed",sans-serif;font-size:.95rem;font-weight:700;}
+.hist-horas{font-family:"Barlow Condensed",sans-serif;font-size:1rem;font-weight:900;color:var(--orange);}
+.hist-detail{font-size:.75rem;color:var(--muted);margin-top:.2rem;}
 
 /* ADMIN */
 .admin-header{background:var(--surface);border-bottom:1px solid var(--border);padding:.875rem 1.25rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;}
 .admin-title{font-family:"Barlow Condensed",sans-serif;font-size:1.4rem;font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.05em;}
-.admin-back{background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:.75rem;padding:.4rem .75rem;cursor:pointer;}
 .admin-content{padding:1.25rem;}
-.admin-worker-link{display:block;width:100%;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);border-radius:12px;color:var(--orange);font-family:"Barlow Condensed",sans-serif;font-size:1rem;font-weight:700;padding:.875rem;text-align:center;cursor:pointer;text-transform:uppercase;letter-spacing:.05em;margin-bottom:1.5rem;}
 .mes-selector{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;}
 .mes-selector input[type="month"]{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:"Barlow",sans-serif;font-size:.9rem;padding:.625rem .75rem;outline:none;}
-.mes-selector input[type="month"]:focus{border-color:var(--blue);}
 .mes-selector button{background:var(--blue);border:none;border-radius:8px;color:#fff;font-family:"Barlow Condensed",sans-serif;font-size:.9rem;font-weight:700;padding:.625rem 1rem;cursor:pointer;text-transform:uppercase;}
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:.625rem;margin-bottom:1.25rem;}
 .kpi-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:.875rem;}
 .kpi-label{font-size:.63rem;color:var(--dim);text-transform:uppercase;letter-spacing:.12em;font-weight:600;margin-bottom:.25rem;}
 .kpi-value{font-family:"Barlow Condensed",sans-serif;font-size:1.5rem;font-weight:900;color:var(--text);line-height:1;}
-.kpi-value.orange{color:var(--orange);}
-.kpi-value.green{color:var(--green);}
-.kpi-value.red{color:var(--red);}
-.kpi-value.blue{color:var(--blue);}
+.kpi-value.orange{color:var(--orange);}.kpi-value.green{color:var(--green);}.kpi-value.red{color:var(--red);}.kpi-value.blue{color:var(--blue);}
 .admin-section-title{font-family:"Barlow Condensed",sans-serif;font-size:.75rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.15em;margin:1.25rem 0 .75rem;}
 .worker-row{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.875rem;margin-bottom:.5rem;}
 .worker-row-top{display:flex;justify-content:space-between;align-items:baseline;}
@@ -155,7 +193,7 @@ textarea{resize:none;height:68px;line-height:1.4;}
 .obra-stat{font-size:.78rem;color:var(--muted);}
 .obra-stat span{color:var(--text);font-weight:600;}
 .progress-bar{height:6px;background:var(--border);border-radius:3px;margin-top:.5rem;overflow:hidden;}
-.progress-fill{height:100%;border-radius:3px;background:var(--orange);transition:width .4s;}
+.progress-fill{height:100%;border-radius:3px;background:var(--orange);}
 .progress-fill.over{background:var(--red);}
 .fichaje-row-admin{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.75rem;margin-bottom:.4rem;}
 .fichaje-row-top{display:flex;justify-content:space-between;align-items:baseline;}
@@ -164,7 +202,7 @@ textarea{resize:none;height:68px;line-height:1.4;}
 .fichaje-horas-detail{font-size:.78rem;color:var(--muted);margin-top:.2rem;}
 
 /* TOAST / LOADING */
-.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.75rem 1.25rem;font-size:.85rem;color:var(--text);z-index:200;transition:transform .28s ease;white-space:nowrap;pointer-events:none;}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.75rem 1.25rem;font-size:.85rem;color:var(--text);z-index:200;transition:transform .28s ease;white-space:nowrap;pointer-events:none;max-width:90vw;text-align:center;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .toast.success{border-color:var(--green);color:var(--green);}
 .toast.error{border-color:var(--red);color:var(--red);}
@@ -178,7 +216,26 @@ textarea{resize:none;height:68px;line-height:1.4;}
 <div id="loading-overlay" class="loading-overlay"><div class="spinner"></div></div>
 <div id="toast" class="toast"></div>
 
-<!-- WORKER SELECT -->
+<!-- ══════════════════════════════════════
+     PANTALLA LOPD (primera vez)
+══════════════════════════════════════ -->
+<div id="lopd-screen" class="screen">
+  <div class="lopd-box">
+    <div class="lopd-title">📋 Información Legal</div>
+    <div class="lopd-text">
+      <b>Registro de jornada (RD-ley 8/2019)</b><br>
+      La empresa está legalmente obligada a registrar diariamente tu hora de entrada y salida, conservando estos registros durante <b>4 años</b> y poniéndolos a disposición de la Inspección de Trabajo cuando se requiera.<br><br>
+      <b>Geolocalización (LOPD / RGPD)</b><br>
+      En el momento del fichaje se registrará tu ubicación GPS para verificar el lugar de trabajo. Este dato se usa exclusivamente para el control de presencia, es accesible solo por la empresa y se conserva junto al registro horario.<br><br>
+      Tienes derecho a acceder, rectificar y suprimir tus datos según el RGPD. Puedes consultar tu historial de fichajes en la sección "Mi Historial" de esta app.
+    </div>
+    <button class="lopd-btn" onclick="aceptarLopd()">He leído y acepto — Continuar</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SELECCIÓN TRABAJADOR
+══════════════════════════════════════ -->
 <div id="worker-screen" class="screen">
   <div class="ws-header">
     <div class="app-brand">
@@ -190,7 +247,9 @@ textarea{resize:none;height:68px;line-height:1.4;}
   <div class="ws-body" id="worker-buttons"></div>
 </div>
 
-<!-- PIN -->
+<!-- ══════════════════════════════════════
+     PIN
+══════════════════════════════════════ -->
 <div id="pin-screen" class="screen">
   <div class="pin-header">
     <div class="app-brand">
@@ -215,7 +274,33 @@ textarea{resize:none;height:68px;line-height:1.4;}
   </div>
 </div>
 
-<!-- MAIN (TRABAJADOR) -->
+<!-- ══════════════════════════════════════
+     GPS BLOQUEADO
+══════════════════════════════════════ -->
+<div id="gps-screen" class="screen">
+  <div class="gps-box">
+    <div class="gps-icon">📍</div>
+    <div class="gps-title">Ubicación necesaria</div>
+    <div class="gps-text">
+      Para iniciar la jornada laboral es obligatorio registrar la ubicación GPS, conforme al <b>RD-ley 8/2019</b> y la política de control de presencia de la empresa.<br><br>
+      El acceso a tu ubicación está <b>bloqueado</b>. Sigue estos pasos para activarlo:
+    </div>
+    <div class="gps-steps">
+      <b>Android:</b><br>
+      1. Ajustes → Aplicaciones → Chrome<br>
+      2. Permisos → Ubicación → Permitir<br><br>
+      <b>iPhone:</b><br>
+      1. Ajustes → Chrome → Ubicación<br>
+      2. Selecciona "Al usar la app"
+    </div>
+    <button class="gps-retry" onclick="retryGPS()">🔄 Reintentar</button>
+    <button class="gps-skip" onclick="goWorker()">← Volver</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     APP PRINCIPAL (TRABAJADOR)
+══════════════════════════════════════ -->
 <div id="main-screen" class="screen">
   <div class="header">
     <div class="header-left">
@@ -226,20 +311,31 @@ textarea{resize:none;height:68px;line-height:1.4;}
       </div>
     </div>
     <div class="header-right">
-      <button class="admin-btn" id="btn-admin" onclick="goAdmin()" style="display:none">⚙ Admin</button>
+      <button class="history-btn" onclick="goHistory()">📋 Mi historial</button>
       <button class="logout-btn" onclick="logout()">Salir</button>
     </div>
   </div>
 
+  <!-- Aviso ayer pendiente -->
+  <div class="aviso-ayer" id="aviso-ayer" style="display:none">
+    <div class="aviso-ayer-text" id="aviso-ayer-text"></div>
+    <button class="aviso-ayer-btn" onclick="completarAyer()">Completar</button>
+  </div>
+
+  <!-- Fichaje -->
   <div class="section">
     <div class="section-title">Fichaje de jornada</div>
     <div class="fichaje-row">
-      <button class="fichaje-btn start" id="btn-in" onclick="fichar('entrada')">▶ Iniciar jornada</button>
-      <button class="fichaje-btn end" id="btn-out" onclick="fichar('salida')" disabled>■ Finalizar</button>
+      <button class="fichaje-btn start" id="btn-in"    onclick="iniciarFichaje()">▶ Iniciar jornada</button>
+      <button class="fichaje-btn end"   id="btn-out"   onclick="finalizarFichaje()" disabled>■ Finalizar</button>
+      <button class="fichaje-btn pause" id="btn-pausa" onclick="togglePausa()" disabled style="display:none">⏸ Pausa</button>
       <div class="timer-box">
         <div class="timer-value" id="timer">--:--</div>
-        <div class="timer-label">Horas</div>
+        <div class="timer-label" id="timer-label">Horas</div>
       </div>
+    </div>
+    <div class="pausa-aviso" id="pausa-aviso">
+      ⏸ <b>Pausa activa</b> — Art. 34.4 ET: Los trabajadores tienen derecho a un descanso de 15 minutos en jornadas superiores a 6 horas continuadas.
     </div>
     <div class="fichaje-times" id="fich-times">
       <div>
@@ -255,6 +351,7 @@ textarea{resize:none;height:68px;line-height:1.4;}
     </div>
   </div>
 
+  <!-- Tareas -->
   <div class="section">
     <div class="tareas-header">
       <div class="section-title" style="margin:0">Tareas de hoy</div>
@@ -263,6 +360,7 @@ textarea{resize:none;height:68px;line-height:1.4;}
     <div id="tareas-list" style="margin-top:.75rem"></div>
   </div>
 
+  <!-- Obra activa -->
   <div class="obra-banner">
     <div class="obra-info">
       <div class="obra-label">Obra activa</div>
@@ -271,6 +369,7 @@ textarea{resize:none;height:68px;line-height:1.4;}
     <button class="change-obra-btn" onclick="openModal()">⇄ Cambiar</button>
   </div>
 
+  <!-- Nueva tarea -->
   <div class="add-tarea-section">
     <div class="add-tarea-title">＋ Partes de trabajo</div>
     <div class="form-row">
@@ -280,7 +379,8 @@ textarea{resize:none;height:68px;line-height:1.4;}
       </div>
       <div class="form-field w80">
         <div class="field-label">Horas</div>
-        <input type="number" id="inp-horas" min="0.5" max="24" step="0.5" placeholder="0">
+        <input type="number" id="inp-horas" min="0.5" max="24" step="0.5" placeholder="0" oninput="checkHorasInput()">
+        <div class="horas-restantes" id="horas-restantes"></div>
       </div>
     </div>
     <div class="form-field grow mb">
@@ -305,40 +405,56 @@ textarea{resize:none;height:68px;line-height:1.4;}
   </div>
 </div>
 
-<!-- ADMIN -->
+<!-- ══════════════════════════════════════
+     HISTORIAL (solo lectura)
+══════════════════════════════════════ -->
+<div id="history-screen" class="screen">
+  <div class="header">
+    <div class="header-left">
+      <div class="header-name">Mi Historial</div>
+    </div>
+    <button class="logout-btn" onclick="show('main-screen')">← Volver</button>
+  </div>
+  <div class="history-content" id="history-content">
+    <div class="empty-tareas">Cargando...</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ADMIN
+══════════════════════════════════════ -->
 <div id="admin-screen" class="screen">
   <div class="admin-header">
-    <div class="admin-title">⚙ Panel Admin</div>
-    <button class="admin-back" onclick="goWorker()">← Volver</button>
+    <div class="admin-title">⚙ Admin</div>
+    <button class="logout-btn" onclick="logoutAdmin()">Salir</button>
   </div>
   <div class="admin-content">
-    <button class="admin-worker-link" onclick="goWorker()">👷 Ir a mi panel de trabajo</button>
-
     <div class="mes-selector">
       <input type="month" id="mes-input">
       <button onclick="loadAdmin()">Ver</button>
     </div>
-
     <div class="kpi-grid" id="kpi-grid"></div>
-
     <div class="admin-section-title">Por trabajador</div>
     <div id="admin-workers"></div>
-
     <div class="admin-section-title">Por obra</div>
     <div id="admin-obras"></div>
-
     <div class="admin-section-title">Vehículos (compras)</div>
     <div id="admin-vehiculos"></div>
-
     <div class="admin-section-title">Gastos fijos (mensual)</div>
     <div id="admin-gastos"></div>
-
+    <div class="admin-section-title">Facturas</div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem">
+      <button class="change-obra-btn" style="background:var(--blue)" onclick="lanzarFacturas('gmail')">📧 Gmail</button>
+      <button class="change-obra-btn" style="background:var(--surface2);color:var(--text);border:1px solid var(--border)" onclick="lanzarFacturas('manual')">📁 Manual</button>
+      <button class="change-obra-btn" style="background:var(--surface2);color:var(--text);border:1px solid var(--border)" onclick="lanzarFacturas('ambos')">🔄 Ambos</button>
+    </div>
+    <div id="admin-facturas"></div>
     <div class="admin-section-title">Fichajes del mes</div>
     <div id="admin-fichajes"></div>
   </div>
 </div>
 
-<!-- OBRA MODAL -->
+<!-- MODALES -->
 <div id="obra-modal" class="modal-overlay" onclick="maybeClose(event)">
   <div class="modal">
     <div class="modal-title">Selecciona obra</div>
@@ -347,196 +463,656 @@ textarea{resize:none;height:68px;line-height:1.4;}
   </div>
 </div>
 
+<div id="cuadre-modal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">⚠ Horas sin reportar</div>
+    <div id="cuadre-texto" style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;line-height:1.6;"></div>
+    <button class="modal-action-btn primary" id="cuadre-btn1" onclick="cuadreSumarUltima()">Sumar a última tarea</button>
+    <button class="modal-action-btn secondary" id="cuadre-btn2" onclick="cuadreTareaRapida()">Crear tarea rápida</button>
+    <button class="modal-close" onclick="closeCuadre()">Cancelar</button>
+  </div>
+</div>
+
+<div id="gps-close-modal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">📍 Sin ubicación GPS</div>
+    <div style="font-size:.85rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.6;">
+      No se ha podido obtener tu ubicación. El fichaje de salida se registrará <b style="color:var(--red)">sin coordenadas GPS</b>, lo que supone un incumplimiento del protocolo de control de presencia establecido por la empresa (RD-ley 8/2019).<br><br>
+      ¿Deseas continuar de todas formas?
+    </div>
+    <button class="modal-action-btn primary" onclick="confirmarSalidaSinGPS()">Continuar sin GPS</button>
+    <button class="modal-close" onclick="closeGpsModal()">← Volver e intentarlo</button>
+  </div>
+</div>
+
+<div id="admin-pin-modal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">🔐 Acceso Admin</div>
+    <div class="pin-dots" style="justify-content:center;margin:.75rem 0 1.25rem">
+      <div class="pin-dot" id="ad0"></div><div class="pin-dot" id="ad1"></div>
+      <div class="pin-dot" id="ad2"></div><div class="pin-dot" id="ad3"></div>
+    </div>
+    <div class="pin-error" id="admin-pin-error"></div>
+    <div class="pin-grid" style="max-width:100%">
+      <button class="pin-btn" onclick="adminDig('1')">1</button><button class="pin-btn" onclick="adminDig('2')">2</button><button class="pin-btn" onclick="adminDig('3')">3</button>
+      <button class="pin-btn" onclick="adminDig('4')">4</button><button class="pin-btn" onclick="adminDig('5')">5</button><button class="pin-btn" onclick="adminDig('6')">6</button>
+      <button class="pin-btn" onclick="adminDig('7')">7</button><button class="pin-btn" onclick="adminDig('8')">8</button><button class="pin-btn" onclick="adminDig('9')">9</button>
+      <button class="pin-btn empty" disabled></button><button class="pin-btn" onclick="adminDig('0')">0</button><button class="pin-btn delete" onclick="adminDelDig()">⌫</button>
+    </div>
+    <button class="modal-close" style="margin-top:.75rem" onclick="closeAdminPin()">Cancelar</button>
+  </div>
+</div>
+
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWA9z_tMO1yxtojoPdAD8OIb20ME2Cde5KpltuGCquLkkDP0sCzGc7W_AdrFuQ5fXv/exec';
-const OFICIOS = ['LIMPIEZA','ACARREO MATERIALES','DESESCOMBRO / DESMONTAJE / ROZAS','PREPARACION PAREDES / SUELO / RESANES YESO','ALICATAR / LECHAR','ALISADO','PLADUR','RETRABAJOS','PINTURA','COMPRAS','MONTAJE','DESPLAZAMIENTOS ENTRE OBRAS','ELECTRICIDAD','FONTANERIA','MARCAR / REPLANTEAR','FORMACION REUNIONES','VACACIONES','PERMISOS','OTROS'];
-const OBRAS_FB = ['ARROYO MURO VECINO','ARROYO','SANTA LUCIA','OTROS (ESPECIFICAR)'];
+const SCRIPT_URL = '<?= scriptUrl ?>';
+const PAGE_MODE = window.location.hash === '#admin' ? 'admin' : '<?= pageMode ?>';
 
-let S={wid:null,wname:null,isAdmin:false,pin:'',fichaje:null,partes:[],obras:OBRAS_FB,obra:null,timerRef:null,entradaTs:null};
+const OFICIOS = [
+  {cod:1,  nombre:'LIMPIEZA'},
+  {cod:2,  nombre:'TRANSPORTE MATERIALES'},
+  {cod:3,  nombre:'DEMOLICIÓN / ROZAS'},
+  {cod:4,  nombre:'PREPARACIÓN SUPERFICIES'},
+  {cod:5,  nombre:'ALBAÑILERÍA'},
+  {cod:6,  nombre:'PLADUR'},
+  {cod:7,  nombre:'PINTURA / ALISADO'},
+  {cod:8,  nombre:'ELECTRICIDAD'},
+  {cod:9,  nombre:'FONTANERÍA'},
+  {cod:10, nombre:'MONTAJE'},
+  {cod:50, nombre:'COMPRAS'},
+  {cod:51, nombre:'DESPLAZAMIENTOS'},
+  {cod:99, nombre:'OTROS'},
+];
 
-async function init(){
+let S={
+  wid:null, wname:null, pin:'',
+  fichaje:null, partes:[], obras:[], obra:null,
+  timerRef:null, entradaTs:null, pausaTs:null, pausado:false, pausaAcum:0,
+  serverTs:0, clientTs:0,
+  pendienteAyer:null
+};
+
+// ── ADMIN ──
+let ADMIN = {pin:'', wname:null};
+
+// ══════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════
+async function init() {
+  if (PAGE_MODE === 'admin') {
+    // Modo admin: mostrar PIN admin directamente
+    document.getElementById('admin-pin-modal').classList.add('open');
+    return;
+  }
+
+  // Modo trabajador
+  // Comprobar LOPD
+  const lopdAceptada = localStorage.getItem('lopd_v1');
+  if (!lopdAceptada) { show('lopd-screen'); return; }
+
+  // Cargar trabajadores
   load(true);
-  const r=await api({action:'getWorkers'});
+  const r = await api({action:'getWorkers'});
   load(false);
-  const lista=r?.workers||[{nombre:'Jose',id:'jose'}];
-  const btns=document.getElementById('worker-buttons');
-  lista.forEach(t=>{
-    const b=document.createElement('button');
-    b.className='worker-btn';b.textContent=t.nombre;
-    b.onclick=()=>selectWorker(t.id,t.nombre);btns.appendChild(b);
+  const lista = r?.workers || [];
+  const btns = document.getElementById('worker-buttons');
+  lista.forEach(t => {
+    const b = document.createElement('button');
+    b.className = 'worker-btn'; b.textContent = t.nombre;
+    b.onclick = () => selectWorker(t.id, t.nombre);
+    btns.appendChild(b);
   });
-  const sel=document.getElementById('sel-oficio');
-  OFICIOS.forEach(o=>{const opt=document.createElement('option');opt.value=o;opt.textContent=o;sel.appendChild(opt);});
+
+  // Oficios
+  const sel = document.getElementById('sel-oficio');
+  OFICIOS.forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = o.nombre; opt.textContent = o.nombre;
+    sel.appendChild(opt);
+  });
+
   show('worker-screen');
 }
 
-function show(id){
-  document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.display='none';});
-  const t=document.getElementById(id);
-  t.style.display=(id==='main-screen'||id==='admin-screen')?'block':'flex';
-  setTimeout(()=>t.classList.add('active'),10);
+function aceptarLopd() {
+  localStorage.setItem('lopd_v1', '1');
+  show('worker-screen');
+  init();
 }
 
-function selectWorker(id,nombre){
-  S.wid=id;S.wname=nombre;S.pin='';
-  document.getElementById('worker-display').textContent=nombre.toUpperCase();
-  paintDots();document.getElementById('pin-error').textContent='';
+// ══════════════════════════════════════
+//  SCREENS
+// ══════════════════════════════════════
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active'); s.style.display='none';
+  });
+  const t = document.getElementById(id);
+  const blockScreens = ['main-screen','admin-screen','history-screen'];
+  t.style.display = blockScreens.includes(id) ? 'block' : 'flex';
+  setTimeout(() => t.classList.add('active'), 10);
+}
+
+// ══════════════════════════════════════
+//  SELECCIÓN TRABAJADOR
+// ══════════════════════════════════════
+function selectWorker(id, nombre) {
+  S.wid=id; S.wname=nombre; S.pin='';
+  document.getElementById('worker-display').textContent = nombre.toUpperCase();
+  paintDots(); document.getElementById('pin-error').textContent='';
   show('pin-screen');
 }
-function backToWorkers(){S.wid=null;S.wname=null;S.pin='';show('worker-screen');}
+function backToWorkers() { S.wid=null; S.wname=null; S.pin=''; show('worker-screen'); }
+function goWorker() { show('worker-screen'); }
 
-function dig(d){if(S.pin.length>=4)return;S.pin+=d;paintDots();if(S.pin.length===4)setTimeout(submitPin,120);}
-function delDig(){S.pin=S.pin.slice(0,-1);paintDots();document.getElementById('pin-error').textContent='';}
-function paintDots(){for(let i=0;i<4;i++)document.getElementById('d'+i).classList.toggle('filled',i<S.pin.length);}
+// ══════════════════════════════════════
+//  PIN TRABAJADOR
+// ══════════════════════════════════════
+function dig(d) {
+  if (S.pin.length>=4) return; S.pin+=d; paintDots();
+  if (S.pin.length===4) setTimeout(submitPin,120);
+}
+function delDig() { S.pin=S.pin.slice(0,-1); paintDots(); document.getElementById('pin-error').textContent=''; }
+function paintDots() { for(let i=0;i<4;i++) document.getElementById('d'+i).classList.toggle('filled',i<S.pin.length); }
 
-async function submitPin(){
+async function submitPin() {
   load(true);
-  const r=await api({action:'login',worker:S.wid,pin:S.pin});
+  const r = await api({action:'login',worker:S.wid,pin:S.pin});
   load(false);
-  if(!r){resetPin();return;}
-  if(r.success){S.wname=r.worker;S.isAdmin=r.isAdmin||false;await loadMain();}
-  else{document.getElementById('pin-error').textContent=r.error||'PIN incorrecto';if(navigator.vibrate)navigator.vibrate([80,40,80]);resetPin();}
+  if (!r) { resetPin(); return; }
+  if (r.success) { S.wname=r.worker; await loadMain(); }
+  else {
+    document.getElementById('pin-error').textContent = r.error||'PIN incorrecto';
+    if (navigator.vibrate) navigator.vibrate([80,40,80]);
+    resetPin();
+  }
 }
-function resetPin(){S.pin='';paintDots();}
+function resetPin() { S.pin=''; paintDots(); }
 
-async function loadMain(){
+// ══════════════════════════════════════
+//  CARGA PRINCIPAL
+// ══════════════════════════════════════
+async function loadMain() {
   load(true);
-  const r=await api({action:'getData',worker:S.wid,fecha:today()});
+  const r = await api({action:'getData',worker:S.wid,fecha:today()});
   load(false);
-  if(!r?.success){toast('Error cargando datos','error');return;}
-  if(r.obras?.length)S.obras=r.obras;
-  S.fichaje=r.fichaje||null;S.partes=r.partes||[];
-  const saved=localStorage.getItem('obra_'+S.wid);
-  S.obra=(S.fichaje?.obra)||(S.partes.length?S.partes[S.partes.length-1].obra:null)||saved||S.obras[0];
-  document.getElementById('btn-admin').style.display=S.isAdmin?'block':'none';
-  show('main-screen');renderHeader();renderObra();renderFichaje();renderPartes();
+  if (!r?.success) { toast('Error cargando datos','error'); return; }
+
+  if (r.obras?.length) S.obras = r.obras;
+  S.fichaje = r.fichaje||null;
+  S.partes  = r.partes||[];
+  S.pendienteAyer = r.pendienteAyer||null;
+  // Sincronizar timestamp con servidor
+  S.serverTs = r.serverTs||Date.now();
+  S.clientTs = Date.now();
+
+  const saved = localStorage.getItem('obra_'+S.wid);
+  S.obra = (S.fichaje?.obra)||(S.partes.length?S.partes[S.partes.length-1].obra:null)||saved||S.obras[0];
+
+  show('main-screen');
+  renderHeader();
+  renderObra();
+  renderFichaje();
+  renderPartes();
+  renderAvisoPendiente();
 }
 
-function renderHeader(){
-  document.getElementById('hdr-name').textContent=S.wname.toUpperCase();
-  const n=new Date();
-  const dias=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
-  const meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-  document.getElementById('hdr-date').textContent=`${dias[n.getDay()]}, ${n.getDate()} de ${meses[n.getMonth()]}`;
+function serverNow() {
+  // Devuelve timestamp correcto usando hora del servidor
+  return S.serverTs + (Date.now() - S.clientTs);
 }
-function renderObra(){document.getElementById('obra-display').textContent=S.obra||'—';}
 
-function renderFichaje(){
-  const bIn=document.getElementById('btn-in'),bOut=document.getElementById('btn-out');
-  const tim=document.getElementById('timer'),times=document.getElementById('fich-times');
+function renderHeader() {
+  document.getElementById('hdr-name').textContent = S.wname.toUpperCase();
+  const n = new Date();
+  const dias  = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  document.getElementById('hdr-date').textContent = `${dias[n.getDay()]}, ${n.getDate()} de ${meses[n.getMonth()]}`;
+}
+function renderObra() { document.getElementById('obra-display').textContent = S.obra||'—'; }
+
+function renderAvisoPendiente() {
+  const el = document.getElementById('aviso-ayer');
+  if (S.pendienteAyer) {
+    const h = S.pendienteAyer.horas;
+    document.getElementById('aviso-ayer-text').textContent =
+      `⚠ Ayer te quedaron ${h}h sin reportar. Puedes completarlo ahora.`;
+    el.style.display = 'flex';
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+// ══════════════════════════════════════
+//  FICHAJE
+// ══════════════════════════════════════
+function renderFichaje() {
+  const bIn   = document.getElementById('btn-in');
+  const bOut  = document.getElementById('btn-out');
+  const bPaus = document.getElementById('btn-pausa');
+  const tim   = document.getElementById('timer');
+  const times = document.getElementById('fich-times');
   clearInterval(S.timerRef);
-  if(!S.fichaje?.entrada){bIn.disabled=false;bOut.disabled=true;tim.textContent='--:--';times.classList.remove('visible');return;}
+
+  if (!S.fichaje?.entrada) {
+    bIn.disabled=false; bOut.disabled=true;
+    bPaus.style.display='none';
+    tim.textContent='--:--'; tim.className='timer-value';
+    times.classList.remove('visible'); return;
+  }
   times.classList.add('visible');
-  document.getElementById('hora-in').textContent=S.fichaje.entrada;
-  const mIn=document.getElementById('maps-in');
-  if(S.fichaje.mapsIn){mIn.href=S.fichaje.mapsIn;mIn.style.display='inline-block';}else{mIn.style.display='none';}
-  if(S.fichaje.salida){
-    bIn.disabled=true;bOut.disabled=true;
+  document.getElementById('hora-in').textContent = S.fichaje.entrada;
+  const mIn = document.getElementById('maps-in');
+  if (S.fichaje.mapsIn){mIn.href=S.fichaje.mapsIn;mIn.style.display='inline-block';}else{mIn.style.display='none';}
+
+  if (S.fichaje.salida) {
+    bIn.disabled=true; bOut.disabled=true; bPaus.style.display='none';
     document.getElementById('hora-out').textContent=S.fichaje.salida;
-    tim.textContent=duracion(S.fichaje.entrada,S.fichaje.salida);
+    tim.textContent=duracion(S.fichaje.entradaTs, S.fichaje.salidaTs);
     const mOut=document.getElementById('maps-out');
     if(S.fichaje.mapsOut){mOut.href=S.fichaje.mapsOut;mOut.style.display='inline-block';}
-  }else{
-    bIn.disabled=true;bOut.disabled=false;
+  } else {
+    bIn.disabled=true; bOut.disabled=false;
+    bPaus.style.display='block';
     document.getElementById('hora-out').textContent='—';
-    S.entradaTs=parseHora(S.fichaje.entrada);tickTimer();
-    S.timerRef=setInterval(tickTimer,1000);
+    S.entradaTs = S.fichaje.entradaTs;
+    tickTimer(); S.timerRef=setInterval(tickTimer,1000);
   }
 }
-function tickTimer(){const diff=Date.now()-S.entradaTs;document.getElementById('timer').textContent=pad(Math.floor(diff/3600000))+':'+pad(Math.floor((diff%3600000)/60000));}
 
-function renderPartes(){
-  const list=document.getElementById('tareas-list'),tot=document.getElementById('horas-total');
-  if(!S.partes.length){list.innerHTML='<div class="empty-tareas">Sin tareas reportadas hoy</div>';tot.textContent='0h reportadas';return;}
-  const sum=S.partes.reduce((a,p)=>a+(parseFloat(p.horas)||0),0);
-  tot.textContent=sum+'h reportadas';
-  list.innerHTML=S.partes.map(p=>`<div class="tarea-card"><div class="tarea-top"><div class="tarea-oficio">${esc(p.oficio)}</div><div class="tarea-horas">${p.horas}h</div></div>${p.obra&&p.obra!==S.obra?`<div class="tarea-obra-tag">📍 ${esc(p.obra)}</div>`:''} ${p.descripcion?`<div class="tarea-desc">${esc(p.descripcion)}</div>`:''}<div class="tarea-badges">${p.retrabajo==='SÍ'?'<span class="badge retrabajo">⚠ Retrabajo</span>':''} ${p.tipo_compras==='empresa'?'<span class="badge compras">Furgoneta empresa</span>':''} ${p.tipo_compras==='propio'?'<span class="badge compras">Vehículo propio</span>':''} ${p.comercio?`<span class="badge compras">📦 ${esc(p.comercio)}</span>`:''}</div></div>`).join('');
+function tickTimer() {
+  if (S.pausado) return;
+  const elapsed = serverNow() - S.entradaTs - S.pausaAcum;
+  const h = Math.floor(elapsed/3600000);
+  const m = Math.floor((elapsed%3600000)/60000);
+  const tv = document.getElementById('timer');
+  tv.textContent = pad(h)+':'+pad(m);
+  // Alerta horas extras (>8h)
+  tv.className = (h>=8) ? 'timer-value overtime' : 'timer-value';
+  if (h>=8) document.getElementById('timer-label').textContent='⚠ Extras';
+  else document.getElementById('timer-label').textContent='Horas';
 }
 
-async function fichar(tipo){
-  load(true);let lat='',lon='';
-  try{const pos=await gps();lat=pos.coords.latitude.toFixed(6);lon=pos.coords.longitude.toFixed(6);}
-  catch(e){toast('Sin GPS, se registra sin ubicación','error');}
-  const r=await api({action:'fichar',worker:S.wid,tipo,obra:S.obra,lat,lon});
+async function iniciarFichaje() {
+  // OBLIGATORIO pedir GPS
+  load(true);
+  let lat='', lon='';
+  try {
+    const pos = await gpsObligatorio();
+    lat = pos.coords.latitude.toFixed(6);
+    lon = pos.coords.longitude.toFixed(6);
+  } catch(e) {
+    load(false);
+    if (e === 'DENIED') { show('gps-screen'); return; }
+    // Timeout u otro error — también bloqueamos
+    show('gps-screen'); return;
+  }
+
+  const r = await api({action:'fichar',worker:S.wid,tipo:'entrada',obra:S.obra,lat,lon});
   load(false);
-  if(!r?.success){toast('Error al fichar','error');return;}
-  if(tipo==='entrada'){S.fichaje={entrada:r.hora,salida:null,obra:S.obra,mapsIn:r.mapsUrl,mapsOut:''};S.entradaTs=Date.now();toast('Jornada iniciada · '+r.hora,'success');}
-  else{S.fichaje.salida=r.hora;S.fichaje.mapsOut=r.mapsUrl;clearInterval(S.timerRef);toast('Jornada finalizada · '+r.hora,'success');}
+  if (!r?.success) { toast('Error al fichar','error'); return; }
+
+  S.fichaje = {entrada:r.hora, salida:null, obra:S.obra, mapsIn:r.mapsUrl, mapsOut:'', entradaTs:r.ts, salidaTs:null};
+  S.entradaTs = r.ts;
+  S.serverTs  = r.ts; S.clientTs = Date.now();
+  S.pausaAcum = 0; S.pausado = false;
+
+  // Mensaje legal al iniciar
+  toast('✅ Jornada iniciada · '+r.hora,'success');
+  renderFichaje();
+
+  // Mostrar aviso legal breve
+  setTimeout(()=>{ toast('📋 Jornada registrada conforme al RD-ley 8/2019 y política LOPD de la empresa',''); },2500);
+}
+
+async function finalizarFichaje() {
+  // Verificar cuadre antes de cerrar
+  const diff = getHorasPendientes();
+
+  if (diff > 1) {
+    // >1h: NO puede cerrar
+    toast(`⛔ Te quedan ${diff.toFixed(2)}h sin reportar. Debes registrar más tareas antes de finalizar.`,'error');
+    return;
+  }
+
+  if (diff >= 0.5) {
+    // 30min-1h: aviso, elige
+    S._diffPendiente = diff;
+    document.getElementById('cuadre-texto').innerHTML =
+      `Te quedan <b>${minutosStr(diff)}</b> de jornada sin reportar.<br>¿Qué quieres hacer?`;
+    document.getElementById('cuadre-modal').classList.add('open');
+    return;
+  }
+
+  if (diff > 0.05 && diff < 0.5) {
+    // <30min: auto-suma a última tarea
+    await autoSumarUltima(diff);
+  }
+
+  await ejecutarSalida();
+}
+
+async function ejecutarSalida() {
+  load(true);
+  let lat='', lon='';
+  try {
+    const pos = await gpsRapido();
+    lat = pos.coords.latitude.toFixed(6);
+    lon = pos.coords.longitude.toFixed(6);
+  } catch(e) {
+    load(false);
+    // Sin GPS al salir: aviso y deja continuar
+    document.getElementById('gps-close-modal').classList.add('open');
+    return;
+  }
+  await _doSalida(lat, lon);
+}
+
+async function confirmarSalidaSinGPS() {
+  document.getElementById('gps-close-modal').classList.remove('open');
+  await _doSalida('','');
+}
+function closeGpsModal() { document.getElementById('gps-close-modal').classList.remove('open'); }
+
+async function _doSalida(lat, lon) {
+  load(true);
+  const r = await api({action:'fichar',worker:S.wid,tipo:'salida',obra:S.obra,lat,lon});
+  load(false);
+  if (!r?.success) { toast('Error al fichar salida','error'); return; }
+  S.fichaje.salida  = r.hora;
+  S.fichaje.salidaTs= r.ts;
+  S.fichaje.mapsOut = r.mapsUrl||'?';
+  clearInterval(S.timerRef); S.pausado=false;
+  document.getElementById('pausa-aviso').classList.remove('visible');
+  document.getElementById('btn-pausa').textContent='⏸ Pausa';
+  toast('✅ Jornada finalizada · '+r.hora,'success');
   renderFichaje();
 }
-function gps(){return new Promise((res,rej)=>{if(!navigator.geolocation){rej();return;}navigator.geolocation.getCurrentPosition(res,rej,{timeout:8000,maximumAge:60000});});}
 
-function onOficio(){document.getElementById('compras-extra').classList.toggle('visible',document.getElementById('sel-oficio').value==='COMPRAS');}
-
-async function addTarea(){
-  const oficio=document.getElementById('sel-oficio').value;
-  const horas=document.getElementById('inp-horas').value;
-  const desc=document.getElementById('inp-desc').value.trim();
-  const retrab=document.getElementById('chk-retrabajo').checked;
-  if(!oficio){toast('Selecciona un oficio','error');return;}
-  if(!horas||parseFloat(horas)<=0){toast('Indica las horas','error');return;}
-  let tipo_compras='',comercio='';
-  if(oficio==='COMPRAS'){
-    const vE=document.getElementById('veh-empresa').checked,vP=document.getElementById('veh-propio').checked;
-    if(!vE&&!vP){toast('Indica el vehículo','error');return;}
-    tipo_compras=vE?'empresa':'propio';
-    comercio=document.getElementById('inp-comercio').value.trim();
-    if(!comercio){toast('Indica el comercio','error');return;}
+// Pausa
+function togglePausa() {
+  const btn = document.getElementById('btn-pausa');
+  const aviso = document.getElementById('pausa-aviso');
+  if (!S.pausado) {
+    S.pausaTs = serverNow(); S.pausado = true;
+    btn.textContent='▶ Reanudar'; aviso.classList.add('visible');
+    toast('⏸ Pausa iniciada','');
+  } else {
+    S.pausaAcum += serverNow()-S.pausaTs;
+    S.pausado=false; S.pausaTs=null;
+    btn.textContent='⏸ Pausa'; aviso.classList.remove('visible');
+    toast('▶ Jornada reanudada','');
   }
-  document.getElementById('btn-guardar').disabled=true;load(true);
-  const r=await api({action:'addParte',worker:S.wid,fecha:today(),obra:S.obra,oficio,horas:parseFloat(horas),desc:desc.substring(0,200),retrabajo:retrab?'1':'0',tipo_compras,comercio:comercio.substring(0,100)});
-  load(false);document.getElementById('btn-guardar').disabled=false;
-  if(!r?.success){toast('Error guardando tarea','error');return;}
-  S.partes.push({oficio,horas:parseFloat(horas),descripcion:desc,retrabajo:retrab?'SÍ':'NO',tipo_compras,comercio,obra:S.obra});
-  document.getElementById('sel-oficio').value='';document.getElementById('inp-horas').value='';
-  document.getElementById('inp-desc').value='';document.getElementById('chk-retrabajo').checked=false;
-  document.getElementById('veh-empresa').checked=false;document.getElementById('veh-propio').checked=false;
-  document.getElementById('inp-comercio').value='';document.getElementById('compras-extra').classList.remove('visible');
-  renderPartes();toast('Tarea guardada ✓','success');
+}
+
+// ══════════════════════════════════════
+//  CUADRE
+// ══════════════════════════════════════
+function getHorasFichadas() {
+  if (!S.fichaje?.entradaTs) return 0;
+  const fin = S.fichaje.salidaTs || serverNow();
+  return Math.max(0, (fin - S.entradaTs - S.pausaAcum)/3600000);
+}
+function getHorasReportadas() {
+  return S.partes.reduce((a,p)=>{
+    if (p.tipo_horas!=='NO_PRODUCTIVA') a += parseFloat(p.horas)||0;
+    return a;
+  },0);
+}
+function getHorasPendientes() {
+  return Math.max(0, getHorasFichadas() - getHorasReportadas());
+}
+function getHorasRestantes() {
+  const fich = getHorasFichadas();
+  const rep  = getHorasReportadas();
+  return Math.max(0, fich-rep);
+}
+function minutosStr(h) {
+  const m = Math.round(h*60);
+  if (m>=60) return `${Math.floor(m/60)}h ${m%60}min`;
+  return `${m} min`;
+}
+
+async function autoSumarUltima(diff) {
+  if (!S.partes.length) return;
+  const ultima = S.partes[S.partes.length-1];
+  const nuevasH = Math.round((parseFloat(ultima.horas)+diff)*10)/10;
+  // No tenemos endpoint de edición, así que añadimos una tarea de ajuste mínima
+  await api({action:'addParte',worker:S.wid,fecha:today(),obra:ultima.obra||S.obra,
+             oficio:ultima.oficio,horas:Math.round(diff*10)/10,
+             desc:'Ajuste automático de cuadre',retrabajo:'0'});
+  S.partes.push({oficio:ultima.oficio,horas:Math.round(diff*10)/10,
+    descripcion:'Ajuste automático',retrabajo:'NO',obra:ultima.obra||S.obra,tipo_horas:'PRODUCTIVA'});
+  renderPartes();
+}
+
+async function cuadreSumarUltima() {
+  document.getElementById('cuadre-modal').classList.remove('open');
+  if (S.partes.length) await autoSumarUltima(S._diffPendiente);
+  await ejecutarSalida();
+}
+function cuadreTareaRapida() {
+  document.getElementById('cuadre-modal').classList.remove('open');
+  // Rellena el form con las horas pendientes
+  document.getElementById('inp-horas').value = Math.round(S._diffPendiente*10)/10;
+  document.getElementById('inp-desc').value = 'Tarea pendiente de especificar';
+  document.getElementById('inp-horas').focus();
+  toast('Rellena el oficio y guarda la tarea pendiente','');
+}
+function closeCuadre() { document.getElementById('cuadre-modal').classList.remove('open'); }
+
+// ══════════════════════════════════════
+//  NUEVA TAREA
+// ══════════════════════════════════════
+function onOficio() {
+  document.getElementById('compras-extra').classList.toggle('visible',
+    document.getElementById('sel-oficio').value==='COMPRAS');
+  checkHorasInput();
+}
+
+function checkHorasInput() {
+  const restantes = getHorasRestantes();
+  const inp = parseFloat(document.getElementById('inp-horas').value)||0;
+  const el  = document.getElementById('horas-restantes');
+  if (!S.fichaje?.entrada||S.fichaje.salida) { el.textContent=''; return; }
+  el.textContent = `Puedes reportar hasta ${minutosStr(restantes)}`;
+  el.className   = inp>restantes ? 'horas-restantes alerta' : 'horas-restantes';
+}
+
+async function addTarea() {
+  // Bloquear si no ha fichado
+  if (!S.fichaje?.entrada) { toast('Debes iniciar la jornada antes de reportar tareas','error'); return; }
+
+  const oficio = document.getElementById('sel-oficio').value;
+  const horas  = parseFloat(document.getElementById('inp-horas').value)||0;
+  const desc   = document.getElementById('inp-desc').value.trim();
+  const retrab = document.getElementById('chk-retrabajo').checked;
+
+  if (!oficio) { toast('Selecciona un oficio','error'); return; }
+  if (!horas||horas<=0) { toast('Indica las horas','error'); return; }
+
+  // Validar límite de horas
+  const restantes = getHorasRestantes();
+  if (horas > restantes+0.05) {
+    const r = Math.round(restantes*10)/10;
+    toast(`Solo puedes reportar ${minutosStr(restantes)} más (llevas ${minutosStr(getHorasFichadas())} fichadas)`,'error');
+    return;
+  }
+
+  let tipo_compras='', comercio='';
+  if (oficio==='COMPRAS') {
+    const vE=document.getElementById('veh-empresa').checked;
+    const vP=document.getElementById('veh-propio').checked;
+    if (!vE&&!vP) { toast('Indica el vehículo','error'); return; }
+    tipo_compras = vE?'empresa':'propio';
+    comercio = document.getElementById('inp-comercio').value.trim();
+    if (!comercio) { toast('Indica el comercio','error'); return; }
+  }
+
+  document.getElementById('btn-guardar').disabled=true; load(true);
+  const r = await api({action:'addParte',worker:S.wid,fecha:today(),obra:S.obra,
+    oficio,horas,desc:desc.substring(0,200),retrabajo:retrab?'1':'0',tipo_compras,comercio});
+  load(false); document.getElementById('btn-guardar').disabled=false;
+  if (!r?.success) { toast('Error guardando tarea','error'); return; }
+
+  S.partes.push({oficio,horas,descripcion:desc,retrabajo:retrab?'SÍ':'NO',tipo_compras,comercio,obra:S.obra,tipo_horas:'PRODUCTIVA'});
+  document.getElementById('sel-oficio').value='';
+  document.getElementById('inp-horas').value='';
+  document.getElementById('inp-desc').value='';
+  document.getElementById('chk-retrabajo').checked=false;
+  document.getElementById('veh-empresa').checked=false;
+  document.getElementById('veh-propio').checked=false;
+  document.getElementById('inp-comercio').value='';
+  document.getElementById('compras-extra').classList.remove('visible');
+  renderPartes(); checkHorasInput();
+  toast('Tarea guardada ✓','success');
   document.getElementById('tareas-list').scrollIntoView({behavior:'smooth'});
 }
 
-function openModal(){
-  document.getElementById('obras-list').innerHTML=S.obras.map(o=>`<div class="obra-option ${o===S.obra?'selected':''}" onclick="pickObra('${o.replace(/'/g,"\'")}')"> ${o}</div>`).join('');
+// ══════════════════════════════════════
+//  COMPLETAR AYER
+// ══════════════════════════════════════
+async function completarAyer() {
+  load(true);
+  const r = await api({action:'getYesterday',worker:S.wid});
+  load(false);
+  if (!r?.success) return;
+  // Mostrar modal con partes de ayer y permitir añadir
+  // Por simplicidad: abrimos el form con fecha de ayer y avisamos
+  toast('Añade las tareas que te faltan de ayer. Se guardarán con fecha de ayer.','');
+  S._fechaAyer = r.fecha;
+  document.getElementById('add-tarea-section')?.scrollIntoView({behavior:'smooth'});
+}
+
+// ══════════════════════════════════════
+//  RENDER PARTES
+// ══════════════════════════════════════
+function renderPartes() {
+  const list = document.getElementById('tareas-list');
+  const tot  = document.getElementById('horas-total');
+  if (!S.partes.length) {
+    list.innerHTML='<div class="empty-tareas">Sin tareas reportadas hoy</div>';
+    tot.textContent='0h reportadas'; return;
+  }
+  const sum = S.partes.reduce((a,p)=>a+(parseFloat(p.horas)||0),0);
+  tot.textContent = sum+'h reportadas';
+  list.innerHTML = S.partes.map(p=>`
+    <div class="tarea-card">
+      <div class="tarea-top">
+        <div class="tarea-oficio">${esc(p.oficio)}</div>
+        <div class="tarea-horas">${p.horas}h</div>
+      </div>
+      ${p.obra&&p.obra!==S.obra?`<div class="tarea-obra-tag">📍 ${esc(p.obra)}</div>`:''}
+      ${p.descripcion?`<div class="tarea-desc">${esc(p.descripcion)}</div>`:''}
+      <div class="tarea-badges">
+        ${p.retrabajo==='SÍ'?'<span class="badge retrabajo">⚠ Retrabajo</span>':''}
+        ${p.tipo_compras==='empresa'?'<span class="badge compras">Furgoneta empresa</span>':''}
+        ${p.tipo_compras==='propio'?'<span class="badge compras">Vehículo propio</span>':''}
+        ${p.comercio?`<span class="badge compras">📦 ${esc(p.comercio)}</span>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════
+//  MODAL OBRA
+// ══════════════════════════════════════
+function openModal() {
+  document.getElementById('obras-list').innerHTML = S.obras.map(o=>
+    `<div class="obra-option ${o===S.obra?'selected':''}" onclick="pickObra('${o.replace(/'/g,"\\'")}')"> ${o}</div>`
+  ).join('');
   document.getElementById('obra-modal').classList.add('open');
 }
-function pickObra(obra){S.obra=obra;localStorage.setItem('obra_'+S.wid,obra);renderObra();closeModal();}
-function closeModal(){document.getElementById('obra-modal').classList.remove('open');}
-function maybeClose(e){if(e.target===document.getElementById('obra-modal'))closeModal();}
+function pickObra(obra) { S.obra=obra; localStorage.setItem('obra_'+S.wid,obra); renderObra(); closeModal(); }
+function closeModal()   { document.getElementById('obra-modal').classList.remove('open'); }
+function maybeClose(e)  { if(e.target===document.getElementById('obra-modal')) closeModal(); }
 
-// ── ADMIN ──
-function goAdmin(){
-  const mes=new Date();
-  document.getElementById('mes-input').value=mes.getFullYear()+'-'+pad(mes.getMonth()+1);
-  show('admin-screen');loadAdmin();
+// ══════════════════════════════════════
+//  HISTORIAL
+// ══════════════════════════════════════
+async function goHistory() {
+  show('history-screen');
+  load(true);
+  const r = await api({action:'getHistorial',worker:S.wid});
+  load(false);
+  const el = document.getElementById('history-content');
+  if (!r?.success) { el.innerHTML='<div class="empty-tareas">Error cargando historial</div>'; return; }
+
+  let html = '<p style="font-size:.75rem;color:var(--dim);margin-bottom:1rem">Últimos 30 días · Solo lectura</p>';
+
+  html += '<div class="hist-section-title">Fichajes</div>';
+  if (!r.fichajes.length) html+='<div class="empty-tareas">Sin fichajes</div>';
+  r.fichajes.forEach(f=>{
+    html+=`<div class="hist-row">
+      <div class="hist-row-top"><div class="hist-fecha">${f.fecha}</div><div class="hist-horas">${f.horas}h</div></div>
+      <div class="hist-detail">${f.entrada||'—'} → ${f.salida||'—'} ${f.obra?'· '+esc(f.obra):''}</div>
+    </div>`;
+  });
+
+  html += '<div class="hist-section-title">Tareas</div>';
+  if (!r.partes.length) html+='<div class="empty-tareas">Sin tareas</div>';
+  r.partes.forEach(p=>{
+    html+=`<div class="hist-row">
+      <div class="hist-row-top"><div class="hist-fecha">${p.fecha} · ${esc(p.oficio)}</div><div class="hist-horas">${p.horas}h</div></div>
+      <div class="hist-detail">${esc(p.obra)} ${p.retrab==='SÍ'?'· ⚠ Retrabajo':''}</div>
+    </div>`;
+  });
+
+  el.innerHTML = html;
 }
-function goWorker(){show('main-screen');}
 
-async function loadAdmin(){
-  const mes=document.getElementById('mes-input').value;
-  if(!mes)return;
+// ══════════════════════════════════════
+//  ADMIN PIN
+// ══════════════════════════════════════
+function adminDig(d) {
+  if (ADMIN.pin.length>=4) return; ADMIN.pin+=d; paintAdminDots();
+  if (ADMIN.pin.length===4) setTimeout(submitAdminPin,120);
+}
+function adminDelDig() { ADMIN.pin=ADMIN.pin.slice(0,-1); paintAdminDots(); document.getElementById('admin-pin-error').textContent=''; }
+function paintAdminDots() { for(let i=0;i<4;i++) document.getElementById('ad'+i).classList.toggle('filled',i<ADMIN.pin.length); }
+function closeAdminPin() { document.getElementById('admin-pin-modal').classList.remove('open'); }
+
+async function submitAdminPin() {
+  load(true);
+  const r = await api({action:'loginAdmin',pin:ADMIN.pin});
+  load(false);
+  if (!r) { adminResetPin(); return; }
+  if (r.success) {
+    ADMIN.wname = r.worker;
+    document.getElementById('admin-pin-modal').classList.remove('open');
+    const mes=new Date(); document.getElementById('mes-input').value=mes.getFullYear()+'-'+pad(mes.getMonth()+1);
+    show('admin-screen'); loadAdmin();
+  } else {
+    document.getElementById('admin-pin-error').textContent=r.error||'PIN incorrecto';
+    if(navigator.vibrate) navigator.vibrate([80,40,80]);
+    adminResetPin();
+  }
+}
+function adminResetPin() { ADMIN.pin=''; paintAdminDots(); }
+function logoutAdmin() { ADMIN={pin:'',wname:null}; location.reload(); }
+
+// ══════════════════════════════════════
+//  ADMIN DASHBOARD
+// ══════════════════════════════════════
+async function loadAdmin() {
+  const mes=document.getElementById('mes-input').value; if(!mes) return;
   load(true);
   const r=await api({action:'getAdminData',mes});
   load(false);
-  if(!r?.success){toast('Error cargando datos admin','error');return;}
+  if(!r?.success){toast('Error admin','error');return;}
 
-  // KPIs
   document.getElementById('kpi-grid').innerHTML=`
     <div class="kpi-card"><div class="kpi-label">Horas totales</div><div class="kpi-value orange">${r.totalHorasMes}h</div></div>
     <div class="kpi-card"><div class="kpi-label">Coste mano obra</div><div class="kpi-value orange">${r.totalCosteMes}€</div></div>
     <div class="kpi-card"><div class="kpi-label">Gastos fijos mes</div><div class="kpi-value blue">${r.gastosFijosMes}€</div></div>
-    <div class="kpi-card"><div class="kpi-label">Coste total mes</div><div class="kpi-value red">${r.costeTotal}€</div></div>
+    <div class="kpi-card"><div class="kpi-label">Coste total</div><div class="kpi-value red">${r.costeTotal}€</div></div>
     <div class="kpi-card"><div class="kpi-label">Retrabajos</div><div class="kpi-value ${r.totalRetrabajos>0?'red':'green'}">${r.totalRetrabajos}</div></div>
-    <div class="kpi-card"><div class="kpi-label">Viajes furgoneta</div><div class="kpi-value">${r.horasComprasEmpresa} · <span style="color:var(--muted);font-size:1rem">Propio: ${r.horasComprasPropio}</span></div></div>`;
+    <div class="kpi-card"><div class="kpi-label">Compras empresa / propio</div><div class="kpi-value">${r.comprasEmpresa} / ${r.comprasPropio}</div></div>`;
 
-  // Workers
   document.getElementById('admin-workers').innerHTML=r.workers.map(w=>`
     <div class="worker-row">
       <div class="worker-row-top"><div class="worker-row-name">${esc(w.nombre)}</div><div class="worker-row-coste">${Math.round(w.coste)}€</div></div>
       <div class="worker-row-detail">${w.horas}h totales · ${w.horasProd}h productivas · ${w.retrabajos} retrabajos</div>
     </div>`).join('');
 
-  // Obras
   document.getElementById('admin-obras').innerHTML=r.obras.map(o=>{
     const pct=o.presupuesto>0?Math.min(Math.round(o.coste/o.presupuesto*100),200):0;
     const over=o.coste>o.presupuesto&&o.presupuesto>0;
@@ -551,47 +1127,117 @@ async function loadAdmin(){
       ${o.presupuesto>0?`<div class="progress-bar"><div class="progress-fill ${over?'over':''}" style="width:${pct}%"></div></div>`:''}</div>`;
   }).join('');
 
-  // Vehículos
   document.getElementById('admin-vehiculos').innerHTML=`
     <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-label">Viajes furgoneta empresa</div><div class="kpi-value blue">${r.horasComprasEmpresa}</div></div>
-      <div class="kpi-card"><div class="kpi-label">Viajes vehículo propio</div><div class="kpi-value orange">${r.horasComprasPropio}</div></div>
+      <div class="kpi-card"><div class="kpi-label">Viajes furgoneta empresa</div><div class="kpi-value blue">${r.comprasEmpresa}</div></div>
+      <div class="kpi-card"><div class="kpi-label">Viajes vehículo propio</div><div class="kpi-value orange">${r.comprasPropio}</div></div>
     </div>`;
 
-  // Gastos fijos
   document.getElementById('admin-gastos').innerHTML=`
-    <div class="kpi-card" style="margin-bottom:.5rem">
-      <div class="kpi-label">Total mensual</div><div class="kpi-value blue">${r.gastosFijosMes}€</div>
-    </div>
-    ${r.gastosFijos.filter(g=>g.importe>0).map(g=>`<div class="worker-row"><div class="worker-row-top"><div style="font-size:.9rem">${esc(g.concepto)}</div><div class="worker-row-coste" style="font-size:.95rem">${Math.round(g.importe/12)}€/mes</div></div></div>`).join('')}`;
+    <div class="kpi-card" style="margin-bottom:.5rem"><div class="kpi-label">Total mensual</div><div class="kpi-value blue">${r.gastosFijosMes}€</div></div>
+    ${r.gastosFijos.filter(g=>g.importe>0).map(g=>`
+    <div class="worker-row"><div class="worker-row-top">
+      <div style="font-size:.9rem">${esc(g.concepto)}</div>
+      <div class="worker-row-coste" style="font-size:.95rem">${Math.round(g.importe/12)}€/mes</div>
+    </div></div>`).join('')}`;
 
-  // Fichajes
   document.getElementById('admin-fichajes').innerHTML=r.fichajes.map(f=>`
     <div class="fichaje-row-admin">
       <div class="fichaje-row-top"><div class="fichaje-worker">${esc(f.trabajador)}</div><div class="fichaje-fecha">${f.fecha}</div></div>
       <div class="fichaje-horas-detail">
-        ${f.entrada?`Entrada: ${f.entrada} ${f.mapsIn?`<a href="${f.mapsIn}" target="_blank" style="color:var(--blue);font-size:.72rem">📍</a>`:''}`:''} 
-        ${f.salida?`· Salida: ${f.salida} ${f.mapsOut?`<a href="${f.mapsOut}" target="_blank" style="color:var(--blue);font-size:.72rem">📍</a>`:''}`:''}
-        ${f.obra?`· ${esc(f.obra)}`:''}
+        ${f.entrada?`Entrada: ${f.entrada} ${f.mapsIn?`<a href="${f.mapsIn}" target="_blank" style="color:var(--blue)">📍</a>`:''}`:''}
+        ${f.salida?`· Salida: ${f.salida} ${f.mapsOut&&f.mapsOut!=='?'?`<a href="${f.mapsOut}" target="_blank" style="color:var(--blue)">📍</a>`:''}`:''}
+        ${f.obra?'· '+esc(f.obra):''}
       </div>
     </div>`).join('');
+
+  // Cargar facturas del trimestre correspondiente
+  const trimestre = parseInt(mes.split('-')[1])<=3?'T1':parseInt(mes.split('-')[1])<=6?'T2':parseInt(mes.split('-')[1])<=9?'T3':'T4';
+  loadFacturasAdmin(trimestre);
 }
 
-function logout(){clearInterval(S.timerRef);S={wid:null,wname:null,isAdmin:false,pin:'',fichaje:null,partes:[],obras:OBRAS_FB,obra:null,timerRef:null,entradaTs:null};show('worker-screen');}
-
-async function api(params){
-  try{const r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(params)});return await r.json();}
-  catch(e){console.error(e);toast('Error de conexión','error');return null;}
+async function loadFacturasAdmin(trimestre) {
+  const r = await api({action:'getFacturas',trimestre});
+  const el = document.getElementById('admin-facturas');
+  if (!r?.success||!r.facturas.length) { el.innerHTML='<div class="empty-tareas">Sin facturas procesadas</div>'; return; }
+  let html=`<div class="kpi-grid" style="margin-bottom:.75rem">
+    <div class="kpi-card"><div class="kpi-label">Total ${trimestre}</div><div class="kpi-value orange">${r.total}€</div></div>
+    <div class="kpi-card"><div class="kpi-label">Facturas</div><div class="kpi-value">${r.facturas.length}</div></div>
+    ${r.porRevisar>0?`<div class="kpi-card"><div class="kpi-label">A revisar</div><div class="kpi-value red">${r.porRevisar}</div></div>`:''}
+  </div>`;
+  html+=r.facturas.map(f=>`
+    <div class="fichaje-row-admin" style="${f.duplicado==='REVISAR_IMPORTE'?'border-color:var(--red)':''}}">
+      <div class="fichaje-row-top"><div class="fichaje-worker">${esc(f.proveedor)}</div><div style="font-weight:900;color:var(--orange)">${f.total}€</div></div>
+      <div class="fichaje-horas-detail">${f.fecha} · Nº ${esc(f.num)}
+        ${f.proyecto?'· <span style="color:var(--orange)">'+esc(f.proyecto)+'</span>':'<span style="color:var(--dim)">· sin proyecto</span>'}
+        ${f.enlace?`· <a href="${f.enlace}" target="_blank" style="color:var(--blue)">📎 PDF</a>`:''}
+        ${f.duplicado==='REVISAR_IMPORTE'?'<span style="color:var(--red)"> ⚠ REVISAR</span>':''}
+      </div>
+    </div>`).join('');
+  el.innerHTML=html;
 }
 
+async function lanzarFacturas(origen) {
+  const mes=document.getElementById('mes-input').value;
+  const trimestre=parseInt(mes.split('-')[1])<=3?'T1':parseInt(mes.split('-')[1])<=6?'T2':parseInt(mes.split('-')[1])<=9?'T3':'T4';
+  toast('Procesando facturas...',''); load(true);
+  const r=await api({action:'procesarFacturas',trimestre,origen});
+  load(false);
+  if(!r?.success){toast('Error: '+(r?.error||'?'),'error');return;}
+  const res=r.resultados;
+  toast([res.gmail?`Gmail: ${res.gmail.nuevas} nuevas`:'',res.manual?`Manual: ${res.manual.nuevas} nuevas`:''].filter(Boolean).join(' · ')||'Completado','success');
+  setTimeout(()=>loadFacturasAdmin(trimestre),1500);
+}
+
+// ══════════════════════════════════════
+//  GPS
+// ══════════════════════════════════════
+function gpsObligatorio() {
+  return new Promise((res,rej) => {
+    if (!navigator.geolocation) { rej('DENIED'); return; }
+    navigator.geolocation.getCurrentPosition(res, err => {
+      if (err.code===err.PERMISSION_DENIED) rej('DENIED');
+      else rej('ERROR');
+    },{timeout:10000,maximumAge:0,enableHighAccuracy:true});
+  });
+}
+function gpsRapido() {
+  return new Promise((res,rej) => {
+    if (!navigator.geolocation) { rej(); return; }
+    navigator.geolocation.getCurrentPosition(res,rej,{timeout:8000,maximumAge:60000});
+  });
+}
+async function retryGPS() {
+  try {
+    load(true);
+    await gpsObligatorio();
+    load(false);
+    show('worker-screen');
+    if (S.wid) show('pin-screen');
+  } catch(e) {
+    load(false);
+    toast('Sigue sin acceso a la ubicación. Actívala en los ajustes.','error');
+  }
+}
+
+// ══════════════════════════════════════
+//  API + UTILS
+// ══════════════════════════════════════
+async function api(params) {
+  try {
+    const r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(params)});
+    return await r.json();
+  } catch(e) { console.error(e); toast('Error de conexión','error'); return null; }
+}
 function today(){const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
-function parseHora(s){const[h,m]=s.split(':').map(Number);const d=new Date();d.setHours(h,m,0,0);return d.getTime();}
-function duracion(e,s){const diff=parseHora(s)-parseHora(e);return pad(Math.floor(diff/3600000))+':'+pad(Math.floor((diff%3600000)/60000));}
+function duracion(ts1,ts2){if(!ts1||!ts2)return'--:--';const diff=ts2-ts1;return pad(Math.floor(diff/3600000))+':'+pad(Math.floor((diff%3600000)/60000));}
 function pad(n){return String(n).padStart(2,'0');}
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function load(v){document.getElementById('loading-overlay').classList.toggle('show',v);}
 let toastT;
-function toast(msg,type=''){const el=document.getElementById('toast');el.textContent=msg;el.className='toast '+type+' show';clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),3200);}
+function toast(msg,type=''){const el=document.getElementById('toast');el.textContent=msg;el.className='toast '+type+' show';clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),3500);}
+function logout(){clearInterval(S.timerRef);S={wid:null,wname:null,pin:'',fichaje:null,partes:[],obras:[],obra:null,timerRef:null,entradaTs:null,pausaTs:null,pausado:false,pausaAcum:0,serverTs:0,clientTs:0,pendienteAyer:null};show('worker-screen');}
+
 init();
 </script>
 </body>
