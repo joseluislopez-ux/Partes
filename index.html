@@ -488,7 +488,8 @@ function updateDots() {
 
 async function doLogin() {
   load(true);
-  const r = await api({ action: 'login', workerId: S.wid, pin: S.pin });
+  // ★ UNA sola llamada: login + config + estado
+  const r = await api({ action: 'loginCompleto', workerId: S.wid, pin: S.pin });
   load(false);
 
   if (!r || !r.ok) {
@@ -500,6 +501,18 @@ async function doLogin() {
 
   S.wname = r.nombre;
   S.esAdmin = r.esAdmin || false;
+  S.obras = (r.obras || []);
+  S.oficios = (r.oficios || []);
+
+  // Actualizar selector de oficios
+  var sel = document.getElementById('sel-oficio');
+  sel.innerHTML = '<option value="">— Selecciona oficio —</option>';
+  S.oficios.forEach(function(o) {
+    var opt = document.createElement('option');
+    opt.value = o.id;
+    opt.textContent = o.nombre;
+    sel.appendChild(opt);
+  });
 
   // LOPD
   if (!r.lopdAceptada) {
@@ -507,7 +520,8 @@ async function doLogin() {
     return;
   }
 
-  await entrarApp();
+  // Ya tenemos el estado — entrar directo
+  await entrarAppConDatos(r);
 }
 
 async function aceptarLOPD() {
@@ -520,18 +534,15 @@ async function aceptarLOPD() {
 // ══════════════════════════════════════
 //  ENTRAR EN LA APP
 // ══════════════════════════════════════
-async function entrarApp() {
-  // Cargar estado actual
-  load(true);
-  const status = await api({ action: 'getCurrentStatus', workerId: S.wid });
-  load(false);
 
+/** Entrada con datos ya cargados desde loginCompleto */
+async function entrarAppConDatos(r) {
   // Header
   document.getElementById('hdr-name').textContent = S.wname;
   document.getElementById('hdr-date').textContent = formatFechaHoy();
 
   // Obra guardada en localStorage
-  const obraGuardada = localStorage.getItem('iu_obra_' + S.wid);
+  var obraGuardada = localStorage.getItem('iu_obra_' + S.wid);
   if (obraGuardada && S.obras.some(function(o) { return o.nombre === obraGuardada; })) {
     S.obra = obraGuardada;
   } else if (S.obras.length > 0) {
@@ -539,40 +550,44 @@ async function entrarApp() {
   }
   renderObra();
 
-  if (status && status.ok) {
-    S.partes = status.tareas || [];
+  S.partes = r.tareas || [];
 
-    if (status.fichajeAbierto && status.fichaje) {
-      var f = status.fichaje;
-      S.horaEntrada = f.horaEntrada;
-      S.obra = f.obraId || S.obra;
+  if (r.fichajeAbierto && r.fichaje) {
+    var f = r.fichaje;
+    S.horaEntrada = f.horaEntrada;
+    S.obra = f.obraId || S.obra;
+    S.entradaLocal = calcEntradaLocal(f.horaEntrada);
+    S.pausaAcum = (f.minPausa || 0) * 60000;
+    S.pausado = f.pausaActiva || false;
+    if (S.pausado) S.pausaTs = Date.now();
 
-      // ★ FIX ZONA HORARIA: calcular cuándo empezó usando hora texto del servidor
-      S.entradaLocal = calcEntradaLocal(f.horaEntrada);
-      S.pausaAcum = (f.minPausa || 0) * 60000;
-      S.pausado = f.pausaActiva || false;
-      if (S.pausado) {
-        S.pausaTs = Date.now(); // aproximación
-      }
+    S.fichaje = {
+      entrada: f.horaEntrada,
+      salida: null,
+      mapsIn: _mapsUrl(f.latEntrada, f.lngEntrada)
+    };
 
-      S.fichaje = {
-        entrada: f.horaEntrada,
-        salida: null,
-        mapsIn: _mapsUrl(f.latEntrada, f.lngEntrada)
-      };
-
-      renderFichaje();
-      startTimer();
-      document.getElementById('legal-fichaje').style.display = 'block';
-    }
-
-    renderPartes();
+    renderFichaje();
+    startTimer();
+    document.getElementById('legal-fichaje').style.display = 'block';
   }
 
-  // Formulario tarea visible si fichaje abierto
+  renderPartes();
   document.getElementById('form-tarea').style.display = S.fichaje ? 'block' : 'none';
-
   show('main-screen');
+}
+
+/** Entrada con llamada extra al servidor (fallback / LOPD) */
+async function entrarApp() {
+  load(true);
+  var status = await api({ action: 'getCurrentStatus', workerId: S.wid });
+  load(false);
+
+  entrarAppConDatos({
+    fichajeAbierto: status ? status.fichajeAbierto : false,
+    fichaje: status ? status.fichaje : null,
+    tareas: status ? status.tareas : []
+  });
 }
 
 // ══════════════════════════════════════
