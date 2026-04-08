@@ -1,1140 +1,394 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>IU Gestión · Industria Urbana</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>IU Gestión</title>
 <style>
-:root {
-  --bg: #111;
-  --surface: #1c1c1c;
-  --surface2: #252525;
-  --border: #333;
-  --orange: #f97316;
-  --green: #22c55e;
-  --red: #ef4444;
-  --blue: #3b82f6;
-  --text: #f0f0f0;
-  --muted: #888;
-  --dim: #555;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; }
-body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; overscroll-behavior: none; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#1a1a1a;color:#fff;min-height:100vh}
+.hide{display:none!important}
+button{cursor:pointer;border:none;border-radius:8px;font-size:16px;padding:12px 20px;font-weight:600}
+select,input,textarea{width:100%;padding:12px;border-radius:8px;border:1px solid #444;background:#2a2a2a;color:#fff;font-size:16px;margin-top:4px}
+textarea{resize:vertical;min-height:80px}
+label{display:block;margin-top:14px;font-size:14px;color:#aaa}
 
-.screen { display:none; min-height:100vh; flex-direction:column; }
-.screen.active { display:flex; }
+/* LOGIN */
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+#loginScreen h1{font-size:22px;margin-bottom:30px;color:#f90}
+#loginScreen select,#loginScreen input{max-width:300px;margin-top:10px}
+#loginScreen button{margin-top:20px;background:#f90;color:#000;width:100%;max-width:300px}
 
-/* ── TOAST / LOADING ── */
-.toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(100px); background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:.75rem 1.25rem; font-size:.85rem; z-index:500; transition:transform .3s; white-space:nowrap; max-width:90vw; overflow:hidden; text-overflow:ellipsis; }
-.toast.show { transform:translateX(-50%) translateY(0); }
-.toast.success { border-color:var(--green); color:var(--green); }
-.toast.error { border-color:var(--red); color:var(--red); }
+/* APP */
+#appScreen{padding:16px;max-width:500px;margin:0 auto}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.header h2{font-size:20px}
+.header button{background:transparent;color:#f90;font-size:14px;padding:6px 12px;border:1px solid #f90}
+.obra-bar{background:#2a2a2a;padding:12px;border-radius:8px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.obra-bar span{font-size:16px;font-weight:600}
 
-.loading-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:300; align-items:center; justify-content:center; }
-.loading-overlay.show { display:flex; }
-.spinner { width:38px; height:38px; border:3px solid var(--border); border-top-color:var(--orange); border-radius:50%; animation:spin .8s linear infinite; }
-@keyframes spin { to { transform:rotate(360deg); } }
+/* FICHAJE */
+.fichaje-box{background:#222;border-radius:12px;padding:16px;margin-bottom:20px}
+.fichaje-box h3{color:#f90;margin-bottom:12px;font-size:15px}
+.fichaje-btns{display:flex;gap:10px;margin-bottom:14px}
+.btn-entrada{background:#2e7d32;color:#fff;flex:1}
+.btn-salida{background:#c62828;color:#fff;flex:1}
+.btn-entrada:disabled,.btn-salida:disabled{opacity:0.4}
+.fichaje-info{display:flex;justify-content:space-between;font-size:14px;color:#aaa}
+.fichaje-info .hora{color:#fff;font-size:18px;font-weight:700}
+.contador{text-align:center;font-size:36px;font-weight:700;color:#f90;margin:10px 0}
+.ubicacion{font-size:12px;color:#888;margin-top:6px}
+.ubicacion a{color:#4fc3f7}
 
-/* ── WORKER SELECT ── */
-.ws-header { padding:3rem 2rem 1rem; text-align:center; }
-.ws-sub { color:var(--muted); margin-top:.5rem; font-size:.95rem; }
-.ws-body { flex:1; padding:0 1.5rem 3rem; display:flex; flex-direction:column; gap:.75rem; justify-content:center; }
-.worker-btn { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:1rem; font-size:1.2rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; cursor:pointer; text-align:center; color:var(--text); transition:all .15s; }
-.worker-btn:active { background:var(--surface2); border-color:var(--orange); color:var(--orange); transform:scale(.97); }
-
-/* ── LOGO ── */
-.logo { font-weight:900; font-size:1.8rem; letter-spacing:.05em; color:var(--orange); }
-.logo span { color:var(--dim); font-weight:400; font-size:1rem; display:block; letter-spacing:0; }
-
-/* ── PIN ── */
-.pin-header { padding:2.5rem 2rem 1rem; text-align:center; }
-.pin-name { font-size:1.3rem; font-weight:700; text-transform:uppercase; margin-top:.5rem; }
-.pin-back { background:none; border:none; color:var(--muted); font-size:.85rem; cursor:pointer; margin-top:.5rem; }
-.pin-body { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 2rem 2rem; }
-.pin-dots { display:flex; gap:12px; margin-bottom:1rem; }
-.pin-dot { width:16px; height:16px; border-radius:50%; border:2px solid var(--dim); }
-.pin-dot.filled { background:var(--orange); border-color:var(--orange); }
-.pin-error { color:var(--red); font-size:.8rem; min-height:1.2rem; margin-bottom:.5rem; }
-.pin-grid { display:grid; grid-template-columns:repeat(3,72px); gap:12px; }
-.pin-btn { width:72px; height:56px; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:1.3rem; font-weight:600; cursor:pointer; }
-.pin-btn:active { background:var(--surface2); border-color:var(--orange); }
-.pin-btn.empty { visibility:hidden; }
-.pin-btn.delete { font-size:1.1rem; color:var(--muted); }
-
-/* ── GPS SCREEN ── */
-#gps-screen { padding:2rem; text-align:center; justify-content:center; align-items:center; gap:1.5rem; }
-#gps-screen h2 { color:var(--orange); font-size:1.2rem; }
-#gps-screen p { color:var(--muted); font-size:.9rem; line-height:1.6; }
-#gps-screen code { background:var(--surface2); border:1px solid var(--border); padding:.15em .4em; border-radius:4px; font-size:.8rem; color:var(--orange); }
-
-/* ── LOPD ── */
-#lopd-screen { padding:1.5rem; overflow-y:auto; }
-#lopd-screen h2 { color:var(--orange); font-size:1.1rem; margin-bottom:1rem; }
-#lopd-screen .lopd-text { color:var(--muted); font-size:.8rem; line-height:1.6; max-height:50vh; overflow-y:auto; background:var(--surface); padding:1rem; border-radius:8px; margin-bottom:1rem; }
-.lopd-accept-btn { width:100%; padding:1rem; background:var(--orange); color:#000; border:none; border-radius:12px; font-size:1rem; font-weight:700; cursor:pointer; }
-
-/* ── MAIN APP ── */
-.header { display:flex; justify-content:space-between; align-items:center; padding:1rem 1.25rem; border-bottom:1px solid var(--border); }
-.header-name { font-weight:700; font-size:1rem; }
-.header-date { font-size:.75rem; color:var(--muted); }
-.header-right { display:flex; gap:.5rem; }
-.logout-btn, .admin-btn { background:var(--surface); border:1px solid var(--border); color:var(--muted); padding:.4rem .8rem; border-radius:8px; font-size:.75rem; cursor:pointer; }
-
-.section { padding:1rem 1.25rem; border-bottom:1px solid var(--border); }
-.section-title { font-weight:700; font-size:.85rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:.75rem; }
-
-/* Fichaje */
-.fichaje-row { display:flex; gap:.5rem; align-items:center; margin-bottom:.75rem; }
-.fichaje-btn { flex:1; padding:.75rem; border:none; border-radius:10px; font-weight:700; font-size:.85rem; cursor:pointer; }
-.fichaje-btn.start { background:var(--green); color:#000; }
-.fichaje-btn.end { background:var(--red); color:#fff; }
-.fichaje-btn.pause { background:var(--surface2); color:var(--orange); border:1px solid var(--orange); }
-.fichaje-btn:disabled { opacity:.4; cursor:default; }
-.timer-box { text-align:center; min-width:70px; }
-.timer-value { font-size:1.5rem; font-weight:800; font-variant-numeric:tabular-nums; }
-.timer-value.overtime { color:var(--red); }
-.timer-label { font-size:.65rem; color:var(--muted); }
-.fichaje-times { display:flex; gap:2rem; }
-.time-item-label { font-size:.7rem; color:var(--dim); }
-.time-item-value { font-size:.95rem; font-weight:600; }
-.maps-link { font-size:.7rem; color:var(--blue); text-decoration:none; }
-
-/* Pausa */
-.pausa-aviso { display:none; background:var(--surface); border:1px solid var(--orange); border-radius:8px; padding:.6rem .8rem; font-size:.75rem; color:var(--orange); margin-top:.5rem; }
-.pausa-aviso.visible { display:block; }
-
-/* Obra */
-.obra-banner { padding:.75rem 1.25rem; background:var(--surface); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
-.obra-info { font-size:.85rem; font-weight:600; }
-.obra-change { background:none; border:1px solid var(--border); color:var(--muted); padding:.3rem .6rem; border-radius:6px; font-size:.7rem; cursor:pointer; }
-
-/* Tareas */
-.tareas-header { display:flex; justify-content:space-between; align-items:center; }
-.horas-total { font-size:1rem; font-weight:800; color:var(--orange); }
-.tarea-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:.75rem; margin-bottom:.5rem; }
-.tarea-card-top { display:flex; justify-content:space-between; }
-.tarea-oficio { font-weight:700; font-size:.85rem; }
-.tarea-horas { color:var(--orange); font-weight:700; }
-.tarea-desc { font-size:.8rem; color:var(--muted); margin-top:.25rem; }
-.tarea-retrabajo { color:var(--red); font-size:.7rem; font-weight:700; }
-
-/* Formulario tarea */
-.form-group { margin-bottom:.75rem; }
-.form-label { display:block; font-size:.75rem; color:var(--muted); margin-bottom:.3rem; }
-.form-select, .form-input, .form-textarea { width:100%; padding:.6rem .8rem; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:.9rem; }
-.form-textarea { min-height:60px; resize:vertical; }
-.horas-restantes { font-size:.75rem; margin-top:.2rem; }
-.horas-restantes.warn { color:var(--red); }
-.form-check { display:flex; align-items:center; gap:.5rem; font-size:.85rem; }
-.form-check input { width:18px; height:18px; }
-.compras-extra { display:none; }
-.compras-extra.visible { display:block; }
-.btn-primary { width:100%; padding:.75rem; background:var(--orange); color:#000; border:none; border-radius:10px; font-weight:700; font-size:.9rem; cursor:pointer; }
-.btn-primary:disabled { opacity:.4; cursor:default; }
-
-/* Historial */
-.historial-header { display:flex; justify-content:space-between; align-items:center; }
-.historial-toggle { background:none; border:1px solid var(--border); color:var(--muted); padding:.3rem .6rem; border-radius:6px; font-size:.7rem; cursor:pointer; }
-#historial-list { max-height:300px; overflow-y:auto; }
-.hist-day { margin-bottom:.75rem; }
-.hist-fecha { font-size:.75rem; color:var(--dim); font-weight:700; margin-bottom:.3rem; border-bottom:1px solid var(--border); padding-bottom:.2rem; }
-.hist-item { font-size:.8rem; color:var(--muted); padding:.2rem 0; }
-
-/* Modales */
-.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:200; align-items:center; justify-content:center; padding:1.5rem; }
-.modal-overlay.open { display:flex; }
-.modal-box { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1.5rem; max-width:340px; width:100%; }
-.modal-title { font-weight:700; margin-bottom:.75rem; }
-.modal-text { font-size:.85rem; color:var(--muted); line-height:1.5; margin-bottom:1rem; }
-.modal-btns { display:flex; flex-direction:column; gap:.5rem; }
-.modal-btn { padding:.7rem; border:none; border-radius:10px; font-weight:700; font-size:.85rem; cursor:pointer; }
-.modal-btn.primary { background:var(--orange); color:#000; }
-.modal-btn.secondary { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
-.modal-btn.danger { background:var(--red); color:#fff; }
-
-/* Obra selector modal */
-.obra-option { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:.75rem; margin-bottom:.5rem; cursor:pointer; font-size:.9rem; font-weight:600; text-align:center; }
-.obra-option:active { border-color:var(--orange); color:var(--orange); }
-
-/* Aviso ayer */
-.aviso-ayer { background:var(--surface); border:1px solid var(--orange); border-radius:10px; padding:.75rem 1rem; margin:0 1.25rem; font-size:.8rem; color:var(--orange); }
+/* TAREAS */
+.tareas-box{background:#222;border-radius:12px;padding:16px}
+.tareas-box h3{color:#f90;margin-bottom:4px;font-size:15px}
+.btn-guardar{background:#f90;color:#000;width:100%;margin-top:16px}
+.btn-guardar:disabled{opacity:0.4}
+.retrabajo-row{display:flex;align-items:center;gap:8px;margin-top:14px}
+.retrabajo-row input{width:auto}
+.msg{padding:10px;border-radius:8px;margin-top:10px;font-size:14px;text-align:center}
+.msg-ok{background:#1b5e20;color:#a5d6a7}
+.msg-err{background:#b71c1c;color:#ef9a9a}
+.legal{font-size:11px;color:#666;text-align:center;margin-top:12px}
 </style>
 </head>
 <body>
 
-<div id="loading-overlay" class="loading-overlay"><div class="spinner"></div></div>
-<div id="toast" class="toast"></div>
-
-<!-- ═══ PANTALLA 1: Selección trabajador ═══ -->
-<div id="worker-screen" class="screen active">
-  <div class="ws-header">
-    <div class="logo">INDUSTRIA URBANA<span>Pisuerga SL · Partes de Obra</span></div>
-    <div class="ws-sub">¿Quién eres?</div>
-  </div>
-  <div class="ws-body" id="worker-buttons">
-    <!-- Se llena dinámicamente -->
-  </div>
+<!-- ===== LOGIN ===== -->
+<div id="loginScreen">
+  <h1>🏗️ Industria Urbana</h1>
+  <select id="selTrabajador">
+    <option value="">— Selecciona trabajador —</option>
+    <option value="luis">Luis</option>
+    <option value="senon">Senon</option>
+    <option value="eligio">Eligio</option>
+    <option value="jona">Jona</option>
+    <option value="jose">Jose</option>
+  </select>
+  <input type="password" id="inputPin" placeholder="PIN" inputmode="numeric" maxlength="4">
+  <button onclick="doLogin()">Entrar</button>
+  <div id="loginMsg" class="msg hide"></div>
 </div>
 
-<!-- ═══ PANTALLA 2: PIN ═══ -->
-<div id="pin-screen" class="screen">
-  <div class="pin-header">
-    <div class="logo">INDUSTRIA URBANA<span>Pisuerga SL</span></div>
-    <div class="pin-name" id="worker-display">—</div>
-    <button class="pin-back" onclick="backToWorkers()">← No soy yo</button>
-  </div>
-  <div class="pin-body">
-    <div class="pin-dots">
-      <div class="pin-dot" id="d0"></div>
-      <div class="pin-dot" id="d1"></div>
-      <div class="pin-dot" id="d2"></div>
-      <div class="pin-dot" id="d3"></div>
-    </div>
-    <div class="pin-error" id="pin-error"></div>
-    <div class="pin-grid">
-      <button class="pin-btn" onclick="dig('1')">1</button>
-      <button class="pin-btn" onclick="dig('2')">2</button>
-      <button class="pin-btn" onclick="dig('3')">3</button>
-      <button class="pin-btn" onclick="dig('4')">4</button>
-      <button class="pin-btn" onclick="dig('5')">5</button>
-      <button class="pin-btn" onclick="dig('6')">6</button>
-      <button class="pin-btn" onclick="dig('7')">7</button>
-      <button class="pin-btn" onclick="dig('8')">8</button>
-      <button class="pin-btn" onclick="dig('9')">9</button>
-      <button class="pin-btn empty" disabled></button>
-      <button class="pin-btn" onclick="dig('0')">0</button>
-      <button class="pin-btn delete" onclick="delDig()">⌫</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ PANTALLA GPS BLOQUEADO ═══ -->
-<div id="gps-screen" class="screen">
-  <h2>📍 GPS necesario</h2>
-  <p>Para fichar necesitas activar la ubicación.</p>
-  <p><b>Android:</b> Ajustes → Permisos → Ubicación → Permitir</p>
-  <p><b>iPhone:</b> Ajustes → Privacidad → Localización → Safari → <code>Mientras se usa</code></p>
-  <button class="btn-primary" onclick="reintentar()" style="margin-top:1rem">Reintentar</button>
-  <button class="pin-back" onclick="show('main-screen')" style="margin-top:.5rem">Volver sin fichar</button>
-</div>
-
-<!-- ═══ PANTALLA LOPD ═══ -->
-<div id="lopd-screen" class="screen">
-  <h2>Protección de Datos</h2>
-  <div class="lopd-text">
-    <p><b>INFORMACIÓN SOBRE TRATAMIENTO DE DATOS PERSONALES</b></p>
-    <p>De conformidad con el Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD), le informamos:</p>
-    <p><b>Responsable:</b> Industria Urbana Pisuerga SL</p>
-    <p><b>Finalidad:</b> Registro de jornada laboral conforme al Real Decreto-ley 8/2019, control de presencia y gestión de partes de obra.</p>
-    <p><b>Base legal:</b> Cumplimiento de obligación legal (Art. 34.9 ET) y ejecución del contrato de trabajo.</p>
-    <p><b>Datos tratados:</b> Identificación (nombre, PIN), geolocalización (GPS al fichar entrada/salida), registro horario y tareas realizadas.</p>
-    <p><b>Destinatarios:</b> Los datos no se cederán a terceros salvo obligación legal.</p>
-    <p><b>Conservación:</b> Los datos de registro horario se conservarán durante 4 años conforme al Art. 34.9 ET.</p>
-    <p><b>Derechos:</b> Puede ejercer sus derechos de acceso, rectificación, supresión, limitación y portabilidad dirigiéndose a administracion@industriaurbana.com</p>
-    <p>Al pulsar "Acepto" confirma que ha sido informado y acepta el tratamiento de sus datos para las finalidades indicadas.</p>
-  </div>
-  <button class="lopd-accept-btn" onclick="aceptarLOPD()">Acepto</button>
-</div>
-
-<!-- ═══ PANTALLA PRINCIPAL ═══ -->
-<div id="main-screen" class="screen">
+<!-- ===== APP ===== -->
+<div id="appScreen" class="hide">
   <div class="header">
-    <div>
-      <div class="header-name" id="hdr-name"></div>
-      <div class="header-date" id="hdr-date"></div>
-    </div>
-    <div class="header-right">
-      <button class="logout-btn" onclick="logout()">Salir</button>
-    </div>
+    <h2 id="userName">—</h2>
+    <button onclick="doLogout()">Salir</button>
   </div>
 
-  <!-- Aviso ayer -->
-  <div class="aviso-ayer" id="aviso-ayer" style="display:none"></div>
-
-  <!-- Obra activa -->
-  <div class="obra-banner">
-    <div class="obra-info" id="obra-activa">Sin obra seleccionada</div>
-    <button class="obra-change" onclick="abrirObras()">Cambiar obra</button>
+  <!-- Obra -->
+  <div class="obra-bar">
+    <span id="obraActual">—</span>
+    <button onclick="mostrarCambioObra()" style="background:#444;color:#fff;font-size:13px;padding:6px 10px">Cambiar</button>
+  </div>
+  <div id="cambioObra" class="hide" style="margin-bottom:16px">
+    <select id="selObra" onchange="cambiarObra()">
+      <option value="">— Selecciona obra —</option>
+      <option>ARROYO MURO VECINO</option>
+      <option>ARROYO</option>
+      <option>SANTA LUCIA</option>
+      <option>MARQUES DE SANTILLANA</option>
+      <option>BURGOS</option>
+      <option>TRILLA</option>
+      <option>CISTERNIGA</option>
+      <option>TERESA GIL</option>
+      <option>PEÑA</option>
+      <option>LG10 ZONAS COMUNES</option>
+      <option>BAJO IZQ LG10</option>
+      <option>BAJO DER LG10</option>
+      <option>ENTREPLANTA IZQ LG10</option>
+      <option>ENTREPLANTA DER LG10</option>
+      <option>1 IZQ LG10</option>
+      <option>1 DER LG10</option>
+      <option>2 IZQ LG10</option>
+      <option>2 DER LG10</option>
+      <option>3 IZQ LG10</option>
+      <option>3 DER LG10</option>
+      <option>4 IZQ LG10</option>
+      <option>4 DER LG10</option>
+      <option>OTROS (ESPECIFICAR)</option>
+    </select>
   </div>
 
-  <!-- Fichaje -->
-  <div class="section">
-    <div class="section-title">Fichaje de jornada</div>
-    <div class="fichaje-row">
-      <button class="fichaje-btn start" id="btn-in" onclick="iniciarFichaje()">▶ Iniciar jornada</button>
-      <button class="fichaje-btn pause" id="btn-pausa" onclick="togglePausa()" style="display:none">⏸ Pausa</button>
-      <button class="fichaje-btn end" id="btn-out" onclick="finalizarFichaje()" style="display:none">■ Finalizar</button>
-      <div class="timer-box">
-        <div class="timer-value" id="timer">--:--</div>
-        <div class="timer-label" id="timer-label">Horas</div>
-      </div>
+  <!-- FICHAJE -->
+  <div class="fichaje-box">
+    <h3>FICHAJE DE JORNADA</h3>
+    <div class="fichaje-btns">
+      <button class="btn-entrada" id="btnEntrada" onclick="fichar('entrada')">▶ Entrada</button>
+      <button class="btn-salida" id="btnSalida" onclick="fichar('salida')" disabled>■ Salida</button>
     </div>
-    <div class="fichaje-times">
-      <div>
-        <div class="time-item-label">Entrada</div>
-        <div class="time-item-value" id="hora-in">—</div>
-        <a id="maps-in" class="maps-link" href="#" target="_blank" style="display:none">📍 Mapa</a>
-      </div>
-      <div>
-        <div class="time-item-label">Salida</div>
-        <div class="time-item-value" id="hora-out">—</div>
-        <a id="maps-out" class="maps-link" href="#" target="_blank" style="display:none">📍 Mapa</a>
-      </div>
+    <div class="contador" id="contador">00:00:00</div>
+    <div class="fichaje-info">
+      <div>Entrada: <span class="hora" id="horaEntrada">—</span></div>
+      <div>Salida: <span class="hora" id="horaSalida">—</span></div>
     </div>
-    <div class="pausa-aviso" id="pausa-aviso">
-      ⏸ Pausa activa · Art. 34.4 ET — El tiempo de pausa no computa como jornada efectiva.
-    </div>
-    <div id="legal-fichaje" style="display:none; margin-top:.5rem; font-size:.7rem; color:var(--dim);">
-      📋 Registro conforme al RD-ley 8/2019 · Datos tratados según política LOPD
-    </div>
+    <div class="ubicacion" id="ubicacionInfo"></div>
   </div>
 
-  <!-- Tareas -->
-  <div class="section">
-    <div class="tareas-header">
-      <div class="section-title" style="margin:0">Tareas de hoy</div>
-      <div class="horas-total" id="horas-total">0h</div>
+  <!-- TAREAS -->
+  <div class="tareas-box">
+    <h3>TAREAS DE HOY</h3>
+    <label>Oficio
+      <select id="selOficio">
+        <option value="">— Selecciona oficio —</option>
+        <option>LIMPIEZA</option>
+        <option>TRANSPORTE MATERIALES</option>
+        <option>DEMOLICIÓN / ROZAS</option>
+        <option>PREPARACIÓN SUPERFICIES</option>
+        <option>ALBAÑILERÍA</option>
+        <option>PLADUR</option>
+        <option>PINTURA / ALISADO</option>
+        <option>ELECTRICIDAD</option>
+        <option>FONTANERÍA</option>
+        <option>MONTAJE</option>
+        <option>COMPRAS</option>
+        <option>DESPLAZAMIENTOS</option>
+        <option>OTROS</option>
+      </select>
+    </label>
+    <label>Horas
+      <input type="number" id="inputHoras" value="1" min="0.5" max="12" step="0.5">
+    </label>
+    <label>Descripción
+      <textarea id="inputDesc" placeholder="¿Qué has hecho?"></textarea>
+    </label>
+    <div class="retrabajo-row">
+      <input type="checkbox" id="chkRetrabajo">
+      <span>Retrabajo</span>
     </div>
-    <div id="tareas-list" style="margin-top:.75rem"></div>
-
-    <!-- Formulario nueva tarea -->
-    <div id="form-tarea" style="margin-top:1rem; display:none;">
-      <div class="form-group">
-        <label class="form-label">Oficio</label>
-        <select class="form-select" id="sel-oficio" onchange="onOficio()"></select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Horas</label>
-        <input type="number" class="form-input" id="inp-horas" step="0.5" min="0.5" max="12" value="1" oninput="checkHorasInput()">
-        <div class="horas-restantes" id="horas-restantes"></div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Descripción</label>
-        <textarea class="form-textarea" id="inp-desc" placeholder="¿Qué has hecho?"></textarea>
-      </div>
-      <div class="form-group">
-        <label class="form-check"><input type="checkbox" id="chk-retrabajo"> Retrabajo</label>
-      </div>
-      <div class="compras-extra" id="compras-extra">
-        <div class="form-group">
-          <label class="form-label">Vehículo</label>
-          <select class="form-select" id="sel-vehiculo">
-            <option value="">— Selecciona —</option>
-            <option value="empresa">Empresa</option>
-            <option value="propio">Propio</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Comercio</label>
-          <input type="text" class="form-input" id="inp-comercio" placeholder="Nombre del comercio">
-        </div>
-      </div>
-      <button class="btn-primary" id="btn-guardar" onclick="guardarTarea()">Guardar tarea</button>
-    </div>
+    <button class="btn-guardar" id="btnGuardar" onclick="guardarTarea()">Guardar tarea</button>
+    <div id="tareaMsg" class="msg hide"></div>
   </div>
 
-  <!-- Historial -->
-  <div class="section">
-    <div class="historial-header">
-      <div class="section-title" style="margin:0">Historial</div>
-      <button class="historial-toggle" id="btn-historial" onclick="toggleHistorial()">Ver historial</button>
-    </div>
-    <div id="historial-list" style="display:none; margin-top:.75rem;"></div>
-  </div>
-</div>
-
-<!-- ═══ MODAL: Selección de obra ═══ -->
-<div class="modal-overlay" id="obra-modal">
-  <div class="modal-box">
-    <div class="modal-title">Selecciona obra</div>
-    <div id="obra-options"></div>
-    <button class="modal-btn secondary" onclick="cerrarObras()" style="margin-top:.5rem">Cancelar</button>
-  </div>
-</div>
-
-<!-- ═══ MODAL: Cuadre ═══ -->
-<div class="modal-overlay" id="cuadre-modal">
-  <div class="modal-box">
-    <div class="modal-title">Cuadre de horas</div>
-    <div class="modal-text" id="cuadre-texto"></div>
-    <div class="modal-btns">
-      <button class="modal-btn primary" onclick="cuadreSumarUltima()">Sumar a última tarea</button>
-      <button class="modal-btn secondary" onclick="cuadreCerrarIgual()">Cerrar igualmente</button>
-      <button class="modal-btn secondary" onclick="closeCuadre()">Cancelar</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ MODAL: GPS al salir ═══ -->
-<div class="modal-overlay" id="gps-close-modal">
-  <div class="modal-box">
-    <div class="modal-title">Sin GPS al salir</div>
-    <div class="modal-text">No se ha podido obtener tu ubicación. ¿Cerrar jornada sin GPS?</div>
-    <div class="modal-btns">
-      <button class="modal-btn danger" onclick="confirmarSalidaSinGPS()">Cerrar sin GPS</button>
-      <button class="modal-btn secondary" onclick="closeGpsModal()">Cancelar</button>
-    </div>
-  </div>
+  <p class="legal">📋 Registro conforme al RD-ley 8/2019 · Datos tratados según política LOPD</p>
 </div>
 
 <script>
-// ══════════════════════════════════════
-//  CONFIGURACIÓN
-// ══════════════════════════════════════
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWA9z_tMO1yxtojoPdAD8OIb20ME2Cde5KpltuGCquLkkDP0sCzGc7W_AdrFuQ5fXv/exec';
+// ── CONFIG ──
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWA9z_tMO1yxtojoPdAD8OIb20ME2Cde5KpltuGCquLkkDP0sCzGc7W_AdrFuQ5fXv/exec';
+var usuario = null; // {id, nombre}
+var obraActual = '';
+var horaEntradaStr = ''; // "HH:mm"
+var contadorInterval = null;
 
-// ══════════════════════════════════════
-//  ESTADO GLOBAL
-// ══════════════════════════════════════
-let S = {
-  wid: null, wname: null, pin: '',
-  fichaje: null, partes: [], obras: [], oficios: [],
-  obra: null,
-  timerRef: null,
-  // ★ FIX ZONA HORARIA: usamos hora texto + reloj local
-  entradaLocal: null,   // Date.now() cuando fichó entrada
-  horaEntrada: null,    // texto "HH:mm" del servidor
-  pausado: false, pausaTs: null, pausaAcum: 0,
-  _diffPendiente: 0,
-  pendienteAyer: null,
-  esAdmin: false
-};
-
-// ══════════════════════════════════════
-//  INICIALIZACIÓN
-// ══════════════════════════════════════
-async function init() {
-  load(true);
-  const r = await api({ action: 'getConfig' });
-  load(false);
-  if (!r || !r.ok) {
-    toast('Error cargando configuración', 'error');
-    return;
-  }
-
-  S.obras = r.obras || [];
-  S.oficios = r.oficios || [];
-
-  // Botones trabajadores (sin admin)
-  const btns = document.getElementById('worker-buttons');
-  btns.innerHTML = '';
-  (r.workers || []).forEach(function(w) {
-    const b = document.createElement('button');
-    b.className = 'worker-btn';
-    b.textContent = w.nombre;
-    b.onclick = function() { selectWorker(w.id, w.nombre); };
-    btns.appendChild(b);
-  });
-
-  // Oficios en selector
-  const sel = document.getElementById('sel-oficio');
-  sel.innerHTML = '<option value="">— Selecciona oficio —</option>';
-  S.oficios.forEach(function(o) {
-    const opt = document.createElement('option');
-    opt.value = o.id;
-    opt.textContent = o.nombre;
-    sel.appendChild(opt);
-  });
-
-  show('worker-screen');
+// ── API ──
+function api(data) {
+  return fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+    body: JSON.stringify(data)
+  }).then(function(r) { return r.json(); });
 }
 
-// ══════════════════════════════════════
-//  NAVEGACIÓN
-// ══════════════════════════════════════
-function show(id) {
-  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
-  document.getElementById(id).classList.add('active');
+// ── LOGIN ──
+function doLogin() {
+  var id = document.getElementById('selTrabajador').value;
+  var pin = document.getElementById('inputPin').value;
+  if (!id || !pin) return showMsg('loginMsg', 'Selecciona trabajador e introduce PIN', true);
+  
+  showMsg('loginMsg', 'Entrando...', false);
+  api({action: 'login', id: id, pin: pin}).then(function(r) {
+    if (!r.ok) return showMsg('loginMsg', r.error, true);
+    usuario = {id: r.id, nombre: r.nombre};
+    document.getElementById('loginScreen').classList.add('hide');
+    document.getElementById('appScreen').classList.remove('hide');
+    document.getElementById('userName').textContent = r.nombre;
+    cargarEstado();
+  }).catch(function(e) { showMsg('loginMsg', 'Error de conexión', true); });
 }
 
-function selectWorker(id, nombre) {
-  S.wid = id;
-  S.wname = nombre;
-  S.pin = '';
-  document.getElementById('worker-display').textContent = nombre;
-  document.getElementById('pin-error').textContent = '';
-  updateDots();
-  show('pin-screen');
+function doLogout() {
+  usuario = null;
+  horaEntradaStr = '';
+  if (contadorInterval) clearInterval(contadorInterval);
+  document.getElementById('appScreen').classList.add('hide');
+  document.getElementById('loginScreen').classList.remove('hide');
+  document.getElementById('inputPin').value = '';
+  document.getElementById('loginMsg').classList.add('hide');
 }
 
-function backToWorkers() {
-  S.pin = '';
-  updateDots();
-  show('worker-screen');
-}
-
-// ══════════════════════════════════════
-//  PIN
-// ══════════════════════════════════════
-function dig(d) {
-  if (S.pin.length >= 4) return;
-  S.pin += d;
-  updateDots();
-  if (S.pin.length === 4) doLogin();
-}
-
-function delDig() {
-  S.pin = S.pin.slice(0, -1);
-  updateDots();
-  document.getElementById('pin-error').textContent = '';
-}
-
-function updateDots() {
-  for (let i = 0; i < 4; i++) {
-    document.getElementById('d' + i).classList.toggle('filled', i < S.pin.length);
-  }
-}
-
-async function doLogin() {
-  load(true);
-  // ★ UNA sola llamada: login + config + estado
-  const r = await api({ action: 'loginCompleto', workerId: S.wid, pin: S.pin });
-  load(false);
-
-  if (!r || !r.ok) {
-    document.getElementById('pin-error').textContent = (r && r.error) || 'Error de conexión';
-    S.pin = '';
-    updateDots();
-    return;
-  }
-
-  S.wname = r.nombre;
-  S.esAdmin = r.esAdmin || false;
-  S.obras = (r.obras || []);
-  S.oficios = (r.oficios || []);
-
-  // Actualizar selector de oficios
-  var sel = document.getElementById('sel-oficio');
-  sel.innerHTML = '<option value="">— Selecciona oficio —</option>';
-  S.oficios.forEach(function(o) {
-    var opt = document.createElement('option');
-    opt.value = o.id;
-    opt.textContent = o.nombre;
-    sel.appendChild(opt);
-  });
-
-  // LOPD
-  if (!r.lopdAceptada) {
-    show('lopd-screen');
-    return;
-  }
-
-  // Ya tenemos el estado — entrar directo
-  await entrarAppConDatos(r);
-}
-
-async function aceptarLOPD() {
-  load(true);
-  await api({ action: 'acceptLOPD', workerId: S.wid });
-  load(false);
-  await entrarApp();
-}
-
-// ══════════════════════════════════════
-//  ENTRAR EN LA APP
-// ══════════════════════════════════════
-
-/** Entrada con datos ya cargados desde loginCompleto */
-async function entrarAppConDatos(r) {
-  // Header
-  document.getElementById('hdr-name').textContent = S.wname;
-  document.getElementById('hdr-date').textContent = formatFechaHoy();
-
-  // Obra guardada en localStorage
-  var obraGuardada = localStorage.getItem('iu_obra_' + S.wid);
-  if (obraGuardada && S.obras.some(function(o) { return o.nombre === obraGuardada; })) {
-    S.obra = obraGuardada;
-  } else if (S.obras.length > 0) {
-    S.obra = S.obras[0].nombre;
-  }
-  renderObra();
-
-  S.partes = r.tareas || [];
-
-  if (r.fichajeAbierto && r.fichaje) {
-    var f = r.fichaje;
-    S.horaEntrada = f.horaEntrada;
-    S.obra = f.obraId || S.obra;
-    S.entradaLocal = calcEntradaLocal(f.horaEntrada);
-    S.pausaAcum = (f.minPausa || 0) * 60000;
-    S.pausado = f.pausaActiva || false;
-    if (S.pausado) S.pausaTs = Date.now();
-
-    S.fichaje = {
-      entrada: f.horaEntrada,
-      salida: null,
-      mapsIn: _mapsUrl(f.latEntrada, f.lngEntrada)
-    };
-
-    renderFichaje();
-    startTimer();
-    document.getElementById('legal-fichaje').style.display = 'block';
-  }
-
-  renderPartes();
-  document.getElementById('form-tarea').style.display = S.fichaje ? 'block' : 'none';
-  show('main-screen');
-}
-
-/** Entrada con llamada extra al servidor (fallback / LOPD) */
-async function entrarApp() {
-  load(true);
-  var status = await api({ action: 'getCurrentStatus', workerId: S.wid });
-  load(false);
-
-  entrarAppConDatos({
-    fichajeAbierto: status ? status.fichajeAbierto : false,
-    fichaje: status ? status.fichaje : null,
-    tareas: status ? status.tareas : []
-  });
-}
-
-// ══════════════════════════════════════
-//  GPS
-// ══════════════════════════════════════
-function gpsObligatorio() {
-  return new Promise(function(resolve, reject) {
-    if (!navigator.geolocation) { reject('NO_GPS'); return; }
-    navigator.geolocation.getCurrentPosition(resolve, function(err) {
-      reject(err.code === 1 ? 'DENIED' : 'ERROR');
-    }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
-  });
-}
-
-function gpsRapido() {
-  return new Promise(function(resolve, reject) {
-    if (!navigator.geolocation) { reject('NO_GPS'); return; }
-    navigator.geolocation.getCurrentPosition(resolve, function() {
-      reject('ERROR');
-    }, { enableHighAccuracy: false, timeout: 8000, maximumAge: 30000 });
-  });
-}
-
-function reintentar() {
-  iniciarFichaje();
-}
-
-// ══════════════════════════════════════
-//  TIMER — ★ FIX ZONA HORARIA
-// ══════════════════════════════════════
-
-/**
- * Calcula el timestamp local de entrada a partir de la hora texto del servidor.
- * Ejemplo: servidor devuelve "08:38" → creamos un Date de hoy a las 08:38 local.
- * Esto es válido porque el servidor formatea en Europe/Madrid y los trabajadores
- * están en la misma zona horaria.
- */
-function calcEntradaLocal(horaTexto) {
-  if (!horaTexto) return Date.now();
-  var partes = horaTexto.split(':');
-  var h = parseInt(partes[0]) || 0;
-  var m = parseInt(partes[1]) || 0;
-  var d = new Date();
-  d.setHours(h, m, 0, 0);
-  return d.getTime();
-}
-
-function startTimer() {
-  clearInterval(S.timerRef);
-  S.timerRef = setInterval(updateTimer, 1000);
-  updateTimer();
-}
-
-function updateTimer() {
-  if (!S.entradaLocal) return;
-  var ahora = Date.now();
-  var elapsed = ahora - S.entradaLocal - S.pausaAcum;
-  if (S.pausado && S.pausaTs) {
-    elapsed -= (ahora - S.pausaTs);
-  }
-  elapsed = Math.max(0, elapsed);
-
-  var totalMin = Math.floor(elapsed / 60000);
-  var h = Math.floor(totalMin / 60);
-  var m = totalMin % 60;
-
-  var el = document.getElementById('timer');
-  el.textContent = pad(h) + ':' + pad(m);
-  el.className = (h >= 8) ? 'timer-value overtime' : 'timer-value';
-  document.getElementById('timer-label').textContent = (h >= 8) ? '⚠ Extras' : 'Horas';
-}
-
-function getHorasFichadas() {
-  if (!S.entradaLocal) return 0;
-  var ahora = S.fichaje && S.fichaje.salidaLocal ? S.fichaje.salidaLocal : Date.now();
-  var elapsed = ahora - S.entradaLocal - S.pausaAcum;
-  if (S.pausado && S.pausaTs) elapsed -= (ahora - S.pausaTs);
-  return Math.max(0, elapsed / 3600000);
-}
-
-function getHorasReportadas() {
-  var total = 0;
-  S.partes.forEach(function(p) { total += parseFloat(p.horas) || 0; });
-  return total;
-}
-
-function getHorasPendientes() {
-  return Math.max(0, getHorasFichadas() - getHorasReportadas());
-}
-
-function getHorasRestantes() {
-  return Math.max(0, getHorasFichadas() - getHorasReportadas());
-}
-
-function minutosStr(h) {
-  var m = Math.round(h * 60);
-  if (m >= 60) return Math.floor(m / 60) + 'h ' + (m % 60) + 'min';
-  return m + ' min';
-}
-
-// ══════════════════════════════════════
-//  FICHAJE
-// ══════════════════════════════════════
-async function iniciarFichaje() {
-  if (!S.obra) { toast('Selecciona una obra primero', 'error'); return; }
-
-  load(true);
-  var lat = '', lon = '';
-  try {
-    var pos = await gpsObligatorio();
-    lat = pos.coords.latitude.toFixed(6);
-    lon = pos.coords.longitude.toFixed(6);
-  } catch (e) {
-    load(false);
-    show('gps-screen');
-    return;
-  }
-
-  var r = await api({ action: 'startFichaje', workerId: S.wid, lat: lat, lng: lon, obraId: S.obra });
-  load(false);
-
-  if (!r || !r.ok) {
-    toast((r && r.error) || 'Error al fichar', 'error');
-    return;
-  }
-
-  // ★ Usamos hora texto del servidor (Europe/Madrid), NO timestamp
-  S.horaEntrada = r.hora;
-  S.entradaLocal = calcEntradaLocal(r.hora);
-  S.pausaAcum = 0;
-  S.pausado = false;
-
-  S.fichaje = {
-    entrada: r.hora,
-    salida: null,
-    mapsIn: r.mapsUrl || ''
-  };
-
-  renderFichaje();
-  startTimer();
-  document.getElementById('form-tarea').style.display = 'block';
-  document.getElementById('legal-fichaje').style.display = 'block';
-
-  toast('✅ Jornada iniciada · ' + r.hora, 'success');
-  setTimeout(function() {
-    toast('📋 Registro conforme al RD-ley 8/2019 y política LOPD', '');
-  }, 2500);
-}
-
-async function finalizarFichaje() {
-  var diff = getHorasPendientes();
-
-  if (diff > 1) {
-    toast('⛔ Te quedan ' + diff.toFixed(1) + 'h sin reportar. Registra más tareas.', 'error');
-    return;
-  }
-
-  if (diff >= 0.5) {
-    S._diffPendiente = diff;
-    document.getElementById('cuadre-texto').innerHTML =
-      'Te quedan <b>' + minutosStr(diff) + '</b> sin reportar.<br>¿Qué quieres hacer?';
-    document.getElementById('cuadre-modal').classList.add('open');
-    return;
-  }
-
-  if (diff > 0.05 && diff < 0.5) {
-    await autoSumarUltima(diff);
-  }
-
-  await ejecutarSalida();
-}
-
-async function ejecutarSalida() {
-  load(true);
-  var lat = '', lon = '';
-  try {
-    var pos = await gpsRapido();
-    lat = pos.coords.latitude.toFixed(6);
-    lon = pos.coords.longitude.toFixed(6);
-  } catch (e) {
-    load(false);
-    document.getElementById('gps-close-modal').classList.add('open');
-    return;
-  }
-  await _doSalida(lat, lon);
-}
-
-async function confirmarSalidaSinGPS() {
-  document.getElementById('gps-close-modal').classList.remove('open');
-  await _doSalida('', '');
-}
-function closeGpsModal() { document.getElementById('gps-close-modal').classList.remove('open'); }
-
-async function _doSalida(lat, lon) {
-  load(true);
-  var r = await api({ action: 'endFichaje', workerId: S.wid, lat: lat, lng: lon });
-  load(false);
-
-  if (!r || !r.ok) {
-    if (r && r.bloqueo) {
-      toast('⛔ ' + r.error, 'error');
-      return;
-    }
-    if (r && r.confirmacion) {
-      S._diffPendiente = r.diferencia;
-      document.getElementById('cuadre-texto').innerHTML = r.mensaje;
-      document.getElementById('cuadre-modal').classList.add('open');
-      return;
-    }
-    toast((r && r.error) || 'Error al fichar salida', 'error');
-    return;
-  }
-
-  S.fichaje.salida = r.hora;
-  S.fichaje.salidaLocal = Date.now();
-  S.fichaje.mapsOut = r.mapsUrl || '';
-  clearInterval(S.timerRef);
-  S.pausado = false;
-  document.getElementById('pausa-aviso').classList.remove('visible');
-  document.getElementById('form-tarea').style.display = 'none';
-
-  renderFichaje();
-  toast('✅ Jornada finalizada · ' + r.hora + ' · ' + (r.horas || '') + 'h', 'success');
-}
-
-// ══════════════════════════════════════
-//  PAUSA
-// ══════════════════════════════════════
-function togglePausa() {
-  var btn = document.getElementById('btn-pausa');
-  var aviso = document.getElementById('pausa-aviso');
-
-  if (!S.pausado) {
-    S.pausaTs = Date.now();
-    S.pausado = true;
-    btn.textContent = '▶ Reanudar';
-    aviso.classList.add('visible');
-    toast('⏸ Pausa iniciada', '');
-    // Notificar servidor
-    api({ action: 'pauseFichaje', workerId: S.wid });
-  } else {
-    S.pausaAcum += Date.now() - S.pausaTs;
-    S.pausado = false;
-    S.pausaTs = null;
-    btn.textContent = '⏸ Pausa';
-    aviso.classList.remove('visible');
-    toast('▶ Jornada reanudada', '');
-    api({ action: 'resumeFichaje', workerId: S.wid });
-  }
-}
-
-// ══════════════════════════════════════
-//  CUADRE
-// ══════════════════════════════════════
-async function autoSumarUltima(diff) {
-  if (!S.partes.length) return;
-  var ultima = S.partes[S.partes.length - 1];
-  await api({
-    action: 'addTarea', workerId: S.wid, fecha: today(),
-    obraId: ultima.obraId || S.obra,
-    oficioId: ultima.oficioId, horas: Math.round(diff * 10) / 10,
-    descripcion: 'Ajuste automático de cuadre', retrabajo: false
-  });
-}
-
-async function cuadreSumarUltima() {
-  document.getElementById('cuadre-modal').classList.remove('open');
-  await _doSalida('', ''); // endFichaje con forzar lo maneja el server
-  // Alternativa: llamar endFichajeConSuma
-}
-
-function cuadreCerrarIgual() {
-  document.getElementById('cuadre-modal').classList.remove('open');
-  api({ action: 'endFichaje', workerId: S.wid, lat: '', lng: '', forzar: 'cerrarIgual' }).then(function(r) {
-    if (r && r.ok) {
-      S.fichaje.salida = r.hora;
-      clearInterval(S.timerRef);
-      renderFichaje();
-      document.getElementById('form-tarea').style.display = 'none';
-      toast('✅ Jornada cerrada · ' + r.hora, 'success');
+// ── ESTADO ──
+function cargarEstado() {
+  api({action: 'getEstado', id: usuario.id}).then(function(r) {
+    if (!r.ok) return;
+    if (r.fichaje) {
+      horaEntradaStr = r.horaEntrada;
+      obraActual = r.obra;
+      document.getElementById('obraActual').textContent = obraActual || '—';
+      document.getElementById('horaEntrada').textContent = horaEntradaStr;
+      document.getElementById('btnEntrada').disabled = true;
+      document.getElementById('btnSalida').disabled = false;
+      iniciarContador();
+      if (r.lat && r.lon) mostrarUbicacion(r.lat, r.lon);
     }
   });
 }
 
-function closeCuadre() { document.getElementById('cuadre-modal').classList.remove('open'); }
-
-// ══════════════════════════════════════
-//  NUEVA TAREA
-// ══════════════════════════════════════
-function onOficio() {
-  var val = document.getElementById('sel-oficio').value;
-  document.getElementById('compras-extra').classList.toggle('visible',
-    S.oficios.some(function(o) { return String(o.id) === val && o.nombre === 'COMPRAS'; }));
-  checkHorasInput();
+// ── OBRA ──
+function mostrarCambioObra() {
+  document.getElementById('cambioObra').classList.toggle('hide');
 }
-
-function checkHorasInput() {
-  var restantes = getHorasRestantes();
-  var inp = parseFloat(document.getElementById('inp-horas').value) || 0;
-  var el = document.getElementById('horas-restantes');
-  if (!S.fichaje || S.fichaje.salida) { el.textContent = ''; return; }
-  el.textContent = 'Puedes reportar hasta ' + minutosStr(restantes);
-  el.className = inp > restantes ? 'horas-restantes warn' : 'horas-restantes';
-}
-
-async function guardarTarea() {
-  var oficioId = document.getElementById('sel-oficio').value;
-  var horas    = parseFloat(document.getElementById('inp-horas').value) || 0;
-  var desc     = document.getElementById('inp-desc').value.trim();
-
-  if (!oficioId) { toast('Selecciona un oficio', 'error'); return; }
-  if (horas <= 0) { toast('Indica las horas', 'error'); return; }
-  if (!desc) { toast('Escribe una descripción', 'error'); return; }
-
-  var restantes = getHorasRestantes();
-  if (horas > restantes + 0.1) {
-    toast('Solo puedes reportar ' + minutosStr(restantes), 'error');
-    return;
-  }
-
-  load(true);
-  var r = await api({
-    action: 'addTarea',
-    workerId: S.wid,
-    fecha: today(),
-    obraId: S.obra,
-    oficioId: parseInt(oficioId),
-    horas: horas,
-    descripcion: desc,
-    retrabajo: document.getElementById('chk-retrabajo').checked,
-    vehiculo: document.getElementById('sel-vehiculo').value,
-    comercio: document.getElementById('inp-comercio').value.trim()
-  });
-  load(false);
-
-  if (!r || !r.ok) {
-    toast((r && r.error) || 'Error al guardar', 'error');
-    return;
-  }
-
-  // Añadir al estado local
-  var oficio = S.oficios.find(function(o) { return o.id === parseInt(oficioId); });
-  S.partes.push({
-    oficio: oficio ? oficio.nombre : '',
-    oficioId: parseInt(oficioId),
-    horas: horas,
-    descripcion: desc,
-    retrabajo: document.getElementById('chk-retrabajo').checked,
-    obraId: S.obra
-  });
-
-  renderPartes();
-  checkHorasInput();
-
-  // Limpiar form
-  document.getElementById('sel-oficio').value = '';
-  document.getElementById('inp-horas').value = '1';
-  document.getElementById('inp-desc').value = '';
-  document.getElementById('chk-retrabajo').checked = false;
-  document.getElementById('compras-extra').classList.remove('visible');
-  document.getElementById('sel-vehiculo').value = '';
-  document.getElementById('inp-comercio').value = '';
-
-  toast('✅ Tarea guardada', 'success');
-}
-
-// ══════════════════════════════════════
-//  OBRAS
-// ══════════════════════════════════════
-function renderObra() {
-  document.getElementById('obra-activa').textContent = S.obra ? '🏗 ' + S.obra : 'Sin obra seleccionada';
-}
-
-function abrirObras() {
-  var container = document.getElementById('obra-options');
-  container.innerHTML = '';
-  S.obras.forEach(function(o) {
-    var div = document.createElement('div');
-    div.className = 'obra-option';
-    div.textContent = o.nombre;
-    div.onclick = function() {
-      S.obra = o.nombre;
-      localStorage.setItem('iu_obra_' + S.wid, o.nombre);
-      renderObra();
-      cerrarObras();
-    };
-    container.appendChild(div);
-  });
-  document.getElementById('obra-modal').classList.add('open');
-}
-
-function cerrarObras() { document.getElementById('obra-modal').classList.remove('open'); }
-
-// ══════════════════════════════════════
-//  RENDER
-// ══════════════════════════════════════
-function renderFichaje() {
-  var f = S.fichaje;
-  var btnIn = document.getElementById('btn-in');
-  var btnOut = document.getElementById('btn-out');
-  var btnPausa = document.getElementById('btn-pausa');
-
-  if (f && !f.salida) {
-    // En jornada
-    btnIn.style.display = 'none';
-    btnOut.style.display = '';
-    btnPausa.style.display = '';
-    document.getElementById('hora-in').textContent = f.entrada;
-    document.getElementById('hora-out').textContent = '—';
-    if (f.mapsIn) {
-      document.getElementById('maps-in').href = f.mapsIn;
-      document.getElementById('maps-in').style.display = '';
-    }
-  } else if (f && f.salida) {
-    // Jornada cerrada
-    btnIn.style.display = 'none';
-    btnOut.style.display = 'none';
-    btnPausa.style.display = 'none';
-    document.getElementById('hora-in').textContent = f.entrada;
-    document.getElementById('hora-out').textContent = f.salida;
-    if (f.mapsOut) {
-      document.getElementById('maps-out').href = f.mapsOut;
-      document.getElementById('maps-out').style.display = '';
-    }
-  } else {
-    // Sin fichaje
-    btnIn.style.display = '';
-    btnOut.style.display = 'none';
-    btnPausa.style.display = 'none';
-    document.getElementById('hora-in').textContent = '—';
-    document.getElementById('hora-out').textContent = '—';
+function cambiarObra() {
+  var sel = document.getElementById('selObra').value;
+  if (sel) {
+    obraActual = sel;
+    document.getElementById('obraActual').textContent = sel;
+    document.getElementById('cambioObra').classList.add('hide');
   }
 }
 
-function renderPartes() {
-  var container = document.getElementById('tareas-list');
-  var total = 0;
-  container.innerHTML = '';
-
-  S.partes.forEach(function(p) {
-    var h = parseFloat(p.horas) || 0;
-    total += h;
-    container.innerHTML += '<div class="tarea-card">' +
-      '<div class="tarea-card-top">' +
-        '<div class="tarea-oficio">' + esc(p.oficio) + '</div>' +
-        '<div class="tarea-horas">' + h + 'h</div>' +
-      '</div>' +
-      '<div class="tarea-desc">' + esc(p.descripcion) + '</div>' +
-      (p.retrabajo ? '<div class="tarea-retrabajo">🔄 RETRABAJO</div>' : '') +
-    '</div>';
-  });
-
-  document.getElementById('horas-total').textContent = Math.round(total * 10) / 10 + 'h';
-}
-
-// ══════════════════════════════════════
-//  HISTORIAL
-// ══════════════════════════════════════
-function toggleHistorial() {
-  var el = document.getElementById('historial-list');
-  if (el.style.display === 'none') {
-    el.style.display = 'block';
-    document.getElementById('btn-historial').textContent = 'Ocultar';
-    loadHistorial();
-  } else {
-    el.style.display = 'none';
-    document.getElementById('btn-historial').textContent = 'Ver historial';
+// ── FICHAR ──
+function fichar(tipo) {
+  if (!obraActual && tipo === 'entrada') {
+    return alert('Selecciona una obra primero');
   }
-}
-
-async function loadHistorial() {
-  document.getElementById('historial-list').innerHTML = '<div style="text-align:center;color:var(--dim)">Cargando...</div>';
-  // Historial se muestra desde getCurrentStatus → tareas del mes si se implementa
-  // Por ahora placeholder
-  document.getElementById('historial-list').innerHTML = '<div style="text-align:center;color:var(--dim);font-size:.8rem;">Historial de 30 días — próximamente</div>';
-}
-
-// ══════════════════════════════════════
-//  API + UTILS
-// ══════════════════════════════════════
-async function api(params) {
-  try {
-    var r = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify(params)
+  
+  var btn = tipo === 'entrada' ? document.getElementById('btnEntrada') : document.getElementById('btnSalida');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+  
+  getUbicacion(function(lat, lon) {
+    api({
+      action: 'fichar',
+      id: usuario.id,
+      tipo: tipo,
+      obra: obraActual,
+      lat: lat,
+      lon: lon
+    }).then(function(r) {
+      if (!r.ok) {
+        alert(r.error);
+        btn.disabled = false;
+        btn.textContent = tipo === 'entrada' ? '▶ Entrada' : '■ Salida';
+        return;
+      }
+      
+      if (tipo === 'entrada') {
+        horaEntradaStr = r.horaEntrada;
+        document.getElementById('horaEntrada').textContent = horaEntradaStr;
+        document.getElementById('horaSalida').textContent = '—';
+        document.getElementById('btnEntrada').textContent = '▶ Entrada';
+        document.getElementById('btnEntrada').disabled = true;
+        document.getElementById('btnSalida').disabled = false;
+        iniciarContador();
+        mostrarUbicacion(lat, lon);
+      } else {
+        document.getElementById('horaSalida').textContent = r.horaSalida;
+        document.getElementById('btnSalida').textContent = '■ Salida';
+        document.getElementById('btnSalida').disabled = true;
+        document.getElementById('btnEntrada').disabled = false;
+        if (contadorInterval) clearInterval(contadorInterval);
+      }
+    }).catch(function(e) {
+      alert('Error de conexión');
+      btn.disabled = false;
+      btn.textContent = tipo === 'entrada' ? '▶ Entrada' : '■ Salida';
     });
-    return await r.json();
-  } catch (e) {
-    console.error(e);
-    toast('Error de conexión', 'error');
-    return null;
+  });
+}
+
+// ── CONTADOR ──
+function iniciarContador() {
+  if (contadorInterval) clearInterval(contadorInterval);
+  if (!horaEntradaStr) return;
+  
+  var partes = horaEntradaStr.split(':');
+  var hEntrada = parseInt(partes[0]);
+  var mEntrada = parseInt(partes[1]);
+  
+  function actualizar() {
+    var ahora = new Date();
+    var hAhora = ahora.getHours();
+    var mAhora = ahora.getMinutes();
+    var sAhora = ahora.getSeconds();
+    
+    var segsTotal = (hAhora * 3600 + mAhora * 60 + sAhora) - (hEntrada * 3600 + mEntrada * 60);
+    if (segsTotal < 0) segsTotal = 0;
+    
+    var h = Math.floor(segsTotal / 3600);
+    var m = Math.floor((segsTotal % 3600) / 60);
+    var s = segsTotal % 60;
+    
+    document.getElementById('contador').textContent =
+      pad(h) + ':' + pad(m) + ':' + pad(s);
   }
+  
+  actualizar();
+  contadorInterval = setInterval(actualizar, 1000);
 }
 
-function today() {
-  var d = new Date();
-  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+// ── UBICACIÓN ──
+function getUbicacion(cb) {
+  if (!navigator.geolocation) return cb('', '');
+  navigator.geolocation.getCurrentPosition(
+    function(pos) { cb(pos.coords.latitude, pos.coords.longitude); },
+    function() { cb('', ''); },
+    {enableHighAccuracy: true, timeout: 10000}
+  );
 }
 
-function formatFechaHoy() {
-  var dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-  var meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-  var d = new Date();
-  return dias[d.getDay()] + ' ' + d.getDate() + ' de ' + meses[d.getMonth()];
+function mostrarUbicacion(lat, lon) {
+  if (!lat || !lon) return;
+  // Convertir si viene como entero grande (coordenadas * 10^6 legacy)
+  var latN = parseFloat(lat);
+  var lonN = parseFloat(lon);
+  if (Math.abs(latN) > 1000) { latN = latN / 1000000; lonN = lonN / 1000000; }
+  
+  var link = 'https://www.google.com/maps?q=' + latN + ',' + lonN;
+  document.getElementById('ubicacionInfo').innerHTML =
+    '📍 <a href="' + link + '" target="_blank">Ver ubicación en mapa</a>';
 }
 
-function pad(n) { return String(n).padStart(2, '0'); }
-function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-function load(v) { document.getElementById('loading-overlay').classList.toggle('show', v); }
-function _mapsUrl(lat, lng) {
-  if (!lat || !lng) return '';
-  return 'https://maps.google.com/?q=' + lat + ',' + lng;
+// ── GUARDAR TAREA ──
+function guardarTarea() {
+  var oficio = document.getElementById('selOficio').value;
+  var horas = document.getElementById('inputHoras').value;
+  var desc = document.getElementById('inputDesc').value;
+  var retrabajo = document.getElementById('chkRetrabajo').checked;
+  
+  if (!oficio) return showMsg('tareaMsg', 'Selecciona un oficio', true);
+  if (!desc.trim()) return showMsg('tareaMsg', 'Escribe una descripción', true);
+  
+  document.getElementById('btnGuardar').disabled = true;
+  document.getElementById('btnGuardar').textContent = 'Guardando...';
+  
+  api({
+    action: 'guardarTarea',
+    id: usuario.id,
+    obra: obraActual,
+    oficio: oficio,
+    horas: horas,
+    descripcion: desc,
+    retrabajo: retrabajo
+  }).then(function(r) {
+    document.getElementById('btnGuardar').disabled = false;
+    document.getElementById('btnGuardar').textContent = 'Guardar tarea';
+    if (r.ok) {
+      showMsg('tareaMsg', '✅ Tarea guardada', false);
+      document.getElementById('inputDesc').value = '';
+      document.getElementById('chkRetrabajo').checked = false;
+    } else {
+      showMsg('tareaMsg', r.error, true);
+    }
+  }).catch(function() {
+    document.getElementById('btnGuardar').disabled = false;
+    document.getElementById('btnGuardar').textContent = 'Guardar tarea';
+    showMsg('tareaMsg', 'Error de conexión', true);
+  });
 }
 
-var toastT;
-function toast(msg, type) {
-  type = type || '';
-  var el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'toast ' + type + ' show';
-  clearTimeout(toastT);
-  toastT = setTimeout(function() { el.classList.remove('show'); }, 3500);
+// ── UTILS ──
+function showMsg(elId, text, isErr) {
+  var el = document.getElementById(elId);
+  el.textContent = text;
+  el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok');
+  el.classList.remove('hide');
+  setTimeout(function() { el.classList.add('hide'); }, 4000);
 }
-
-function logout() {
-  clearInterval(S.timerRef);
-  S = {
-    wid: null, wname: null, pin: '',
-    fichaje: null, partes: [], obras: S.obras, oficios: S.oficios,
-    obra: null, timerRef: null,
-    entradaLocal: null, horaEntrada: null,
-    pausado: false, pausaTs: null, pausaAcum: 0,
-    _diffPendiente: 0, pendienteAyer: null, esAdmin: false
-  };
-  document.getElementById('hora-in').textContent = '—';
-  document.getElementById('hora-out').textContent = '—';
-  document.getElementById('timer').textContent = '--:--';
-  document.getElementById('timer-label').textContent = 'Horas';
-  document.getElementById('maps-in').style.display = 'none';
-  document.getElementById('maps-out').style.display = 'none';
-  document.getElementById('legal-fichaje').style.display = 'none';
-  document.getElementById('form-tarea').style.display = 'none';
-  document.getElementById('historial-list').style.display = 'none';
-  show('worker-screen');
-}
-
-init();
 </script>
 </body>
 </html>
