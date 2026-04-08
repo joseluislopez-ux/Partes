@@ -15,20 +15,22 @@ label{display:block;margin-top:14px;font-size:14px;color:#aaa}
 
 /* LOGIN */
 #loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px}
-#loginScreen h1{font-size:22px;margin-bottom:30px;color:#f90}
-#loginScreen select,#loginScreen input{max-width:300px;margin-top:10px}
-#loginScreen button{margin-top:20px;background:#f90;color:#000;width:100%;max-width:300px}
+#loginScreen h1{font-size:22px;margin-bottom:24px;color:#f90}
+.workers-grid{display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px}
+.worker-btn{background:#2a2a2a;color:#fff;border:2px solid #444;border-radius:12px;padding:16px;font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:1px;transition:all 0.15s}
+.worker-btn:active,.worker-btn.selected{border-color:#f90;color:#f90;background:#2a2a1a}
+#pinBox{width:100%;max-width:300px;margin-top:16px}
+#pinBox input{text-align:center;font-size:24px;letter-spacing:8px}
+#pinBox button{margin-top:12px;background:#f90;color:#000;width:100%;padding:14px}
 
 /* APP */
 #appScreen{padding:16px;max-width:500px;margin:0 auto}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .header h2{font-size:20px}
 .header button{background:transparent;color:#f90;font-size:14px;padding:6px 12px;border:1px solid #f90}
-.obra-bar{background:#2a2a2a;padding:12px;border-radius:8px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
-.obra-bar span{font-size:16px;font-weight:600}
 
 /* FICHAJE */
-.fichaje-box{background:#222;border-radius:12px;padding:16px;margin-bottom:20px}
+.fichaje-box{background:#222;border-radius:12px;padding:16px;margin-bottom:16px}
 .fichaje-box h3{color:#f90;margin-bottom:12px;font-size:15px}
 .fichaje-btns{display:flex;gap:10px;margin-bottom:14px}
 .btn-entrada{background:#2e7d32;color:#fff;flex:1}
@@ -39,6 +41,10 @@ label{display:block;margin-top:14px;font-size:14px;color:#aaa}
 .contador{text-align:center;font-size:36px;font-weight:700;color:#f90;margin:10px 0}
 .ubicacion{font-size:12px;color:#888;margin-top:6px}
 .ubicacion a{color:#4fc3f7}
+
+/* OBRA */
+.obra-bar{background:#2a2a2a;padding:12px;border-radius:8px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.obra-bar span{font-size:16px;font-weight:600}
 
 /* TAREAS */
 .tareas-box{background:#222;border-radius:12px;padding:16px}
@@ -58,16 +64,18 @@ label{display:block;margin-top:14px;font-size:14px;color:#aaa}
 <!-- ===== LOGIN ===== -->
 <div id="loginScreen">
   <h1>🏗️ Industria Urbana</h1>
-  <select id="selTrabajador">
-    <option value="">— Selecciona trabajador —</option>
-    <option value="luis">Luis</option>
-    <option value="senon">Senon</option>
-    <option value="eligio">Eligio</option>
-    <option value="jona">Jona</option>
-    <option value="jose">Jose</option>
-  </select>
-  <input type="password" id="inputPin" placeholder="PIN" inputmode="numeric" maxlength="4">
-  <button onclick="doLogin()">Entrar</button>
+  <div class="workers-grid" id="workersGrid">
+    <button class="worker-btn" onclick="selectWorker('luis','Luis')">Luis</button>
+    <button class="worker-btn" onclick="selectWorker('senon','Senon')">Senon</button>
+    <button class="worker-btn" onclick="selectWorker('eligio','Eligio')">Eligio</button>
+    <button class="worker-btn" onclick="selectWorker('jona','Jona')">Jona</button>
+    <button class="worker-btn" onclick="selectWorker('jose','Jose')">Jose</button>
+  </div>
+  <div id="pinBox" class="hide">
+    <p style="text-align:center;color:#aaa;margin-bottom:4px;font-size:14px" id="pinLabel">PIN</p>
+    <input type="password" id="inputPin" placeholder="····" inputmode="numeric" maxlength="4">
+    <button onclick="doLogin()">Entrar</button>
+  </div>
   <div id="loginMsg" class="msg hide"></div>
 </div>
 
@@ -78,41 +86,7 @@ label{display:block;margin-top:14px;font-size:14px;color:#aaa}
     <button onclick="doLogout()">Salir</button>
   </div>
 
-  <!-- Obra -->
-  <div class="obra-bar">
-    <span id="obraActual">—</span>
-    <button onclick="mostrarCambioObra()" style="background:#444;color:#fff;font-size:13px;padding:6px 10px">Cambiar</button>
-  </div>
-  <div id="cambioObra" class="hide" style="margin-bottom:16px">
-    <select id="selObra" onchange="cambiarObra()">
-      <option value="">— Selecciona obra —</option>
-      <option>ARROYO MURO VECINO</option>
-      <option>ARROYO</option>
-      <option>SANTA LUCIA</option>
-      <option>MARQUES DE SANTILLANA</option>
-      <option>BURGOS</option>
-      <option>TRILLA</option>
-      <option>CISTERNIGA</option>
-      <option>TERESA GIL</option>
-      <option>PEÑA</option>
-      <option>LG10 ZONAS COMUNES</option>
-      <option>BAJO IZQ LG10</option>
-      <option>BAJO DER LG10</option>
-      <option>ENTREPLANTA IZQ LG10</option>
-      <option>ENTREPLANTA DER LG10</option>
-      <option>1 IZQ LG10</option>
-      <option>1 DER LG10</option>
-      <option>2 IZQ LG10</option>
-      <option>2 DER LG10</option>
-      <option>3 IZQ LG10</option>
-      <option>3 DER LG10</option>
-      <option>4 IZQ LG10</option>
-      <option>4 DER LG10</option>
-      <option>OTROS (ESPECIFICAR)</option>
-    </select>
-  </div>
-
-  <!-- FICHAJE -->
+  <!-- FICHAJE (arriba) -->
   <div class="fichaje-box">
     <h3>FICHAJE DE JORNADA</h3>
     <div class="fichaje-btns">
@@ -124,7 +98,19 @@ label{display:block;margin-top:14px;font-size:14px;color:#aaa}
       <div>Entrada: <span class="hora" id="horaEntrada">—</span></div>
       <div>Salida: <span class="hora" id="horaSalida">—</span></div>
     </div>
-    <div class="ubicacion" id="ubicacionInfo"></div>
+    <div class="ubicacion" id="ubicacionEntrada"></div>
+    <div class="ubicacion" id="ubicacionSalida"></div>
+  </div>
+
+  <!-- OBRA (debajo de fichaje) -->
+  <div class="obra-bar">
+    <span id="obraActual">— Selecciona obra —</span>
+    <button onclick="mostrarCambioObra()" style="background:#444;color:#fff;font-size:13px;padding:6px 10px">Cambiar</button>
+  </div>
+  <div id="cambioObra" class="hide" style="margin-bottom:16px">
+    <select id="selObra" onchange="cambiarObra()">
+      <option value="">— Selecciona obra —</option>
+    </select>
   </div>
 
   <!-- TAREAS -->
@@ -173,254 +159,256 @@ label{display:block;margin-top:14px;font-size:14px;color:#aaa}
 </div>
 
 <script>
-// ── CONFIG ──
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwXE6um7Rb9c_N-bO-TR2JEAsWpdX8zHBVjqERi3Ub20W8cE1c7vIhswucv2PlepH4JWQ/exec';
-var usuario = null; // {id, nombre}
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWA9z_tMO1yxtojoPdAD8OIb20ME2Cde5KpltuGCquLkkDP0sCzGc7W_AdrFuQ5fXv/exec';
+var usuario = null;
 var obraActual = '';
-var horaEntradaStr = ''; // "HH:mm"
+var horaEntradaStr = '';
 var contadorInterval = null;
+var obrasData = []; // [{nombre, lat, lon}]
+var selectedWorkerId = '';
 
 // ── API ──
 function api(data) {
   return fetch(SCRIPT_URL, {
-    method: 'POST',
-    headers: {'Content-Type': 'text/plain;charset=utf-8'},
-    body: JSON.stringify(data)
-  }).then(function(r) { return r.json(); });
+    method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify(data)
+  }).then(function(r){return r.json();});
 }
 
-// ── LOGIN ──
+// ── LOGIN CON BOTONES ──
+function selectWorker(id, nombre) {
+  selectedWorkerId = id;
+  // Highlight
+  var btns = document.querySelectorAll('.worker-btn');
+  for (var i=0;i<btns.length;i++) btns[i].classList.remove('selected');
+  event.target.classList.add('selected');
+  // Show PIN
+  document.getElementById('pinBox').classList.remove('hide');
+  document.getElementById('pinLabel').textContent = 'PIN para ' + nombre;
+  document.getElementById('inputPin').value = '';
+  document.getElementById('inputPin').focus();
+}
+
 function doLogin() {
-  var id = document.getElementById('selTrabajador').value;
   var pin = document.getElementById('inputPin').value;
-  if (!id || !pin) return showMsg('loginMsg', 'Selecciona trabajador e introduce PIN', true);
-  
-  showMsg('loginMsg', 'Entrando...', false);
-  api({action: 'login', id: id, pin: pin}).then(function(r) {
-    if (!r.ok) return showMsg('loginMsg', r.error, true);
-    usuario = {id: r.id, nombre: r.nombre};
+  if (!selectedWorkerId || !pin) return showMsg('loginMsg','Selecciona trabajador e introduce PIN',true);
+  showMsg('loginMsg','Entrando...',false);
+  api({action:'login',id:selectedWorkerId,pin:pin}).then(function(r){
+    if (!r.ok) return showMsg('loginMsg',r.error,true);
+    usuario = {id:r.id, nombre:r.nombre};
     document.getElementById('loginScreen').classList.add('hide');
     document.getElementById('appScreen').classList.remove('hide');
     document.getElementById('userName').textContent = r.nombre;
+    cargarObras();
     cargarEstado();
-  }).catch(function(e) { showMsg('loginMsg', 'Error de conexión', true); });
+  }).catch(function(){showMsg('loginMsg','Error de conexión',true);});
 }
 
 function doLogout() {
-  usuario = null;
-  horaEntradaStr = '';
-  if (contadorInterval) clearInterval(contadorInterval);
+  usuario=null; horaEntradaStr=''; selectedWorkerId='';
+  if(contadorInterval)clearInterval(contadorInterval);
   document.getElementById('appScreen').classList.add('hide');
   document.getElementById('loginScreen').classList.remove('hide');
-  document.getElementById('inputPin').value = '';
+  document.getElementById('inputPin').value='';
+  document.getElementById('pinBox').classList.add('hide');
   document.getElementById('loginMsg').classList.add('hide');
+  var btns=document.querySelectorAll('.worker-btn');
+  for(var i=0;i<btns.length;i++)btns[i].classList.remove('selected');
+}
+
+// ── CARGAR OBRAS (con coordenadas) ──
+function cargarObras() {
+  api({action:'getObras'}).then(function(r){
+    if(!r.ok) return;
+    obrasData = r.obras;
+    var sel = document.getElementById('selObra');
+    sel.innerHTML = '<option value="">— Selecciona obra —</option>';
+    for(var i=0;i<r.obras.length;i++){
+      var o = document.createElement('option');
+      o.value = r.obras[i].nombre;
+      o.textContent = r.obras[i].nombre;
+      sel.appendChild(o);
+    }
+  });
 }
 
 // ── ESTADO ──
 function cargarEstado() {
-  api({action: 'getEstado', id: usuario.id}).then(function(r) {
-    if (!r.ok) return;
-    if (r.fichaje) {
-      horaEntradaStr = r.horaEntrada;
-      obraActual = r.obra;
-      document.getElementById('obraActual').textContent = obraActual || '—';
-      document.getElementById('horaEntrada').textContent = horaEntradaStr;
-      document.getElementById('btnEntrada').disabled = true;
-      document.getElementById('btnSalida').disabled = false;
+  api({action:'getEstado',id:usuario.id}).then(function(r){
+    if(!r.ok) return;
+    if(r.fichaje){
+      horaEntradaStr=r.horaEntrada;
+      obraActual=r.obra;
+      document.getElementById('obraActual').textContent=obraActual||'—';
+      document.getElementById('horaEntrada').textContent=horaEntradaStr;
+      document.getElementById('btnEntrada').disabled=true;
+      document.getElementById('btnSalida').disabled=false;
       iniciarContador();
-      if (r.lat && r.lon) mostrarUbicacion(r.lat, r.lon);
+      if(r.lat&&r.lon) mostrarUbicacion('ubicacionEntrada',r.lat,r.lon,'Entrada');
     }
     cargarTareas();
   });
 }
 
 // ── OBRA ──
-function mostrarCambioObra() {
-  document.getElementById('cambioObra').classList.toggle('hide');
+function mostrarCambioObra(){document.getElementById('cambioObra').classList.toggle('hide');}
+function cambiarObra(){
+  var sel=document.getElementById('selObra').value;
+  if(sel){obraActual=sel;document.getElementById('obraActual').textContent=sel;document.getElementById('cambioObra').classList.add('hide');}
 }
-function cambiarObra() {
-  var sel = document.getElementById('selObra').value;
-  if (sel) {
-    obraActual = sel;
-    document.getElementById('obraActual').textContent = sel;
-    document.getElementById('cambioObra').classList.add('hide');
+
+// ── DISTANCIA GPS ──
+function distanciaMetros(lat1,lon1,lat2,lon2) {
+  var R=6371000;
+  var dLat=(lat2-lat1)*Math.PI/180;
+  var dLon=(lon2-lon1)*Math.PI/180;
+  var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+function validarUbicacion(lat,lon) {
+  if(!obraActual) return {ok:false, msg:'Selecciona una obra primero'};
+  // Buscar obra en obrasData
+  var obra = null;
+  for(var i=0;i<obrasData.length;i++){
+    if(obrasData[i].nombre===obraActual){obra=obrasData[i];break;}
   }
+  if(!obra || !obra.lat || !obra.lon) return {ok:true}; // Sin coordenadas = no validar
+  if(!lat||!lon) return {ok:true}; // Sin GPS = dejar pasar
+  var dist = distanciaMetros(lat,lon,obra.lat,obra.lon);
+  if(dist>200){
+    return {ok:false, msg:'⚠ Ubicación no coincide con '+obraActual+' ('+Math.round(dist)+'m). Selecciona la obra correcta o acércate a la ubicación.'};
+  }
+  return {ok:true};
 }
 
 // ── FICHAR ──
 function fichar(tipo) {
-  if (!obraActual && tipo === 'entrada') {
-    return alert('Selecciona una obra primero');
-  }
-  
-  var btn = tipo === 'entrada' ? document.getElementById('btnEntrada') : document.getElementById('btnSalida');
-  btn.disabled = true;
-  btn.textContent = 'Enviando...';
-  
-  getUbicacion(function(lat, lon) {
-    api({
-      action: 'fichar',
-      id: usuario.id,
-      tipo: tipo,
-      obra: obraActual,
-      lat: lat,
-      lon: lon
-    }).then(function(r) {
-      if (!r.ok) {
-        alert(r.error);
-        btn.disabled = false;
-        btn.textContent = tipo === 'entrada' ? '▶ Entrada' : '■ Salida';
-        return;
+  if(!obraActual && tipo==='entrada') return alert('Selecciona una obra primero');
+  var btn = tipo==='entrada' ? document.getElementById('btnEntrada') : document.getElementById('btnSalida');
+  btn.disabled=true; btn.textContent='Enviando...';
+
+  getUbicacion(function(lat,lon){
+    // Validar distancia solo si hay coordenadas
+    var check = validarUbicacion(lat,lon);
+    if(!check.ok){
+      alert(check.msg);
+      btn.disabled=false;
+      btn.textContent = tipo==='entrada'?'▶ Entrada':'■ Salida';
+      return;
+    }
+
+    api({action:'fichar',id:usuario.id,tipo:tipo,obra:obraActual,lat:lat,lon:lon}).then(function(r){
+      if(!r.ok){
+        alert(r.error); btn.disabled=false;
+        btn.textContent=tipo==='entrada'?'▶ Entrada':'■ Salida'; return;
       }
-      
-      if (tipo === 'entrada') {
-        horaEntradaStr = r.horaEntrada;
-        document.getElementById('horaEntrada').textContent = horaEntradaStr;
-        document.getElementById('horaSalida').textContent = '—';
-        document.getElementById('btnEntrada').textContent = '▶ Entrada';
-        document.getElementById('btnEntrada').disabled = true;
-        document.getElementById('btnSalida').disabled = false;
+      if(tipo==='entrada'){
+        horaEntradaStr=r.horaEntrada;
+        document.getElementById('horaEntrada').textContent=horaEntradaStr;
+        document.getElementById('horaSalida').textContent='—';
+        document.getElementById('btnEntrada').textContent='▶ Entrada';
+        document.getElementById('btnEntrada').disabled=true;
+        document.getElementById('btnSalida').disabled=false;
         iniciarContador();
-        mostrarUbicacion(lat, lon);
+        mostrarUbicacion('ubicacionEntrada',lat,lon,'Entrada');
+        document.getElementById('ubicacionSalida').innerHTML='';
       } else {
-        document.getElementById('horaSalida').textContent = r.horaSalida;
-        document.getElementById('btnSalida').textContent = '■ Salida';
-        document.getElementById('btnSalida').disabled = true;
-        document.getElementById('btnEntrada').disabled = false;
-        if (contadorInterval) clearInterval(contadorInterval);
+        document.getElementById('horaSalida').textContent=r.horaSalida;
+        document.getElementById('btnSalida').textContent='■ Salida';
+        document.getElementById('btnSalida').disabled=true;
+        document.getElementById('btnEntrada').disabled=false;
+        if(contadorInterval)clearInterval(contadorInterval);
+        mostrarUbicacion('ubicacionSalida',r.latSalida,r.lonSalida,'Salida');
       }
-    }).catch(function(e) {
-      alert('Error de conexión');
-      btn.disabled = false;
-      btn.textContent = tipo === 'entrada' ? '▶ Entrada' : '■ Salida';
+    }).catch(function(){
+      alert('Error de conexión'); btn.disabled=false;
+      btn.textContent=tipo==='entrada'?'▶ Entrada':'■ Salida';
     });
   });
 }
 
 // ── CONTADOR ──
-function iniciarContador() {
-  if (contadorInterval) clearInterval(contadorInterval);
-  if (!horaEntradaStr) return;
-  
-  var partes = horaEntradaStr.split(':');
-  var hEntrada = parseInt(partes[0]);
-  var mEntrada = parseInt(partes[1]);
-  
-  function actualizar() {
-    var ahora = new Date();
-    var hAhora = ahora.getHours();
-    var mAhora = ahora.getMinutes();
-    var sAhora = ahora.getSeconds();
-    
-    var segsTotal = (hAhora * 3600 + mAhora * 60 + sAhora) - (hEntrada * 3600 + mEntrada * 60);
-    if (segsTotal < 0) segsTotal = 0;
-    
-    var h = Math.floor(segsTotal / 3600);
-    var m = Math.floor((segsTotal % 3600) / 60);
-    var s = segsTotal % 60;
-    
-    document.getElementById('contador').textContent =
-      pad(h) + ':' + pad(m) + ':' + pad(s);
+function iniciarContador(){
+  if(contadorInterval)clearInterval(contadorInterval);
+  if(!horaEntradaStr) return;
+  var p=horaEntradaStr.split(':');
+  var hE=parseInt(p[0]),mE=parseInt(p[1]);
+  function act(){
+    var a=new Date(); var sT=(a.getHours()*3600+a.getMinutes()*60+a.getSeconds())-(hE*3600+mE*60);
+    if(sT<0)sT=0;
+    document.getElementById('contador').textContent=pad(Math.floor(sT/3600))+':'+pad(Math.floor((sT%3600)/60))+':'+pad(sT%60);
   }
-  
-  actualizar();
-  contadorInterval = setInterval(actualizar, 1000);
+  act(); contadorInterval=setInterval(act,1000);
 }
-
-function pad(n) { return n < 10 ? '0' + n : '' + n; }
+function pad(n){return n<10?'0'+n:''+n;}
 
 // ── UBICACIÓN ──
-function getUbicacion(cb) {
-  if (!navigator.geolocation) return cb('', '');
+function getUbicacion(cb){
+  if(!navigator.geolocation) return cb('','');
   navigator.geolocation.getCurrentPosition(
-    function(pos) { cb(pos.coords.latitude, pos.coords.longitude); },
-    function() { cb('', ''); },
-    {enableHighAccuracy: true, timeout: 10000}
+    function(pos){cb(pos.coords.latitude,pos.coords.longitude);},
+    function(){cb('','');},
+    {enableHighAccuracy:true,timeout:10000}
   );
 }
 
-function mostrarUbicacion(lat, lon) {
-  if (!lat || !lon) return;
-  // Convertir si viene como entero grande (coordenadas * 10^6 legacy)
-  var latN = parseFloat(lat);
-  var lonN = parseFloat(lon);
-  if (Math.abs(latN) > 1000) { latN = latN / 1000000; lonN = lonN / 1000000; }
-  
-  var link = 'https://www.google.com/maps?q=' + latN + ',' + lonN;
-  document.getElementById('ubicacionInfo').innerHTML =
-    '📍 <a href="' + link + '" target="_blank">Ver ubicación en mapa</a>';
+function mostrarUbicacion(elId,lat,lon,label){
+  if(!lat||!lon) return;
+  var latN=parseFloat(lat),lonN=parseFloat(lon);
+  if(Math.abs(latN)>1000){latN=latN/1000000;lonN=lonN/1000000;}
+  var link='https://www.google.com/maps?q='+latN+','+lonN;
+  document.getElementById(elId).innerHTML='📍 '+label+': <a href="'+link+'" target="_blank">Ver en mapa</a>';
 }
 
 // ── GUARDAR TAREA ──
-function guardarTarea() {
-  var oficio = document.getElementById('selOficio').value;
-  var horas = document.getElementById('inputHoras').value;
-  var desc = document.getElementById('inputDesc').value;
-  var retrabajo = document.getElementById('chkRetrabajo').checked;
-  
-  if (!oficio) return showMsg('tareaMsg', 'Selecciona un oficio', true);
-  if (!desc.trim()) return showMsg('tareaMsg', 'Escribe una descripción', true);
-  
-  document.getElementById('btnGuardar').disabled = true;
-  document.getElementById('btnGuardar').textContent = 'Guardando...';
-  
-  api({
-    action: 'guardarTarea',
-    id: usuario.id,
-    obra: obraActual,
-    oficio: oficio,
-    horas: horas,
-    descripcion: desc,
-    retrabajo: retrabajo
-  }).then(function(r) {
-    document.getElementById('btnGuardar').disabled = false;
-    document.getElementById('btnGuardar').textContent = 'Guardar tarea';
-    if (r.ok) {
-      showMsg('tareaMsg', '✅ Tarea guardada', false);
-      document.getElementById('inputDesc').value = '';
-      document.getElementById('chkRetrabajo').checked = false;
-      cargarTareas();
-    } else {
-      showMsg('tareaMsg', r.error, true);
-    }
-  }).catch(function() {
-    document.getElementById('btnGuardar').disabled = false;
-    document.getElementById('btnGuardar').textContent = 'Guardar tarea';
-    showMsg('tareaMsg', 'Error de conexión', true);
+function guardarTarea(){
+  var oficio=document.getElementById('selOficio').value;
+  var horas=document.getElementById('inputHoras').value;
+  var desc=document.getElementById('inputDesc').value;
+  var retrabajo=document.getElementById('chkRetrabajo').checked;
+  if(!oficio) return showMsg('tareaMsg','Selecciona un oficio',true);
+  if(!desc.trim()) return showMsg('tareaMsg','Escribe una descripción',true);
+  document.getElementById('btnGuardar').disabled=true;
+  document.getElementById('btnGuardar').textContent='Guardando...';
+  api({action:'guardarTarea',id:usuario.id,obra:obraActual,oficio:oficio,horas:horas,descripcion:desc,retrabajo:retrabajo}).then(function(r){
+    document.getElementById('btnGuardar').disabled=false;
+    document.getElementById('btnGuardar').textContent='Guardar tarea';
+    if(r.ok){showMsg('tareaMsg','✅ Tarea guardada',false);document.getElementById('inputDesc').value='';document.getElementById('chkRetrabajo').checked=false;cargarTareas();}
+    else showMsg('tareaMsg',r.error,true);
+  }).catch(function(){
+    document.getElementById('btnGuardar').disabled=false;
+    document.getElementById('btnGuardar').textContent='Guardar tarea';
+    showMsg('tareaMsg','Error de conexión',true);
   });
 }
 
 // ── CARGAR TAREAS HOY ──
-function cargarTareas() {
-  api({action: 'getTareasHoy', id: usuario.id}).then(function(r) {
-    if (!r.ok) return;
-    document.getElementById('totalHoras').textContent = r.totalHoras + 'h';
-    var html = '';
-    for (var i = 0; i < r.tareas.length; i++) {
-      var t = r.tareas[i];
-      html += '<div style="background:#2a2a2a;border-radius:6px;padding:10px;margin-bottom:6px;font-size:13px">'
-        + '<div style="display:flex;justify-content:space-between">'
-        + '<span style="color:#f90;font-weight:600">' + t.oficio + '</span>'
-        + '<span style="color:#fff;font-weight:700">' + t.horas + 'h</span>'
-        + '</div>'
-        + '<div style="color:#aaa;margin-top:4px">' + t.descripcion + '</div>'
-        + (t.retrabajo ? '<span style="color:#ef5350;font-size:11px">⚠ Retrabajo</span>' : '')
-        + '</div>';
+function cargarTareas(){
+  api({action:'getTareasHoy',id:usuario.id}).then(function(r){
+    if(!r.ok) return;
+    document.getElementById('totalHoras').textContent=r.totalHoras+'h';
+    var html='';
+    for(var i=0;i<r.tareas.length;i++){
+      var t=r.tareas[i];
+      html+='<div style="background:#2a2a2a;border-radius:6px;padding:10px;margin-bottom:6px;font-size:13px">'
+        +'<div style="display:flex;justify-content:space-between">'
+        +'<span style="color:#f90;font-weight:600">'+t.oficio+'</span>'
+        +'<span style="color:#fff;font-weight:700">'+t.horas+'h</span></div>'
+        +'<div style="color:#aaa;margin-top:4px">'+t.descripcion+'</div>'
+        +(t.retrabajo?'<span style="color:#ef5350;font-size:11px">⚠ Retrabajo</span>':'')
+        +'</div>';
     }
-    if (r.tareas.length === 0) {
-      html = '<div style="color:#666;font-size:13px;text-align:center;padding:10px">Sin tareas registradas hoy</div>';
-    }
-    document.getElementById('tareasList').innerHTML = html;
+    if(!r.tareas.length) html='<div style="color:#666;font-size:13px;text-align:center;padding:10px">Sin tareas registradas hoy</div>';
+    document.getElementById('tareasList').innerHTML=html;
   });
 }
 
 // ── UTILS ──
-function showMsg(elId, text, isErr) {
-  var el = document.getElementById(elId);
-  el.textContent = text;
-  el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok');
-  el.classList.remove('hide');
-  setTimeout(function() { el.classList.add('hide'); }, 4000);
+function showMsg(elId,text,isErr){
+  var el=document.getElementById(elId);
+  el.textContent=text; el.className='msg '+(isErr?'msg-err':'msg-ok'); el.classList.remove('hide');
+  setTimeout(function(){el.classList.add('hide');},4000);
 }
 </script>
 </body>
