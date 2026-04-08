@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>IU Gestión</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#1a1a1a;color:#fff;min-height:100vh}
+.hide{display:none!important}
+button{cursor:pointer;border:none;border-radius:8px;font-size:16px;padding:12px 20px;font-weight:600}
+select,input,textarea{width:100%;padding:12px;border-radius:8px;border:1px solid #444;background:#2a2a2a;color:#fff;font-size:16px;margin-top:4px}
+textarea{resize:vertical;min-height:80px}
+label{display:block;margin-top:14px;font-size:14px;color:#aaa}
+
+/* LOGIN */
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+#loginScreen h1{font-size:22px;margin-bottom:30px;color:#f90}
+#loginScreen select,#loginScreen input{max-width:300px;margin-top:10px}
+#loginScreen button{margin-top:20px;background:#f90;color:#000;width:100%;max-width:300px}
+
+/* APP */
+#appScreen{padding:16px;max-width:500px;margin:0 auto}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.header h2{font-size:20px}
+.header button{background:transparent;color:#f90;font-size:14px;padding:6px 12px;border:1px solid #f90}
+.obra-bar{background:#2a2a2a;padding:12px;border-radius:8px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.obra-bar span{font-size:16px;font-weight:600}
+
+/* FICHAJE */
+.fichaje-box{background:#222;border-radius:12px;padding:16px;margin-bottom:20px}
+.fichaje-box h3{color:#f90;margin-bottom:12px;font-size:15px}
+.fichaje-btns{display:flex;gap:10px;margin-bottom:14px}
+.btn-entrada{background:#2e7d32;color:#fff;flex:1}
+.btn-salida{background:#c62828;color:#fff;flex:1}
+.btn-entrada:disabled,.btn-salida:disabled{opacity:0.4}
+.fichaje-info{display:flex;justify-content:space-between;font-size:14px;color:#aaa}
+.fichaje-info .hora{color:#fff;font-size:18px;font-weight:700}
+.contador{text-align:center;font-size:36px;font-weight:700;color:#f90;margin:10px 0}
+.ubicacion{font-size:12px;color:#888;margin-top:6px}
+.ubicacion a{color:#4fc3f7}
+
+/* TAREAS */
+.tareas-box{background:#222;border-radius:12px;padding:16px}
+.tareas-box h3{color:#f90;margin-bottom:4px;font-size:15px}
+.btn-guardar{background:#f90;color:#000;width:100%;margin-top:16px}
+.btn-guardar:disabled{opacity:0.4}
+.retrabajo-row{display:flex;align-items:center;gap:8px;margin-top:14px}
+.retrabajo-row input{width:auto}
+.msg{padding:10px;border-radius:8px;margin-top:10px;font-size:14px;text-align:center}
+.msg-ok{background:#1b5e20;color:#a5d6a7}
+.msg-err{background:#b71c1c;color:#ef9a9a}
+.legal{font-size:11px;color:#666;text-align:center;margin-top:12px}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="loginScreen">
+  <h1>🏗️ Industria Urbana</h1>
+  <select id="selTrabajador">
+    <option value="">— Selecciona trabajador —</option>
+    <option value="luis">Luis</option>
+    <option value="senon">Senon</option>
+    <option value="eligio">Eligio</option>
+    <option value="jona">Jona</option>
+    <option value="jose">Jose</option>
+  </select>
+  <input type="password" id="inputPin" placeholder="PIN" inputmode="numeric" maxlength="4">
+  <button onclick="doLogin()">Entrar</button>
+  <div id="loginMsg" class="msg hide"></div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="appScreen" class="hide">
+  <div class="header">
+    <h2 id="userName">—</h2>
+    <button onclick="doLogout()">Salir</button>
+  </div>
+
+  <!-- Obra -->
+  <div class="obra-bar">
+    <span id="obraActual">—</span>
+    <button onclick="mostrarCambioObra()" style="background:#444;color:#fff;font-size:13px;padding:6px 10px">Cambiar</button>
+  </div>
+  <div id="cambioObra" class="hide" style="margin-bottom:16px">
+    <select id="selObra" onchange="cambiarObra()">
+      <option value="">— Selecciona obra —</option>
+      <option>ARROYO MURO VECINO</option>
+      <option>ARROYO</option>
+      <option>SANTA LUCIA</option>
+      <option>MARQUES DE SANTILLANA</option>
+      <option>BURGOS</option>
+      <option>TRILLA</option>
+      <option>CISTERNIGA</option>
+      <option>TERESA GIL</option>
+      <option>PEÑA</option>
+      <option>LG10 ZONAS COMUNES</option>
+      <option>BAJO IZQ LG10</option>
+      <option>BAJO DER LG10</option>
+      <option>ENTREPLANTA IZQ LG10</option>
+      <option>ENTREPLANTA DER LG10</option>
+      <option>1 IZQ LG10</option>
+      <option>1 DER LG10</option>
+      <option>2 IZQ LG10</option>
+      <option>2 DER LG10</option>
+      <option>3 IZQ LG10</option>
+      <option>3 DER LG10</option>
+      <option>4 IZQ LG10</option>
+      <option>4 DER LG10</option>
+      <option>OTROS (ESPECIFICAR)</option>
+    </select>
+  </div>
+
+  <!-- FICHAJE -->
+  <div class="fichaje-box">
+    <h3>FICHAJE DE JORNADA</h3>
+    <div class="fichaje-btns">
+      <button class="btn-entrada" id="btnEntrada" onclick="fichar('entrada')">▶ Entrada</button>
+      <button class="btn-salida" id="btnSalida" onclick="fichar('salida')" disabled>■ Salida</button>
+    </div>
+    <div class="contador" id="contador">00:00:00</div>
+    <div class="fichaje-info">
+      <div>Entrada: <span class="hora" id="horaEntrada">—</span></div>
+      <div>Salida: <span class="hora" id="horaSalida">—</span></div>
+    </div>
+    <div class="ubicacion" id="ubicacionInfo"></div>
+  </div>
+
+  <!-- TAREAS -->
+  <div class="tareas-box">
+    <h3>TAREAS DE HOY</h3>
+    <label>Oficio
+      <select id="selOficio">
+        <option value="">— Selecciona oficio —</option>
+        <option>LIMPIEZA</option>
+        <option>TRANSPORTE MATERIALES</option>
+        <option>DEMOLICIÓN / ROZAS</option>
+        <option>PREPARACIÓN SUPERFICIES</option>
+        <option>ALBAÑILERÍA</option>
+        <option>PLADUR</option>
+        <option>PINTURA / ALISADO</option>
+        <option>ELECTRICIDAD</option>
+        <option>FONTANERÍA</option>
+        <option>MONTAJE</option>
+        <option>COMPRAS</option>
+        <option>DESPLAZAMIENTOS</option>
+        <option>OTROS</option>
+      </select>
+    </label>
+    <label>Horas
+      <input type="number" id="inputHoras" value="1" min="0.5" max="12" step="0.5">
+    </label>
+    <label>Descripción
+      <textarea id="inputDesc" placeholder="¿Qué has hecho?"></textarea>
+    </label>
+    <div class="retrabajo-row">
+      <input type="checkbox" id="chkRetrabajo">
+      <span>Retrabajo</span>
+    </div>
+    <button class="btn-guardar" id="btnGuardar" onclick="guardarTarea()">Guardar tarea</button>
+    <div id="tareaMsg" class="msg hide"></div>
+  </div>
+
+  <p class="legal">📋 Registro conforme al RD-ley 8/2019 · Datos tratados según política LOPD</p>
+</div>
+
+<script>
+// ── CONFIG ──
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwXE6um7Rb9c_N-bO-TR2JEAsWpdX8zHBVjqERi3Ub20W8cE1c7vIhswucv2PlepH4JWQ/exec';
+var usuario = null; // {id, nombre}
+var obraActual = '';
+var horaEntradaStr = ''; // "HH:mm"
+var contadorInterval = null;
+
+// ── API ──
+function api(data) {
+  return fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+    body: JSON.stringify(data)
+  }).then(function(r) { return r.json(); });
+}
+
+// ── LOGIN ──
+function doLogin() {
+  var id = document.getElementById('selTrabajador').value;
+  var pin = document.getElementById('inputPin').value;
+  if (!id || !pin) return showMsg('loginMsg', 'Selecciona trabajador e introduce PIN', true);
+  
+  showMsg('loginMsg', 'Entrando...', false);
+  api({action: 'login', id: id, pin: pin}).then(function(r) {
+    if (!r.ok) return showMsg('loginMsg', r.error, true);
+    usuario = {id: r.id, nombre: r.nombre};
+    document.getElementById('loginScreen').classList.add('hide');
+    document.getElementById('appScreen').classList.remove('hide');
+    document.getElementById('userName').textContent = r.nombre;
+    cargarEstado();
+  }).catch(function(e) { showMsg('loginMsg', 'Error de conexión', true); });
+}
+
+function doLogout() {
+  usuario = null;
+  horaEntradaStr = '';
+  if (contadorInterval) clearInterval(contadorInterval);
+  document.getElementById('appScreen').classList.add('hide');
+  document.getElementById('loginScreen').classList.remove('hide');
+  document.getElementById('inputPin').value = '';
+  document.getElementById('loginMsg').classList.add('hide');
+}
+
+// ── ESTADO ──
+function cargarEstado() {
+  api({action: 'getEstado', id: usuario.id}).then(function(r) {
+    if (!r.ok) return;
+    if (r.fichaje) {
+      horaEntradaStr = r.horaEntrada;
+      obraActual = r.obra;
+      document.getElementById('obraActual').textContent = obraActual || '—';
+      document.getElementById('horaEntrada').textContent = horaEntradaStr;
+      document.getElementById('btnEntrada').disabled = true;
+      document.getElementById('btnSalida').disabled = false;
+      iniciarContador();
+      if (r.lat && r.lon) mostrarUbicacion(r.lat, r.lon);
+    }
+  });
+}
+
+// ── OBRA ──
+function mostrarCambioObra() {
+  document.getElementById('cambioObra').classList.toggle('hide');
+}
+function cambiarObra() {
+  var sel = document.getElementById('selObra').value;
+  if (sel) {
+    obraActual = sel;
+    document.getElementById('obraActual').textContent = sel;
+    document.getElementById('cambioObra').classList.add('hide');
+  }
+}
+
+// ── FICHAR ──
+function fichar(tipo) {
+  if (!obraActual && tipo === 'entrada') {
+    return alert('Selecciona una obra primero');
+  }
+  
+  var btn = tipo === 'entrada' ? document.getElementById('btnEntrada') : document.getElementById('btnSalida');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+  
+  getUbicacion(function(lat, lon) {
+    api({
+      action: 'fichar',
+      id: usuario.id,
+      tipo: tipo,
+      obra: obraActual,
+      lat: lat,
+      lon: lon
+    }).then(function(r) {
+      if (!r.ok) {
+        alert(r.error);
+        btn.disabled = false;
+        btn.textContent = tipo === 'entrada' ? '▶ Entrada' : '■ Salida';
+        return;
+      }
+      
+      if (tipo === 'entrada') {
+        horaEntradaStr = r.horaEntrada;
+        document.getElementById('horaEntrada').textContent = horaEntradaStr;
+        document.getElementById('horaSalida').textContent = '—';
+        document.getElementById('btnEntrada').textContent = '▶ Entrada';
+        document.getElementById('btnEntrada').disabled = true;
+        document.getElementById('btnSalida').disabled = false;
+        iniciarContador();
+        mostrarUbicacion(lat, lon);
+      } else {
+        document.getElementById('horaSalida').textContent = r.horaSalida;
+        document.getElementById('btnSalida').textContent = '■ Salida';
+        document.getElementById('btnSalida').disabled = true;
+        document.getElementById('btnEntrada').disabled = false;
+        if (contadorInterval) clearInterval(contadorInterval);
+      }
+    }).catch(function(e) {
+      alert('Error de conexión');
+      btn.disabled = false;
+      btn.textContent = tipo === 'entrada' ? '▶ Entrada' : '■ Salida';
+    });
+  });
+}
+
+// ── CONTADOR ──
+function iniciarContador() {
+  if (contadorInterval) clearInterval(contadorInterval);
+  if (!horaEntradaStr) return;
+  
+  var partes = horaEntradaStr.split(':');
+  var hEntrada = parseInt(partes[0]);
+  var mEntrada = parseInt(partes[1]);
+  
+  function actualizar() {
+    var ahora = new Date();
+    var hAhora = ahora.getHours();
+    var mAhora = ahora.getMinutes();
+    var sAhora = ahora.getSeconds();
+    
+    var segsTotal = (hAhora * 3600 + mAhora * 60 + sAhora) - (hEntrada * 3600 + mEntrada * 60);
+    if (segsTotal < 0) segsTotal = 0;
+    
+    var h = Math.floor(segsTotal / 3600);
+    var m = Math.floor((segsTotal % 3600) / 60);
+    var s = segsTotal % 60;
+    
+    document.getElementById('contador').textContent =
+      pad(h) + ':' + pad(m) + ':' + pad(s);
+  }
+  
+  actualizar();
+  contadorInterval = setInterval(actualizar, 1000);
+}
+
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+// ── UBICACIÓN ──
+function getUbicacion(cb) {
+  if (!navigator.geolocation) return cb('', '');
+  navigator.geolocation.getCurrentPosition(
+    function(pos) { cb(pos.coords.latitude, pos.coords.longitude); },
+    function() { cb('', ''); },
+    {enableHighAccuracy: true, timeout: 10000}
+  );
+}
+
+function mostrarUbicacion(lat, lon) {
+  if (!lat || !lon) return;
+  // Convertir si viene como entero grande (coordenadas * 10^6 legacy)
+  var latN = parseFloat(lat);
+  var lonN = parseFloat(lon);
+  if (Math.abs(latN) > 1000) { latN = latN / 1000000; lonN = lonN / 1000000; }
+  
+  var link = 'https://www.google.com/maps?q=' + latN + ',' + lonN;
+  document.getElementById('ubicacionInfo').innerHTML =
+    '📍 <a href="' + link + '" target="_blank">Ver ubicación en mapa</a>';
+}
+
+// ── GUARDAR TAREA ──
+function guardarTarea() {
+  var oficio = document.getElementById('selOficio').value;
+  var horas = document.getElementById('inputHoras').value;
+  var desc = document.getElementById('inputDesc').value;
+  var retrabajo = document.getElementById('chkRetrabajo').checked;
+  
+  if (!oficio) return showMsg('tareaMsg', 'Selecciona un oficio', true);
+  if (!desc.trim()) return showMsg('tareaMsg', 'Escribe una descripción', true);
+  
+  document.getElementById('btnGuardar').disabled = true;
+  document.getElementById('btnGuardar').textContent = 'Guardando...';
+  
+  api({
+    action: 'guardarTarea',
+    id: usuario.id,
+    obra: obraActual,
+    oficio: oficio,
+    horas: horas,
+    descripcion: desc,
+    retrabajo: retrabajo
+  }).then(function(r) {
+    document.getElementById('btnGuardar').disabled = false;
+    document.getElementById('btnGuardar').textContent = 'Guardar tarea';
+    if (r.ok) {
+      showMsg('tareaMsg', '✅ Tarea guardada', false);
+      document.getElementById('inputDesc').value = '';
+      document.getElementById('chkRetrabajo').checked = false;
+    } else {
+      showMsg('tareaMsg', r.error, true);
+    }
+  }).catch(function() {
+    document.getElementById('btnGuardar').disabled = false;
+    document.getElementById('btnGuardar').textContent = 'Guardar tarea';
+    showMsg('tareaMsg', 'Error de conexión', true);
+  });
+}
+
+// ── UTILS ──
+function showMsg(elId, text, isErr) {
+  var el = document.getElementById(elId);
+  el.textContent = text;
+  el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok');
+  el.classList.remove('hide');
+  setTimeout(function() { el.classList.add('hide'); }, 4000);
+}
+</script>
+</body>
+</html>
