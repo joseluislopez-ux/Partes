@@ -70,6 +70,7 @@ label{display:block;margin-top:14px;font-size:14px;color:#aaa}
     <button class="worker-btn" onclick="selectWorker('eligio','Eligio')">Eligio</button>
     <button class="worker-btn" onclick="selectWorker('jona','Jona')">Jona</button>
     <button class="worker-btn" onclick="selectWorker('jose','Jose')">Jose</button>
+    <button class="worker-btn" onclick="selectWorker('pruebas','Pruebas')">Pruebas</button>
   </div>
   <div id="pinBox" class="hide">
     <p style="text-align:center;color:#aaa;margin-bottom:4px;font-size:14px" id="pinLabel">PIN</p>
@@ -110,6 +111,29 @@ label{display:block;margin-top:14px;font-size:14px;color:#aaa}
   <div id="cambioObra" class="hide" style="margin-bottom:16px">
     <select id="selObra" onchange="cambiarObra()">
       <option value="">— Selecciona obra —</option>
+      <option>ARROYO MURO VECINO</option>
+      <option>ARROYO</option>
+      <option>SANTA LUCIA</option>
+      <option>MARQUES DE SANTILLANA</option>
+      <option>BURGOS</option>
+      <option>TRILLA</option>
+      <option>CISTERNIGA</option>
+      <option>TERESA GIL</option>
+      <option>PEÑA</option>
+      <option>LG10 ZONAS COMUNES</option>
+      <option>BAJO IZQ LG10</option>
+      <option>BAJO DER LG10</option>
+      <option>ENTREPLANTA IZQ LG10</option>
+      <option>ENTREPLANTA DER LG10</option>
+      <option>1 IZQ LG10</option>
+      <option>1 DER LG10</option>
+      <option>2 IZQ LG10</option>
+      <option>2 DER LG10</option>
+      <option>3 IZQ LG10</option>
+      <option>3 DER LG10</option>
+      <option>4 IZQ LG10</option>
+      <option>4 DER LG10</option>
+      <option>OTROS (ESPECIFICAR)</option>
     </select>
   </div>
 
@@ -159,13 +183,33 @@ label{display:block;margin-top:14px;font-size:14px;color:#aaa}
 </div>
 
 <script>
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWA9z_tMO1yxtojoPdAD8OIb20ME2Cde5KpltuGCquLkkDP0sCzGc7W_AdrFuQ5fXv/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwXE6um7Rb9c_N-bO-TR2JEAsWpdX8zHBVjqERi3Ub20W8cE1c7vIhswucv2PlepH4JWQ/exec';
 var usuario = null;
 var obraActual = '';
 var horaEntradaStr = '';
 var contadorInterval = null;
-var obrasData = []; // [{nombre, lat, lon}]
 var selectedWorkerId = '';
+
+// Coordenadas de obras hardcodeadas
+var obrasCoords = {
+  'ARROYO MURO VECINO': {lat:41.61792565736123, lon:-4.781063003028537},
+  'ARROYO': {lat:41.61792565736123, lon:-4.781063003028537},
+  'SANTA LUCIA': {lat:41.650344915455484, lon:-4.716467463124058},
+  'MARQUES DE SANTILLANA': {lat:41.66201433037437, lon:-4.720410060697662},
+  'LG10 ZONAS COMUNES': {lat:41.650027923878525, lon:-4.723832203027283},
+  'BAJO IZQ LG10': {lat:41.650027923878525, lon:-4.723832203027283},
+  'BAJO DER LG10': {lat:41.650027923878525, lon:-4.723832203027283},
+  'ENTREPLANTA IZQ LG10': {lat:41.650027923878525, lon:-4.723832203027283},
+  'ENTREPLANTA DER LG10': {lat:41.650027923878525, lon:-4.723832203027283},
+  '1 IZQ LG10': {lat:41.650027923878525, lon:-4.723832203027283},
+  '1 DER LG10': {lat:41.650027923878525, lon:-4.723832203027283},
+  '2 IZQ LG10': {lat:41.650027923878525, lon:-4.723832203027283},
+  '2 DER LG10': {lat:41.650027923878525, lon:-4.723832203027283},
+  '3 IZQ LG10': {lat:41.650027923878525, lon:-4.723832203027283},
+  '3 DER LG10': {lat:41.650027923878525, lon:-4.723832203027283},
+  '4 IZQ LG10': {lat:41.650027923878525, lon:-4.723832203027283},
+  '4 DER LG10': {lat:41.650027923878525, lon:-4.723832203027283}
+};
 
 // ── API ──
 function api(data) {
@@ -175,14 +219,12 @@ function api(data) {
   }).then(function(r){return r.json();});
 }
 
-// ── LOGIN CON BOTONES ──
+// ── LOGIN ──
 function selectWorker(id, nombre) {
   selectedWorkerId = id;
-  // Highlight
   var btns = document.querySelectorAll('.worker-btn');
-  for (var i=0;i<btns.length;i++) btns[i].classList.remove('selected');
+  for(var i=0;i<btns.length;i++) btns[i].classList.remove('selected');
   event.target.classList.add('selected');
-  // Show PIN
   document.getElementById('pinBox').classList.remove('hide');
   document.getElementById('pinLabel').textContent = 'PIN para ' + nombre;
   document.getElementById('inputPin').value = '';
@@ -191,45 +233,34 @@ function selectWorker(id, nombre) {
 
 function doLogin() {
   var pin = document.getElementById('inputPin').value;
-  if (!selectedWorkerId || !pin) return showMsg('loginMsg','Selecciona trabajador e introduce PIN',true);
+  if(!selectedWorkerId||!pin) return showMsg('loginMsg','Selecciona trabajador e introduce PIN',true);
   showMsg('loginMsg','Entrando...',false);
   api({action:'login',id:selectedWorkerId,pin:pin}).then(function(r){
-    if (!r.ok) return showMsg('loginMsg',r.error,true);
-    usuario = {id:r.id, nombre:r.nombre};
+    if(!r.ok) return showMsg('loginMsg',r.error,true);
+    usuario={id:r.id,nombre:r.nombre};
     document.getElementById('loginScreen').classList.add('hide');
     document.getElementById('appScreen').classList.remove('hide');
-    document.getElementById('userName').textContent = r.nombre;
-    cargarObras();
+    document.getElementById('userName').textContent=r.nombre;
     cargarEstado();
   }).catch(function(){showMsg('loginMsg','Error de conexión',true);});
 }
 
 function doLogout() {
-  usuario=null; horaEntradaStr=''; selectedWorkerId='';
+  usuario=null;horaEntradaStr='';selectedWorkerId='';obraActual='';
   if(contadorInterval)clearInterval(contadorInterval);
   document.getElementById('appScreen').classList.add('hide');
   document.getElementById('loginScreen').classList.remove('hide');
   document.getElementById('inputPin').value='';
   document.getElementById('pinBox').classList.add('hide');
   document.getElementById('loginMsg').classList.add('hide');
+  document.getElementById('obraActual').textContent='— Selecciona obra —';
+  document.getElementById('horaEntrada').textContent='—';
+  document.getElementById('horaSalida').textContent='—';
+  document.getElementById('contador').textContent='00:00:00';
+  document.getElementById('ubicacionEntrada').innerHTML='';
+  document.getElementById('ubicacionSalida').innerHTML='';
   var btns=document.querySelectorAll('.worker-btn');
   for(var i=0;i<btns.length;i++)btns[i].classList.remove('selected');
-}
-
-// ── CARGAR OBRAS (con coordenadas) ──
-function cargarObras() {
-  api({action:'getObras'}).then(function(r){
-    if(!r.ok) return;
-    obrasData = r.obras;
-    var sel = document.getElementById('selObra');
-    sel.innerHTML = '<option value="">— Selecciona obra —</option>';
-    for(var i=0;i<r.obras.length;i++){
-      var o = document.createElement('option');
-      o.value = r.obras[i].nombre;
-      o.textContent = r.obras[i].nombre;
-      sel.appendChild(o);
-    }
-  });
 }
 
 // ── ESTADO ──
@@ -258,51 +289,36 @@ function cambiarObra(){
 }
 
 // ── DISTANCIA GPS ──
-function distanciaMetros(lat1,lon1,lat2,lon2) {
-  var R=6371000;
-  var dLat=(lat2-lat1)*Math.PI/180;
-  var dLon=(lon2-lon1)*Math.PI/180;
+function distanciaMetros(lat1,lon1,lat2,lon2){
+  var R=6371000,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;
   var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
-function validarUbicacion(lat,lon) {
-  if(!obraActual) return {ok:false, msg:'Selecciona una obra primero'};
-  // Buscar obra en obrasData
-  var obra = null;
-  for(var i=0;i<obrasData.length;i++){
-    if(obrasData[i].nombre===obraActual){obra=obrasData[i];break;}
-  }
-  if(!obra || !obra.lat || !obra.lon) return {ok:true}; // Sin coordenadas = no validar
+function validarUbicacion(lat,lon){
+  if(!obraActual) return {ok:false,msg:'Selecciona una obra primero'};
+  var coords=obrasCoords[obraActual];
+  if(!coords) return {ok:true}; // Sin coordenadas = no validar
   if(!lat||!lon) return {ok:true}; // Sin GPS = dejar pasar
-  var dist = distanciaMetros(lat,lon,obra.lat,obra.lon);
-  if(dist>200){
-    return {ok:false, msg:'⚠ Ubicación no coincide con '+obraActual+' ('+Math.round(dist)+'m). Selecciona la obra correcta o acércate a la ubicación.'};
-  }
+  var dist=distanciaMetros(lat,lon,coords.lat,coords.lon);
+  if(dist>200) return {ok:false,msg:'⚠ Ubicación no coincide con '+obraActual+' ('+Math.round(dist)+'m). Selecciona la obra correcta o acércate a la ubicación.'};
   return {ok:true};
 }
 
 // ── FICHAR ──
-function fichar(tipo) {
-  if(!obraActual && tipo==='entrada') return alert('Selecciona una obra primero');
-  var btn = tipo==='entrada' ? document.getElementById('btnEntrada') : document.getElementById('btnSalida');
-  btn.disabled=true; btn.textContent='Enviando...';
+function fichar(tipo){
+  if(!obraActual&&tipo==='entrada') return alert('Selecciona una obra primero');
+  var btn=tipo==='entrada'?document.getElementById('btnEntrada'):document.getElementById('btnSalida');
+  btn.disabled=true;btn.textContent='Enviando...';
 
   getUbicacion(function(lat,lon){
-    // Validar distancia solo si hay coordenadas
-    var check = validarUbicacion(lat,lon);
+    var check=validarUbicacion(lat,lon);
     if(!check.ok){
-      alert(check.msg);
-      btn.disabled=false;
-      btn.textContent = tipo==='entrada'?'▶ Entrada':'■ Salida';
-      return;
+      alert(check.msg);btn.disabled=false;
+      btn.textContent=tipo==='entrada'?'▶ Entrada':'■ Salida';return;
     }
-
     api({action:'fichar',id:usuario.id,tipo:tipo,obra:obraActual,lat:lat,lon:lon}).then(function(r){
-      if(!r.ok){
-        alert(r.error); btn.disabled=false;
-        btn.textContent=tipo==='entrada'?'▶ Entrada':'■ Salida'; return;
-      }
+      if(!r.ok){alert(r.error);btn.disabled=false;btn.textContent=tipo==='entrada'?'▶ Entrada':'■ Salida';return;}
       if(tipo==='entrada'){
         horaEntradaStr=r.horaEntrada;
         document.getElementById('horaEntrada').textContent=horaEntradaStr;
@@ -321,44 +337,38 @@ function fichar(tipo) {
         if(contadorInterval)clearInterval(contadorInterval);
         mostrarUbicacion('ubicacionSalida',r.latSalida,r.lonSalida,'Salida');
       }
-    }).catch(function(){
-      alert('Error de conexión'); btn.disabled=false;
-      btn.textContent=tipo==='entrada'?'▶ Entrada':'■ Salida';
-    });
+    }).catch(function(){alert('Error de conexión');btn.disabled=false;btn.textContent=tipo==='entrada'?'▶ Entrada':'■ Salida';});
   });
 }
 
 // ── CONTADOR ──
 function iniciarContador(){
   if(contadorInterval)clearInterval(contadorInterval);
-  if(!horaEntradaStr) return;
-  var p=horaEntradaStr.split(':');
-  var hE=parseInt(p[0]),mE=parseInt(p[1]);
+  if(!horaEntradaStr)return;
+  var p=horaEntradaStr.split(':'),hE=parseInt(p[0]),mE=parseInt(p[1]);
   function act(){
-    var a=new Date(); var sT=(a.getHours()*3600+a.getMinutes()*60+a.getSeconds())-(hE*3600+mE*60);
+    var a=new Date(),sT=(a.getHours()*3600+a.getMinutes()*60+a.getSeconds())-(hE*3600+mE*60);
     if(sT<0)sT=0;
     document.getElementById('contador').textContent=pad(Math.floor(sT/3600))+':'+pad(Math.floor((sT%3600)/60))+':'+pad(sT%60);
   }
-  act(); contadorInterval=setInterval(act,1000);
+  act();contadorInterval=setInterval(act,1000);
 }
 function pad(n){return n<10?'0'+n:''+n;}
 
 // ── UBICACIÓN ──
 function getUbicacion(cb){
-  if(!navigator.geolocation) return cb('','');
+  if(!navigator.geolocation)return cb('','');
   navigator.geolocation.getCurrentPosition(
     function(pos){cb(pos.coords.latitude,pos.coords.longitude);},
     function(){cb('','');},
     {enableHighAccuracy:true,timeout:10000}
   );
 }
-
 function mostrarUbicacion(elId,lat,lon,label){
-  if(!lat||!lon) return;
+  if(!lat||!lon)return;
   var latN=parseFloat(lat),lonN=parseFloat(lon);
-  if(Math.abs(latN)>1000){latN=latN/1000000;lonN=lonN/1000000;}
-  var link='https://www.google.com/maps?q='+latN+','+lonN;
-  document.getElementById(elId).innerHTML='📍 '+label+': <a href="'+link+'" target="_blank">Ver en mapa</a>';
+  if(Math.abs(latN)>1000){latN/=1000000;lonN/=1000000;}
+  document.getElementById(elId).innerHTML='📍 '+label+': <a href="https://www.google.com/maps?q='+latN+','+lonN+'" target="_blank">Ver en mapa</a>';
 }
 
 // ── GUARDAR TAREA ──
@@ -367,8 +377,8 @@ function guardarTarea(){
   var horas=document.getElementById('inputHoras').value;
   var desc=document.getElementById('inputDesc').value;
   var retrabajo=document.getElementById('chkRetrabajo').checked;
-  if(!oficio) return showMsg('tareaMsg','Selecciona un oficio',true);
-  if(!desc.trim()) return showMsg('tareaMsg','Escribe una descripción',true);
+  if(!oficio)return showMsg('tareaMsg','Selecciona un oficio',true);
+  if(!desc.trim())return showMsg('tareaMsg','Escribe una descripción',true);
   document.getElementById('btnGuardar').disabled=true;
   document.getElementById('btnGuardar').textContent='Guardando...';
   api({action:'guardarTarea',id:usuario.id,obra:obraActual,oficio:oficio,horas:horas,descripcion:desc,retrabajo:retrabajo}).then(function(r){
@@ -386,7 +396,7 @@ function guardarTarea(){
 // ── CARGAR TAREAS HOY ──
 function cargarTareas(){
   api({action:'getTareasHoy',id:usuario.id}).then(function(r){
-    if(!r.ok) return;
+    if(!r.ok)return;
     document.getElementById('totalHoras').textContent=r.totalHoras+'h';
     var html='';
     for(var i=0;i<r.tareas.length;i++){
@@ -399,7 +409,7 @@ function cargarTareas(){
         +(t.retrabajo?'<span style="color:#ef5350;font-size:11px">⚠ Retrabajo</span>':'')
         +'</div>';
     }
-    if(!r.tareas.length) html='<div style="color:#666;font-size:13px;text-align:center;padding:10px">Sin tareas registradas hoy</div>';
+    if(!r.tareas.length)html='<div style="color:#666;font-size:13px;text-align:center;padding:10px">Sin tareas registradas hoy</div>';
     document.getElementById('tareasList').innerHTML=html;
   });
 }
@@ -407,7 +417,7 @@ function cargarTareas(){
 // ── UTILS ──
 function showMsg(elId,text,isErr){
   var el=document.getElementById(elId);
-  el.textContent=text; el.className='msg '+(isErr?'msg-err':'msg-ok'); el.classList.remove('hide');
+  el.textContent=text;el.className='msg '+(isErr?'msg-err':'msg-ok');el.classList.remove('hide');
   setTimeout(function(){el.classList.add('hide');},4000);
 }
 </script>
