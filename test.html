@@ -160,6 +160,13 @@ label{display:block;margin-top:14px;font-size:14px;color:#aaa}
     </div>
     <button class="btn-guardar" id="btnGuardar" onclick="guardarTarea()">Guardar tarea</button>
     <div id="tareaMsg" class="msg hide"></div>
+    <div id="tareasListBox" style="margin-top:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:13px;color:#aaa">Tareas guardadas hoy</span>
+        <span style="font-size:18px;font-weight:700;color:#f90" id="totalHoras">0h</span>
+      </div>
+      <div id="tareasList" style="margin-top:8px"></div>
+    </div>
   </div>
 
   <p class="legal">📋 Registro conforme al RD-ley 8/2019 · Datos tratados según política LOPD</p>
@@ -167,7 +174,7 @@ label{display:block;margin-top:14px;font-size:14px;color:#aaa}
 
 <script>
 // ── CONFIG ──
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwXE6um7Rb9c_N-bO-TR2JEAsWpdX8zHBVjqERi3Ub20W8cE1c7vIhswucv2PlepH4JWQ/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWA9z_tMO1yxtojoPdAD8OIb20ME2Cde5KpltuGCquLkkDP0sCzGc7W_AdrFuQ5fXv/exec';
 var usuario = null; // {id, nombre}
 var obraActual = '';
 var horaEntradaStr = ''; // "HH:mm"
@@ -223,6 +230,7 @@ function cargarEstado() {
       iniciarContador();
       if (r.lat && r.lon) mostrarUbicacion(r.lat, r.lon);
     }
+    cargarTareas();
   });
 }
 
@@ -371,6 +379,7 @@ function guardarTarea() {
       showMsg('tareaMsg', '✅ Tarea guardada', false);
       document.getElementById('inputDesc').value = '';
       document.getElementById('chkRetrabajo').checked = false;
+      cargarTareas();
     } else {
       showMsg('tareaMsg', r.error, true);
     }
@@ -378,6 +387,30 @@ function guardarTarea() {
     document.getElementById('btnGuardar').disabled = false;
     document.getElementById('btnGuardar').textContent = 'Guardar tarea';
     showMsg('tareaMsg', 'Error de conexión', true);
+  });
+}
+
+// ── CARGAR TAREAS HOY ──
+function cargarTareas() {
+  api({action: 'getTareasHoy', id: usuario.id}).then(function(r) {
+    if (!r.ok) return;
+    document.getElementById('totalHoras').textContent = r.totalHoras + 'h';
+    var html = '';
+    for (var i = 0; i < r.tareas.length; i++) {
+      var t = r.tareas[i];
+      html += '<div style="background:#2a2a2a;border-radius:6px;padding:10px;margin-bottom:6px;font-size:13px">'
+        + '<div style="display:flex;justify-content:space-between">'
+        + '<span style="color:#f90;font-weight:600">' + t.oficio + '</span>'
+        + '<span style="color:#fff;font-weight:700">' + t.horas + 'h</span>'
+        + '</div>'
+        + '<div style="color:#aaa;margin-top:4px">' + t.descripcion + '</div>'
+        + (t.retrabajo ? '<span style="color:#ef5350;font-size:11px">⚠ Retrabajo</span>' : '')
+        + '</div>';
+    }
+    if (r.tareas.length === 0) {
+      html = '<div style="color:#666;font-size:13px;text-align:center;padding:10px">Sin tareas registradas hoy</div>';
+    }
+    document.getElementById('tareasList').innerHTML = html;
   });
 }
 
