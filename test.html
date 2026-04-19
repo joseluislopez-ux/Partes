@@ -7,20 +7,20 @@
 <style>
 /* ========= RESET / GLOBAL ========= */
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#1a1a1a;color:#fff;min-height:100vh;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#1a1a1a;color:#fff;min-height:100vh;-webkit-tap-highlight-color:transparent;font-size:14px}
 .hide{display:none!important}
-button{cursor:pointer;border:none;border-radius:8px;font-size:16px;padding:12px 20px;font-weight:600;font-family:inherit}
-select,input,textarea{width:100%;padding:12px;border-radius:8px;border:1px solid #444;background:#2a2a2a;color:#fff;font-size:16px;margin-top:4px;font-family:inherit}
-textarea{resize:vertical;min-height:70px}
-label{display:block;margin-top:12px;font-size:13px;color:#aaa}
+button{cursor:pointer;border:none;border-radius:8px;font-size:15px;padding:11px 18px;font-weight:600;font-family:inherit}
+select,input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #444;background:#2a2a2a;color:#fff;font-size:14px;margin-top:4px;font-family:inherit}
+textarea{resize:vertical;min-height:60px}
+label{display:block;margin-top:10px;font-size:12px;color:#aaa}
 
 /* ========= LOGIN ========= */
-#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:28px 20px 20px}
-#loginScreen h1{font-size:22px;margin-bottom:20px;color:#f90}
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:26px 20px 20px}
+#loginScreen h1{font-size:20px;margin-bottom:18px;color:#f90}
 #workersGrid{display:flex;flex-direction:column;gap:8px;width:100%;max-width:300px;min-height:50px}
-.worker-btn{background:#2a2a2a;color:#fff;border:2px solid #444;border-radius:12px;padding:14px;font-size:17px;font-weight:700;text-transform:uppercase;letter-spacing:1px;transition:all .15s}
+.worker-btn{background:#2a2a2a;color:#fff;border:2px solid #444;border-radius:12px;padding:13px;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:1px;transition:all .15s}
 .worker-btn:active,.worker-btn.selected{border-color:#f90;color:#f90;background:#2a2a1a}
-.gps-legal-login{font-size:11px;color:#888;text-align:center;max-width:300px;margin-top:20px;line-height:1.5;padding:0 4px}
+.gps-legal-login{font-size:11px;color:#888;text-align:center;max-width:300px;margin-top:18px;line-height:1.5;padding:0 4px}
 
 /* ========= PIN PANEL (keypad numérico integrado) ========= */
 #pinPanel{width:100%;max-width:300px;margin-top:18px}
@@ -33,89 +33,99 @@ label{display:block;margin-top:12px;font-size:13px;color:#aaa}
 .key-btn:active{background:#3a3a3a}
 .key-btn.key-action{background:#222;color:#f90;font-size:13px;font-weight:600}
 .key-btn.key-action:active{background:#333}
+#numericKeypad.keypad-disabled{pointer-events:none}
+#numericKeypad.keypad-disabled .key-btn{background:#1a1a1a;color:#444;border-color:#252525}
+#enteringMsg{display:flex;justify-content:center;align-items:center;gap:10px;margin:0 0 14px;font-size:13px;color:#f90;animation:pulse 1.2s ease-in-out infinite}
+.spinner{width:14px;height:14px;border:2px solid #3a2d00;border-top-color:#f90;border-radius:50%;animation:spin .8s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
 
 /* ========= APP SHELL ========= */
-#appScreen{padding:14px;max-width:500px;margin:0 auto}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.header h2{font-size:20px}
-.header button{background:transparent;color:#f90;font-size:14px;padding:6px 12px;border:1px solid #f90}
+#appScreen{padding:12px;max-width:500px;margin:0 auto}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.header h2{font-size:18px}
+.header button{background:transparent;color:#f90;font-size:13px;padding:6px 12px;border:1px solid #f90}
 
 /* ========= FICHAJE ========= */
-.fichaje-box{background:#222;border-radius:12px;padding:16px;margin-bottom:14px}
-.fichaje-box h3{color:#f90;margin-bottom:12px;font-size:13px;letter-spacing:1px}
-.fichaje-btns{display:flex;gap:10px;margin-bottom:12px}
+.fichaje-box{background:#222;border-radius:12px;padding:14px;margin-bottom:12px}
+.fichaje-box h3{color:#f90;margin-bottom:10px;font-size:13px;letter-spacing:1px}
+.fichaje-btns{display:flex;gap:10px;margin-bottom:10px}
 .btn-entrada{background:#2e7d32;color:#fff;flex:1}
 .btn-salida{background:#c62828;color:#fff;flex:1}
+.btn-entrada,.btn-salida{font-size:16px;padding:12px 0}
 .btn-entrada:disabled,.btn-salida:disabled{opacity:.4}
-.fichaje-info{display:flex;justify-content:space-between;font-size:14px;color:#aaa}
-.fichaje-info .hora{color:#fff;font-size:18px;font-weight:700}
-.contador{text-align:center;font-size:36px;font-weight:700;color:#f90;margin:8px 0}
-.ubicacion{font-size:12px;color:#888;margin-top:6px}
+.fichaje-info{display:flex;justify-content:space-between;font-size:13px;color:#aaa}
+.fichaje-info .hora{color:#fff;font-size:16px;font-weight:700}
+.contador{text-align:center;font-size:30px;font-weight:700;color:#f90;margin:6px 0}
+.ubicacion{font-size:11px;color:#888;margin-top:5px}
 .ubicacion a{color:#4fc3f7}
 
 /* ========= OBRA BAR (1 toque) ========= */
-.obra-bar{background:#2a2a2a;padding:14px;border-radius:10px;margin-bottom:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .1s}
+.obra-bar{background:#2a2a2a;padding:12px;border-radius:10px;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .1s}
 .obra-bar:active{background:#333}
-.obra-bar .obra-label{font-size:11px;color:#888;letter-spacing:1px;margin-bottom:2px}
-.obra-bar .obra-val{font-size:16px;font-weight:700}
-.obra-bar .obra-arrow{color:#f90;font-size:18px}
+.obra-bar .obra-label{font-size:10px;color:#888;letter-spacing:1px;margin-bottom:2px}
+.obra-bar .obra-val{font-size:15px;font-weight:700}
+.obra-bar .obra-arrow{color:#f90;font-size:16px}
 
 /* ========= MODALES (bottom sheet) ========= */
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100;display:flex;align-items:flex-end;justify-content:center}
 .modal-sheet{background:#222;width:100%;max-width:500px;max-height:85vh;border-radius:14px 14px 0 0;padding:16px;display:flex;flex-direction:column}
-.modal-sheet h3{color:#f90;margin-bottom:6px;font-size:15px;display:flex;justify-content:space-between;align-items:center}
-.modal-sheet h3 .close-x{background:none;color:#aaa;padding:4px 8px;font-size:22px;border:none;line-height:1}
+.modal-sheet h3{color:#f90;margin-bottom:6px;font-size:14px;display:flex;justify-content:space-between;align-items:center}
+.modal-sheet h3 .close-x{background:none;color:#aaa;padding:4px 8px;font-size:20px;border:none;line-height:1}
 .modal-list{overflow-y:auto;flex:1;margin-top:10px}
-.modal-item{padding:14px;border-bottom:1px solid #333;font-size:15px;cursor:pointer}
+.modal-item{padding:12px;border-bottom:1px solid #333;font-size:14px;cursor:pointer}
 .modal-item:active{background:#333}
-.modal-body{overflow-y:auto;flex:1;font-size:14px;color:#ccc;line-height:1.5;margin-top:10px}
-.modal-body h4{color:#f90;margin-top:12px;margin-bottom:6px;font-size:14px}
+.modal-body{overflow-y:auto;flex:1;font-size:13px;color:#ccc;line-height:1.5;margin-top:10px}
+.modal-body h4{color:#f90;margin-top:12px;margin-bottom:6px;font-size:13px}
 .modal-body ol{margin-left:20px;margin-top:4px}
 .modal-body ol li{margin-bottom:4px}
 .modal-actions{margin-top:14px;display:flex;gap:8px;flex-direction:column}
 .modal-actions button{background:#f90;color:#000;width:100%}
 .modal-actions .btn-secondary{background:#444;color:#fff}
 
-/* ========= TAREAS (5 filas) ========= */
-.tareas-box{background:#222;border-radius:12px;padding:14px}
-.tareas-box h3{color:#f90;margin-bottom:4px;font-size:13px;letter-spacing:1px}
-.fila-tarea{background:#2a2a2a;border-radius:10px;padding:12px;margin-top:8px;border:1px solid #333}
-.fila-tarea.collapsed{cursor:pointer}
-.fila-tarea.collapsed:active{background:#333}
-.fila-tarea.expanded{border-color:#555}
-.fila-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.fila-summary{font-size:14px;color:#ccc;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fila-summary.empty{color:#666;font-style:italic}
-.fila-collapse-btn{background:none;color:#888;padding:2px 10px;font-size:16px;border:none}
-.fila-body{margin-top:6px}
-.btn-guardar{background:#f90;color:#000;width:100%;margin-top:16px}
+/* ========= TAREAS (tabla compacta 5 filas) ========= */
+.tareas-box{background:#222;border-radius:12px;padding:12px}
+.tareas-box h3{color:#f90;margin-bottom:8px;font-size:13px;letter-spacing:1px}
+.tabla-filas{background:#222;border-radius:8px;overflow:hidden;padding-bottom:4px}
+.col-head{display:grid;grid-template-columns:1.6fr 1fr .7fr 1.7fr .4fr;gap:4px;padding:8px 6px 6px 6px;font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #333;font-weight:600}
+.col-head span:nth-child(3),.col-head span:nth-child(5){text-align:center}
+.fila-row{display:grid;grid-template-columns:1.6fr 1fr .7fr 1.7fr .4fr;gap:4px;padding:5px 6px;align-items:center;border-bottom:1px solid #2a2a2a}
+.fila-row:last-child{border-bottom:0}
+.fila-row .cell{background:#1a1a1a;border:1px solid #2e2e2e;border-radius:4px;padding:6px 8px;font-size:11px;height:30px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#e0e0e0;display:flex;align-items:center;margin:0}
+.fila-row .cell-obra{font-size:10px;cursor:pointer}
+.fila-row .cell-obra.empty{color:#555;font-style:italic}
+.fila-row .cell-horas{justify-content:center}
+.fila-row .cell-retrabajo{background:transparent;border:0;display:flex;align-items:center;justify-content:center;padding:0}
+.fila-row .cell-retrabajo input{width:14px;height:14px;margin:0}
+.fila-row.active-row{background:#262626}
+.fila-row select.cell{-webkit-appearance:none;appearance:none;background-image:none;padding-right:8px}
+.fila-row input[type=text].cell{width:100%;border:1px solid #2e2e2e;background:#1a1a1a}
+.btn-guardar{background:#f90;color:#000;width:100%;margin-top:12px}
 .btn-guardar:disabled{opacity:.4}
-.retrabajo-row{display:flex;align-items:center;gap:8px;margin-top:12px}
-.retrabajo-row input{width:auto;margin-top:0}
 
 /* ========= TAREAS GUARDADAS ========= */
-.guardadas-box{margin-top:18px}
+.guardadas-box{margin-top:16px}
 .guardadas-head{display:flex;justify-content:space-between;align-items:center}
-.guardadas-head .label{font-size:13px;color:#aaa}
-.guardadas-head .total{font-size:18px;font-weight:700;color:#f90}
-.tarea-card{background:#2a2a2a;border-radius:6px;padding:10px;margin-top:6px;font-size:13px}
+.guardadas-head .label{font-size:12px;color:#aaa}
+.guardadas-head .total{font-size:16px;font-weight:700;color:#f90}
+.tarea-card{background:#2a2a2a;border-radius:6px;padding:9px;margin-top:6px;font-size:12px}
 .tarea-card .tc-head{display:flex;justify-content:space-between;align-items:center}
 .tarea-card .tc-oficio{color:#f90;font-weight:600}
 .tarea-card .tc-horas{color:#fff;font-weight:700}
-.tarea-card .tc-obra{color:#888;font-size:11px;margin-top:2px}
+.tarea-card .tc-obra{color:#888;font-size:10px;margin-top:2px}
 .tarea-card .tc-desc{color:#aaa;margin-top:4px;white-space:pre-wrap}
-.tarea-card .tc-retrab{color:#ef5350;font-size:11px;display:inline-block;margin-top:4px}
-.sin-tareas{color:#666;font-size:13px;text-align:center;padding:12px}
+.tarea-card .tc-retrab{color:#ef5350;font-size:10px;display:inline-block;margin-top:4px}
+.sin-tareas{color:#666;font-size:12px;text-align:center;padding:10px}
 
 /* ========= MSG BANNERS ========= */
-.msg{padding:10px;border-radius:8px;margin-top:10px;font-size:14px;text-align:center}
+.msg{padding:9px;border-radius:8px;margin-top:9px;font-size:13px;text-align:center}
 .msg-ok{background:#1b5e20;color:#a5d6a7}
 .msg-err{background:#b71c1c;color:#ef9a9a}
 .msg-warn{background:#6d4c00;color:#ffd280}
-.legal{font-size:11px;color:#666;text-align:center;margin-top:14px;padding-bottom:10px}
+.legal{font-size:11px;color:#666;text-align:center;margin-top:12px;padding-bottom:10px}
 
 /* ========= TOAST (top floating) ========= */
-.toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#6d4c00;color:#ffd280;padding:12px 18px;border-radius:8px;font-size:14px;z-index:200;max-width:92%;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.5);line-height:1.4}
+.toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#6d4c00;color:#ffd280;padding:11px 16px;border-radius:8px;font-size:13px;z-index:200;max-width:92%;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.5);line-height:1.4}
 .toast-error{background:#8b1a1a;color:#ffb0b0}
 </style>
 </head>
@@ -138,6 +148,7 @@ label{display:block;margin-top:12px;font-size:13px;color:#aaa}
       <div class="pin-dot"></div>
       <div class="pin-dot"></div>
     </div>
+    <div id="enteringMsg" class="hide"><span class="spinner"></span> Entrando...</div>
     <div id="numericKeypad">
       <button class="key-btn" data-k="1">1</button>
       <button class="key-btn" data-k="2">2</button>
@@ -191,10 +202,19 @@ label{display:block;margin-top:12px;font-size:13px;color:#aaa}
     <div class="obra-arrow">▼</div>
   </div>
 
-  <!-- REPORTE DE TAREAS (5 filas) -->
+  <!-- REPORTE DE TAREAS (5 filas, tabla compacta) -->
   <div class="tareas-box">
     <h3>REPORTE DEL DÍA</h3>
-    <div id="filasContainer"></div>
+    <div class="tabla-filas">
+      <div class="col-head">
+        <span>Obra</span>
+        <span>Oficio</span>
+        <span>Horas</span>
+        <span>Descripción</span>
+        <span>Rtrb</span>
+      </div>
+      <div id="filasContainer"></div>
+    </div>
     <button class="btn-guardar" id="btnGuardarBatch">Guardar tareas</button>
     <div id="tareaMsg" class="msg hide"></div>
     <div id="tareaMsgMotivos" class="msg hide"></div>
@@ -298,7 +318,8 @@ var state = {
   selectedWorkerNombre: '',
   tareasGuardadas: [],
   totalHoras: 0,
-  filasTareas: null
+  filasTareas: null,
+  _obraPickTarget: null
 };
 
 // ============================================================
@@ -365,7 +386,6 @@ function renderWorkerButtons() {
   var trabajadores = (state.maestros && state.maestros.trabajadores) || [];
   for (var i = 0; i < trabajadores.length; i++) {
     var t = trabajadores[i];
-    if (t.admin) continue;
     var btn = document.createElement('button');
     btn.className = 'worker-btn';
     btn.textContent = t.nombre;
@@ -414,6 +434,7 @@ function onKeypadClick(e) {
     state.selectedWorkerNombre = '';
     document.getElementById('pinPanel').classList.add('hide');
     document.getElementById('loginMsg').classList.add('hide');
+    _clearLoginFeedback();
     var all = document.querySelectorAll('.worker-btn');
     for (var i = 0; i < all.length; i++) all[i].classList.remove('selected');
     updatePinDots();
@@ -422,16 +443,26 @@ function onKeypadClick(e) {
   if (state.pinBuffer.length >= 4) return;
   state.pinBuffer += k;
   updatePinDots();
-  if (state.pinBuffer.length === 4) doLogin();
+  if (state.pinBuffer.length === 4) {
+    document.getElementById('numericKeypad').classList.add('keypad-disabled');
+    document.getElementById('enteringMsg').classList.remove('hide');
+    doLogin();
+  }
+}
+
+function _clearLoginFeedback() {
+  document.getElementById('numericKeypad').classList.remove('keypad-disabled');
+  document.getElementById('enteringMsg').classList.add('hide');
 }
 
 function doLogin() {
   if (state.loginEnCurso) return;
   if (!state.selectedWorkerId || state.pinBuffer.length < 4) return;
   state.loginEnCurso = true;
-  showMsg('loginMsg', 'Entrando...', false);
+  document.getElementById('loginMsg').classList.add('hide');
   api({action: 'loginCompleto', id: state.selectedWorkerId, pin: state.pinBuffer}).then(function(r){
     state.loginEnCurso = false;
+    _clearLoginFeedback();
     if (!r.ok) {
       state.pinBuffer = '';
       updatePinDots();
@@ -455,6 +486,7 @@ function doLogin() {
     showAppScreen();
   }).catch(function(){
     state.loginEnCurso = false;
+    _clearLoginFeedback();
     state.pinBuffer = '';
     updatePinDots();
     showMsg('loginMsg', 'Error de conexión', true);
@@ -477,6 +509,7 @@ function doLogout() {
   document.getElementById('loginScreen').classList.remove('hide');
   document.getElementById('pinPanel').classList.add('hide');
   document.getElementById('loginMsg').classList.add('hide');
+  _clearLoginFeedback();
   updatePinDots();
   var all = document.querySelectorAll('.worker-btn');
   for (var i = 0; i < all.length; i++) all[i].classList.remove('selected');
@@ -528,6 +561,14 @@ function renderObraActual() {
 }
 
 function openObraModal() {
+  state._obraPickTarget = null; // destino: obra global del fichaje
+  document.getElementById('obraSearch').value = '';
+  renderObraList('');
+  document.getElementById('obraModal').classList.remove('hide');
+}
+
+function openObraModalForFila(idx) {
+  state._obraPickTarget = {tipo: 'fila', idx: idx};
   document.getElementById('obraSearch').value = '';
   renderObraList('');
   document.getElementById('obraModal').classList.remove('hide');
@@ -562,13 +603,18 @@ function renderObraList(filter) {
 function onObraPick(e) {
   var obra = e.currentTarget.getAttribute('data-obra');
   if (!obra) return;
-  state.obraActual = obra;
-  renderObraActual();
-  // Solo actualiza obra de fila 0 si estaba vacía; respeta filas que el usuario haya editado.
-  if (state.filasTareas && !state.filasTareas[0].obra) {
-    state.filasTareas[0].obra = obra;
-    renderFilas();
+  // Dos destinos posibles: obra global del fichaje o una fila de tarea.
+  if (state._obraPickTarget && state._obraPickTarget.tipo === 'fila') {
+    var idx = state._obraPickTarget.idx;
+    if (state.filasTareas && state.filasTareas[idx]) {
+      state.filasTareas[idx].obra = obra;
+      renderFilas();
+    }
+  } else {
+    state.obraActual = obra;
+    renderObraActual();
   }
+  state._obraPickTarget = null;
   closeObraModal();
 }
 
@@ -579,9 +625,8 @@ function resetFilasTareas() {
   state.filasTareas = [];
   for (var i = 0; i < MAX_FILAS; i++) {
     state.filasTareas.push({
-      expanded: i === 0,
-      obra: i === 0 ? state.obraActual : '',
-      oficio: '',
+      obra: '',
+      oficio: i === 0 ? 'LIMPIEZA' : '',
       horas: '',
       desc: '',
       retrabajo: false
@@ -597,87 +642,28 @@ function renderFilas() {
   }
 }
 
+var HORAS_OPTS = ['0.25','0.5','0.75','1','1.25','1.5','1.75','2'];
+
 function renderFila(idx) {
   var f = state.filasTareas[idx];
-  var div = document.createElement('div');
-  div.className = 'fila-tarea ' + (f.expanded ? 'expanded' : 'collapsed');
-  if (f.expanded) {
-    div.appendChild(buildFilaExpanded(idx, f));
-  } else {
-    div.appendChild(buildFilaCollapsed(idx, f));
-    div.onclick = function(){ state.filasTareas[idx].expanded = true; renderFilas(); };
-  }
-  return div;
-}
+  var row = document.createElement('div');
+  row.className = 'fila-row' + (_filaTocada(f) ? ' active-row' : '');
+  row.setAttribute('data-idx', idx);
 
-function buildFilaCollapsed(idx, f) {
-  var head = document.createElement('div');
-  head.className = 'fila-head';
-  var summary = document.createElement('div');
-  var hasData = f.oficio || (f.desc && f.desc.trim()) || (f.horas && parseFloat(f.horas) > 0);
-  if (hasData) {
-    summary.className = 'fila-summary';
-    var parts = [];
-    if (f.oficio) parts.push(f.oficio);
-    if (f.horas && parseFloat(f.horas) > 0) parts.push(f.horas + 'h');
-    if (f.obra) parts.push(f.obra);
-    summary.textContent = parts.join(' · ');
-  } else {
-    summary.className = 'fila-summary empty';
-    summary.textContent = '+ Fila ' + (idx + 1) + ' — Añadir tarea';
-  }
-  head.appendChild(summary);
-  return head;
-}
+  // --- cell obra ---
+  var cellObra = document.createElement('div');
+  cellObra.className = 'cell cell-obra' + (f.obra ? '' : ' empty');
+  cellObra.setAttribute('data-campo', 'obra');
+  cellObra.textContent = f.obra || 'Obra';
+  cellObra.onclick = function(){ openObraModalForFila(idx); };
+  row.appendChild(cellObra);
 
-function buildFilaExpanded(idx, f) {
-  var wrap = document.createElement('div');
-
-  var head = document.createElement('div');
-  head.className = 'fila-head';
-  var title = document.createElement('div');
-  title.className = 'fila-summary';
-  title.textContent = 'Fila ' + (idx + 1);
-  head.appendChild(title);
-  var btnCollapse = document.createElement('button');
-  btnCollapse.className = 'fila-collapse-btn';
-  btnCollapse.textContent = '▲';
-  btnCollapse.onclick = function(e){
-    e.stopPropagation();
-    state.filasTareas[idx].expanded = false;
-    renderFilas();
-  };
-  head.appendChild(btnCollapse);
-  wrap.appendChild(head);
-
-  var body = document.createElement('div');
-  body.className = 'fila-body';
-
-  // Obra
-  var lObra = document.createElement('label');
-  lObra.textContent = 'Obra';
-  var selObra = document.createElement('select');
-  var opt0 = document.createElement('option');
-  opt0.value = ''; opt0.textContent = '— Selecciona obra —';
-  selObra.appendChild(opt0);
-  var obras = (state.maestros && state.maestros.obras) || [];
-  for (var i = 0; i < obras.length; i++) {
-    var o = document.createElement('option');
-    o.value = obras[i].nombre;
-    o.textContent = obras[i].nombre;
-    if (obras[i].nombre === f.obra) o.selected = true;
-    selObra.appendChild(o);
-  }
-  selObra.onchange = function(){ state.filasTareas[idx].obra = this.value; };
-  lObra.appendChild(selObra);
-  body.appendChild(lObra);
-
-  // Oficio
-  var lOf = document.createElement('label');
-  lOf.textContent = 'Oficio';
+  // --- cell oficio ---
   var selOf = document.createElement('select');
+  selOf.className = 'cell cell-oficio';
+  selOf.setAttribute('data-campo', 'oficio');
   var optOf0 = document.createElement('option');
-  optOf0.value = ''; optOf0.textContent = '— Selecciona oficio —';
+  optOf0.value = ''; optOf0.textContent = '— Oficio —';
   selOf.appendChild(optOf0);
   var oficios = (state.maestros && state.maestros.oficios) || [];
   for (var j = 0; j < oficios.length; j++) {
@@ -687,59 +673,83 @@ function buildFilaExpanded(idx, f) {
     if (oficios[j].nombre === f.oficio) oo.selected = true;
     selOf.appendChild(oo);
   }
-  selOf.onchange = function(){ state.filasTareas[idx].oficio = this.value; };
-  lOf.appendChild(selOf);
-  body.appendChild(lOf);
+  selOf.onchange = function(){
+    state.filasTareas[idx].oficio = this.value;
+    renderFilas();
+  };
+  row.appendChild(selOf);
 
-  // Horas
-  var lH = document.createElement('label');
-  lH.textContent = 'Horas';
-  var inpH = document.createElement('input');
-  inpH.type = 'number';
-  inpH.min = '0.5'; inpH.max = '12'; inpH.step = '0.5';
-  inpH.inputMode = 'decimal';
-  inpH.value = f.horas;
-  inpH.oninput = function(){ state.filasTareas[idx].horas = this.value; };
-  lH.appendChild(inpH);
-  body.appendChild(lH);
+  // --- cell horas (select restringido) ---
+  var selH = document.createElement('select');
+  selH.className = 'cell cell-horas';
+  selH.setAttribute('data-campo', 'horas');
+  var optH0 = document.createElement('option');
+  optH0.value = ''; optH0.textContent = '—';
+  selH.appendChild(optH0);
+  for (var k = 0; k < HORAS_OPTS.length; k++) {
+    var oh = document.createElement('option');
+    oh.value = HORAS_OPTS[k];
+    oh.textContent = HORAS_OPTS[k];
+    if (f.horas && String(f.horas) === HORAS_OPTS[k]) oh.selected = true;
+    selH.appendChild(oh);
+  }
+  selH.onchange = function(){
+    state.filasTareas[idx].horas = this.value;
+    renderFilas();
+  };
+  row.appendChild(selH);
 
-  // Descripción
-  var lD = document.createElement('label');
-  lD.textContent = 'Descripción';
-  var inpD = document.createElement('textarea');
-  inpD.placeholder = '¿Qué has hecho?';
-  inpD.value = f.desc;
-  inpD.oninput = function(){ state.filasTareas[idx].desc = this.value; };
-  lD.appendChild(inpD);
-  body.appendChild(lD);
+  // --- cell descripción ---
+  var inpD = document.createElement('input');
+  inpD.type = 'text';
+  inpD.className = 'cell cell-desc';
+  inpD.setAttribute('data-campo', 'desc');
+  inpD.placeholder = 'Descripción';
+  inpD.value = f.desc || '';
+  inpD.oninput = function(){
+    state.filasTareas[idx].desc = this.value;
+    if (this.value && this.parentElement) this.parentElement.classList.add('active-row');
+  };
+  row.appendChild(inpD);
 
-  // Retrabajo
-  var rr = document.createElement('div');
-  rr.className = 'retrabajo-row';
+  // --- cell retrabajo ---
+  var cellR = document.createElement('div');
+  cellR.className = 'cell cell-retrabajo';
   var cb = document.createElement('input');
   cb.type = 'checkbox';
-  cb.checked = f.retrabajo;
-  cb.onchange = function(){ state.filasTareas[idx].retrabajo = this.checked; };
-  var sp = document.createElement('span');
-  sp.textContent = 'Retrabajo';
-  rr.appendChild(cb); rr.appendChild(sp);
-  body.appendChild(rr);
+  cb.setAttribute('data-campo', 'retrabajo');
+  cb.checked = f.retrabajo === true;
+  cb.onchange = function(){
+    state.filasTareas[idx].retrabajo = this.checked;
+    renderFilas();
+  };
+  cellR.appendChild(cb);
+  row.appendChild(cellR);
 
-  wrap.appendChild(body);
-  return wrap;
+  return row;
 }
 
 // ============================================================
 // GUARDAR BATCH
 // ============================================================
+function _filaTocada(f) {
+  return !!(f && (
+    (f.oficio && f.oficio.toString().trim()) ||
+    (f.desc && f.desc.toString().trim()) ||
+    (f.horas && parseFloat(f.horas) > 0) ||
+    f.retrabajo === true
+  ));
+}
+
 function guardarBatch() {
   if (!state.usuario) return;
-  var btn = document.getElementById('btnGuardarBatch');
-  btn.disabled = true;
-  btn.textContent = 'Guardando...';
+
+  // Filtrar solo filas tocadas y construir mapa idxBackend → idxUI
   var tareas = [];
+  var mapaIndices = [];
   for (var i = 0; i < state.filasTareas.length; i++) {
     var f = state.filasTareas[i];
+    if (!_filaTocada(f)) continue;
     tareas.push({
       obra: f.obra,
       oficio: f.oficio,
@@ -747,7 +757,18 @@ function guardarBatch() {
       descripcion: f.desc,
       retrabajo: f.retrabajo === true
     });
+    mapaIndices.push(i);
   }
+
+  if (tareas.length === 0) {
+    showToast('No has añadido ninguna tarea', 5000, 'error');
+    return;
+  }
+
+  var btn = document.getElementById('btnGuardarBatch');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+
   api({
     action: 'guardarTareasBatch',
     id: state.usuario.id,
@@ -759,7 +780,10 @@ function guardarBatch() {
     if (r.ok) {
       showMsg('tareaMsg', '✅ ' + r.guardadas + ' tarea(s) guardada(s)', false);
       if (r.descartadas > 0) {
-        var mm = (r.motivos || []).map(function(m){ return 'Fila ' + (m.indice + 1) + ': ' + m.motivo; });
+        var mm = (r.motivos || []).map(function(m){
+          var filaUI = (mapaIndices[m.indice] != null ? mapaIndices[m.indice] : m.indice) + 1;
+          return 'Fila ' + filaUI + ': ' + m.motivo;
+        });
         showMsgCustom('tareaMsgMotivos', 'Descartadas ' + r.descartadas + ' (' + mm.join(', ') + ')', 'warn');
       }
       state.totalHoras = (state.totalHoras || 0) + (r.totalHoras || 0);
@@ -770,7 +794,10 @@ function guardarBatch() {
     } else {
       var mtxt = r.error || 'Error al guardar';
       if (r.motivos && r.motivos.length) {
-        var mm2 = r.motivos.map(function(m){ return 'Fila ' + (m.indice + 1) + ': ' + m.motivo; });
+        var mm2 = r.motivos.map(function(m){
+          var filaUI = (mapaIndices[m.indice] != null ? mapaIndices[m.indice] : m.indice) + 1;
+          return 'Fila ' + filaUI + ': ' + m.motivo;
+        });
         mtxt += ' (' + mm2.join(', ') + ')';
       }
       showMsg('tareaMsg', mtxt, true);
