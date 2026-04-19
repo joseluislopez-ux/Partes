@@ -5,94 +5,173 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>IU Gestión</title>
 <style>
+/* ========= RESET / GLOBAL ========= */
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#1a1a1a;color:#fff;min-height:100vh}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#1a1a1a;color:#fff;min-height:100vh;-webkit-tap-highlight-color:transparent}
 .hide{display:none!important}
-button{cursor:pointer;border:none;border-radius:8px;font-size:16px;padding:12px 20px;font-weight:600}
-select,input,textarea{width:100%;padding:12px;border-radius:8px;border:1px solid #444;background:#2a2a2a;color:#fff;font-size:16px;margin-top:4px}
-textarea{resize:vertical;min-height:80px}
-label{display:block;margin-top:14px;font-size:14px;color:#aaa}
+button{cursor:pointer;border:none;border-radius:8px;font-size:16px;padding:12px 20px;font-weight:600;font-family:inherit}
+select,input,textarea{width:100%;padding:12px;border-radius:8px;border:1px solid #444;background:#2a2a2a;color:#fff;font-size:16px;margin-top:4px;font-family:inherit}
+textarea{resize:vertical;min-height:70px}
+label{display:block;margin-top:12px;font-size:13px;color:#aaa}
 
-/* LOGIN */
-#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px}
-#loginScreen h1{font-size:22px;margin-bottom:24px;color:#f90}
-.workers-grid{display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px}
-.worker-btn{background:#2a2a2a;color:#fff;border:2px solid #444;border-radius:12px;padding:16px;font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:1px;transition:all 0.15s}
+/* ========= LOGIN ========= */
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:28px 20px 20px}
+#loginScreen h1{font-size:22px;margin-bottom:20px;color:#f90}
+#workersGrid{display:flex;flex-direction:column;gap:8px;width:100%;max-width:300px;min-height:50px}
+.worker-btn{background:#2a2a2a;color:#fff;border:2px solid #444;border-radius:12px;padding:14px;font-size:17px;font-weight:700;text-transform:uppercase;letter-spacing:1px;transition:all .15s}
 .worker-btn:active,.worker-btn.selected{border-color:#f90;color:#f90;background:#2a2a1a}
-#pinBox{width:100%;max-width:300px;margin-top:16px}
-#pinBox input{text-align:center;font-size:24px;letter-spacing:8px}
-#pinBox button{margin-top:12px;background:#f90;color:#000;width:100%;padding:14px}
+.gps-legal-login{font-size:11px;color:#888;text-align:center;max-width:300px;margin-top:20px;line-height:1.5;padding:0 4px}
 
-/* APP */
-#appScreen{padding:16px;max-width:500px;margin:0 auto}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+/* ========= PIN PANEL (keypad numérico integrado) ========= */
+#pinPanel{width:100%;max-width:300px;margin-top:18px}
+#pinLabel{text-align:center;color:#aaa;margin-bottom:10px;font-size:14px}
+#pinDots{display:flex;justify-content:center;gap:14px;margin-bottom:16px}
+.pin-dot{width:14px;height:14px;border-radius:50%;background:#333;border:2px solid #555;transition:all .1s}
+.pin-dot.filled{background:#f90;border-color:#f90}
+#numericKeypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.key-btn{background:#2a2a2a;color:#fff;border:1px solid #444;border-radius:10px;padding:16px 0;font-size:22px;font-weight:700;transition:background .1s;user-select:none}
+.key-btn:active{background:#3a3a3a}
+.key-btn.key-action{background:#222;color:#f90;font-size:13px;font-weight:600}
+.key-btn.key-action:active{background:#333}
+
+/* ========= APP SHELL ========= */
+#appScreen{padding:14px;max-width:500px;margin:0 auto}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .header h2{font-size:20px}
 .header button{background:transparent;color:#f90;font-size:14px;padding:6px 12px;border:1px solid #f90}
 
-/* FICHAJE */
-.fichaje-box{background:#222;border-radius:12px;padding:16px;margin-bottom:16px}
-.fichaje-box h3{color:#f90;margin-bottom:12px;font-size:15px}
-.fichaje-btns{display:flex;gap:10px;margin-bottom:14px}
+/* ========= FICHAJE ========= */
+.fichaje-box{background:#222;border-radius:12px;padding:16px;margin-bottom:14px}
+.fichaje-box h3{color:#f90;margin-bottom:12px;font-size:13px;letter-spacing:1px}
+.fichaje-btns{display:flex;gap:10px;margin-bottom:12px}
 .btn-entrada{background:#2e7d32;color:#fff;flex:1}
 .btn-salida{background:#c62828;color:#fff;flex:1}
-.btn-entrada:disabled,.btn-salida:disabled{opacity:0.4}
+.btn-entrada:disabled,.btn-salida:disabled{opacity:.4}
 .fichaje-info{display:flex;justify-content:space-between;font-size:14px;color:#aaa}
 .fichaje-info .hora{color:#fff;font-size:18px;font-weight:700}
-.contador{text-align:center;font-size:36px;font-weight:700;color:#f90;margin:10px 0}
+.contador{text-align:center;font-size:36px;font-weight:700;color:#f90;margin:8px 0}
 .ubicacion{font-size:12px;color:#888;margin-top:6px}
 .ubicacion a{color:#4fc3f7}
 
-/* OBRA */
-.obra-bar{background:#2a2a2a;padding:12px;border-radius:8px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
-.obra-bar span{font-size:16px;font-weight:600}
+/* ========= OBRA BAR (1 toque) ========= */
+.obra-bar{background:#2a2a2a;padding:14px;border-radius:10px;margin-bottom:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .1s}
+.obra-bar:active{background:#333}
+.obra-bar .obra-label{font-size:11px;color:#888;letter-spacing:1px;margin-bottom:2px}
+.obra-bar .obra-val{font-size:16px;font-weight:700}
+.obra-bar .obra-arrow{color:#f90;font-size:18px}
 
-/* TAREAS */
-.tareas-box{background:#222;border-radius:12px;padding:16px}
-.tareas-box h3{color:#f90;margin-bottom:4px;font-size:15px}
+/* ========= MODALES (bottom sheet) ========= */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100;display:flex;align-items:flex-end;justify-content:center}
+.modal-sheet{background:#222;width:100%;max-width:500px;max-height:85vh;border-radius:14px 14px 0 0;padding:16px;display:flex;flex-direction:column}
+.modal-sheet h3{color:#f90;margin-bottom:6px;font-size:15px;display:flex;justify-content:space-between;align-items:center}
+.modal-sheet h3 .close-x{background:none;color:#aaa;padding:4px 8px;font-size:22px;border:none;line-height:1}
+.modal-list{overflow-y:auto;flex:1;margin-top:10px}
+.modal-item{padding:14px;border-bottom:1px solid #333;font-size:15px;cursor:pointer}
+.modal-item:active{background:#333}
+.modal-body{overflow-y:auto;flex:1;font-size:14px;color:#ccc;line-height:1.5;margin-top:10px}
+.modal-body h4{color:#f90;margin-top:12px;margin-bottom:6px;font-size:14px}
+.modal-body ol{margin-left:20px;margin-top:4px}
+.modal-body ol li{margin-bottom:4px}
+.modal-actions{margin-top:14px;display:flex;gap:8px;flex-direction:column}
+.modal-actions button{background:#f90;color:#000;width:100%}
+.modal-actions .btn-secondary{background:#444;color:#fff}
+
+/* ========= TAREAS (5 filas) ========= */
+.tareas-box{background:#222;border-radius:12px;padding:14px}
+.tareas-box h3{color:#f90;margin-bottom:4px;font-size:13px;letter-spacing:1px}
+.fila-tarea{background:#2a2a2a;border-radius:10px;padding:12px;margin-top:8px;border:1px solid #333}
+.fila-tarea.collapsed{cursor:pointer}
+.fila-tarea.collapsed:active{background:#333}
+.fila-tarea.expanded{border-color:#555}
+.fila-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.fila-summary{font-size:14px;color:#ccc;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fila-summary.empty{color:#666;font-style:italic}
+.fila-collapse-btn{background:none;color:#888;padding:2px 10px;font-size:16px;border:none}
+.fila-body{margin-top:6px}
 .btn-guardar{background:#f90;color:#000;width:100%;margin-top:16px}
-.btn-guardar:disabled{opacity:0.4}
-.retrabajo-row{display:flex;align-items:center;gap:8px;margin-top:14px}
-.retrabajo-row input{width:auto}
+.btn-guardar:disabled{opacity:.4}
+.retrabajo-row{display:flex;align-items:center;gap:8px;margin-top:12px}
+.retrabajo-row input{width:auto;margin-top:0}
+
+/* ========= TAREAS GUARDADAS ========= */
+.guardadas-box{margin-top:18px}
+.guardadas-head{display:flex;justify-content:space-between;align-items:center}
+.guardadas-head .label{font-size:13px;color:#aaa}
+.guardadas-head .total{font-size:18px;font-weight:700;color:#f90}
+.tarea-card{background:#2a2a2a;border-radius:6px;padding:10px;margin-top:6px;font-size:13px}
+.tarea-card .tc-head{display:flex;justify-content:space-between;align-items:center}
+.tarea-card .tc-oficio{color:#f90;font-weight:600}
+.tarea-card .tc-horas{color:#fff;font-weight:700}
+.tarea-card .tc-obra{color:#888;font-size:11px;margin-top:2px}
+.tarea-card .tc-desc{color:#aaa;margin-top:4px;white-space:pre-wrap}
+.tarea-card .tc-retrab{color:#ef5350;font-size:11px;display:inline-block;margin-top:4px}
+.sin-tareas{color:#666;font-size:13px;text-align:center;padding:12px}
+
+/* ========= MSG BANNERS ========= */
 .msg{padding:10px;border-radius:8px;margin-top:10px;font-size:14px;text-align:center}
 .msg-ok{background:#1b5e20;color:#a5d6a7}
 .msg-err{background:#b71c1c;color:#ef9a9a}
-.legal{font-size:11px;color:#666;text-align:center;margin-top:12px}
+.msg-warn{background:#6d4c00;color:#ffd280}
+.legal{font-size:11px;color:#666;text-align:center;margin-top:14px;padding-bottom:10px}
+
+/* ========= TOAST (top floating) ========= */
+.toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#6d4c00;color:#ffd280;padding:12px 18px;border-radius:8px;font-size:14px;z-index:200;max-width:92%;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.5);line-height:1.4}
+.toast-error{background:#8b1a1a;color:#ffb0b0}
 </style>
 </head>
 <body>
 
-<!-- ===== LOGIN ===== -->
+<!-- Toast flotante -->
+<div id="toast" class="toast hide"></div>
+
+<!-- =============================================================
+     LOGIN
+     ============================================================= -->
 <div id="loginScreen">
   <h1>🏗️ Industria Urbana</h1>
-  <div class="workers-grid" id="workersGrid">
-    <button class="worker-btn" onclick="selectWorker('luis','Luis')">Luis</button>
-    <button class="worker-btn" onclick="selectWorker('senon','Senon')">Senon</button>
-    <button class="worker-btn" onclick="selectWorker('eligio','Eligio')">Eligio</button>
-    <button class="worker-btn" onclick="selectWorker('jona','Jona')">Jona</button>
-    <button class="worker-btn" onclick="selectWorker('jose','Jose')">Jose</button>
-    <button class="worker-btn" onclick="selectWorker('pruebas','Pruebas')">Pruebas</button>
+  <div id="workersGrid"></div>
+  <div id="pinPanel" class="hide">
+    <p id="pinLabel">PIN</p>
+    <div id="pinDots">
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+    </div>
+    <div id="numericKeypad">
+      <button class="key-btn" data-k="1">1</button>
+      <button class="key-btn" data-k="2">2</button>
+      <button class="key-btn" data-k="3">3</button>
+      <button class="key-btn" data-k="4">4</button>
+      <button class="key-btn" data-k="5">5</button>
+      <button class="key-btn" data-k="6">6</button>
+      <button class="key-btn" data-k="7">7</button>
+      <button class="key-btn" data-k="8">8</button>
+      <button class="key-btn" data-k="9">9</button>
+      <button class="key-btn key-action" data-k="cerrar">Cerrar</button>
+      <button class="key-btn" data-k="0">0</button>
+      <button class="key-btn key-action" data-k="borrar">Borrar</button>
+    </div>
   </div>
-  <div id="pinBox" class="hide">
-    <p style="text-align:center;color:#aaa;margin-bottom:4px;font-size:14px" id="pinLabel">PIN</p>
-    <input type="password" id="inputPin" placeholder="····" inputmode="numeric" maxlength="4">
-    <button onclick="doLogin()">Entrar</button>
-  </div>
+  <p class="gps-legal-login">Esta aplicación registra el horario laboral conforme al RD-ley 8/2019 de control horario. Es obligatorio compartir tu ubicación al fichar.</p>
   <div id="loginMsg" class="msg hide"></div>
 </div>
 
-<!-- ===== APP ===== -->
+<!-- =============================================================
+     APP PRINCIPAL
+     ============================================================= -->
 <div id="appScreen" class="hide">
   <div class="header">
     <h2 id="userName">—</h2>
-    <button onclick="doLogout()">Salir</button>
+    <button id="btnLogout">Salir</button>
   </div>
 
-  <!-- FICHAJE (arriba) -->
+  <!-- FICHAJE -->
   <div class="fichaje-box">
     <h3>FICHAJE DE JORNADA</h3>
     <div class="fichaje-btns">
-      <button class="btn-entrada" id="btnEntrada" onclick="fichar('entrada')">▶ Entrada</button>
-      <button class="btn-salida" id="btnSalida" onclick="fichar('salida')" disabled>■ Salida</button>
+      <button class="btn-entrada" id="btnEntrada">▶ Entrada</button>
+      <button class="btn-salida" id="btnSalida" disabled>■ Salida</button>
     </div>
     <div class="contador" id="contador">00:00:00</div>
     <div class="fichaje-info">
@@ -103,323 +182,920 @@ label{display:block;margin-top:14px;font-size:14px;color:#aaa}
     <div class="ubicacion" id="ubicacionSalida"></div>
   </div>
 
-  <!-- OBRA (debajo de fichaje) -->
-  <div class="obra-bar">
-    <span id="obraActual">— Selecciona obra —</span>
-    <button onclick="mostrarCambioObra()" style="background:#444;color:#fff;font-size:13px;padding:6px 10px">Cambiar</button>
-  </div>
-  <div id="cambioObra" class="hide" style="margin-bottom:16px">
-    <select id="selObra" onchange="cambiarObra()">
-      <option value="">— Selecciona obra —</option>
-      <option>ARROYO MURO VECINO</option>
-      <option>ARROYO</option>
-      <option>SANTA LUCIA</option>
-      <option>MARQUES DE SANTILLANA</option>
-      <option>BURGOS</option>
-      <option>TRILLA</option>
-      <option>CISTERNIGA</option>
-      <option>TERESA GIL</option>
-      <option>PEÑA</option>
-      <option>LG10 ZONAS COMUNES</option>
-      <option>BAJO IZQ LG10</option>
-      <option>BAJO DER LG10</option>
-      <option>ENTREPLANTA IZQ LG10</option>
-      <option>ENTREPLANTA DER LG10</option>
-      <option>1 IZQ LG10</option>
-      <option>1 DER LG10</option>
-      <option>2 IZQ LG10</option>
-      <option>2 DER LG10</option>
-      <option>3 IZQ LG10</option>
-      <option>3 DER LG10</option>
-      <option>4 IZQ LG10</option>
-      <option>4 DER LG10</option>
-      <option>OTROS (ESPECIFICAR)</option>
-    </select>
+  <!-- OBRA (1 toque) -->
+  <div class="obra-bar" id="obraBar">
+    <div>
+      <div class="obra-label">OBRA ACTUAL</div>
+      <div class="obra-val" id="obraActualLabel">— Selecciona obra —</div>
+    </div>
+    <div class="obra-arrow">▼</div>
   </div>
 
-  <!-- TAREAS -->
+  <!-- REPORTE DE TAREAS (5 filas) -->
   <div class="tareas-box">
-    <h3>TAREAS DE HOY</h3>
-    <label>Oficio
-      <select id="selOficio">
-        <option value="">— Selecciona oficio —</option>
-        <option>LIMPIEZA</option>
-        <option>TRANSPORTE MATERIALES</option>
-        <option>DEMOLICIÓN / ROZAS</option>
-        <option>PREPARACIÓN SUPERFICIES</option>
-        <option>ALBAÑILERÍA</option>
-        <option>PLADUR</option>
-        <option>PINTURA / ALISADO</option>
-        <option>ELECTRICIDAD</option>
-        <option>FONTANERÍA</option>
-        <option>MONTAJE</option>
-        <option>COMPRAS</option>
-        <option>DESPLAZAMIENTOS</option>
-        <option>OTROS</option>
-      </select>
-    </label>
-    <label>Horas
-      <input type="number" id="inputHoras" value="1" min="0.5" max="12" step="0.5">
-    </label>
-    <label>Descripción
-      <textarea id="inputDesc" placeholder="¿Qué has hecho?"></textarea>
-    </label>
-    <div class="retrabajo-row">
-      <input type="checkbox" id="chkRetrabajo">
-      <span>Retrabajo</span>
-    </div>
-    <button class="btn-guardar" id="btnGuardar" onclick="guardarTarea()">Guardar tarea</button>
+    <h3>REPORTE DEL DÍA</h3>
+    <div id="filasContainer"></div>
+    <button class="btn-guardar" id="btnGuardarBatch">Guardar tareas</button>
     <div id="tareaMsg" class="msg hide"></div>
-    <div id="tareasListBox" style="margin-top:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:13px;color:#aaa">Tareas guardadas hoy</span>
-        <span style="font-size:18px;font-weight:700;color:#f90" id="totalHoras">0h</span>
+    <div id="tareaMsgMotivos" class="msg hide"></div>
+
+    <!-- GUARDADAS HOY -->
+    <div class="guardadas-box">
+      <div class="guardadas-head">
+        <span class="label">Guardadas hoy</span>
+        <span class="total" id="totalHoras">0h</span>
       </div>
-      <div id="tareasList" style="margin-top:8px"></div>
+      <div id="tareasList" style="margin-top:6px"></div>
     </div>
   </div>
 
   <p class="legal">📋 Registro conforme al RD-ley 8/2019 · Datos tratados según política LOPD</p>
 </div>
 
-<script>
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwXE6um7Rb9c_N-bO-TR2JEAsWpdX8zHBVjqERi3Ub20W8cE1c7vIhswucv2PlepH4JWQ/exec';
-var usuario = null;
-var obraActual = '';
-var horaEntradaStr = '';
-var contadorInterval = null;
-var selectedWorkerId = '';
+<!-- =============================================================
+     MODAL: SELECTOR OBRA (con búsqueda)
+     ============================================================= -->
+<div id="obraModal" class="modal-backdrop hide">
+  <div class="modal-sheet">
+    <h3>Selecciona obra <button class="close-x" id="obraModalClose">&times;</button></h3>
+    <input type="text" id="obraSearch" placeholder="Buscar obra..." autocomplete="off">
+    <div class="modal-list" id="obraList"></div>
+  </div>
+</div>
 
-// Coordenadas de obras hardcodeadas
-var obrasCoords = {
-  'ARROYO MURO VECINO': {lat:41.61792565736123, lon:-4.781063003028537},
-  'ARROYO': {lat:41.61792565736123, lon:-4.781063003028537},
-  'SANTA LUCIA': {lat:41.650344915455484, lon:-4.716467463124058},
-  'MARQUES DE SANTILLANA': {lat:41.66201433037437, lon:-4.720410060697662},
-  'LG10 ZONAS COMUNES': {lat:41.650027923878525, lon:-4.723832203027283},
-  'BAJO IZQ LG10': {lat:41.650027923878525, lon:-4.723832203027283},
-  'BAJO DER LG10': {lat:41.650027923878525, lon:-4.723832203027283},
-  'ENTREPLANTA IZQ LG10': {lat:41.650027923878525, lon:-4.723832203027283},
-  'ENTREPLANTA DER LG10': {lat:41.650027923878525, lon:-4.723832203027283},
-  '1 IZQ LG10': {lat:41.650027923878525, lon:-4.723832203027283},
-  '1 DER LG10': {lat:41.650027923878525, lon:-4.723832203027283},
-  '2 IZQ LG10': {lat:41.650027923878525, lon:-4.723832203027283},
-  '2 DER LG10': {lat:41.650027923878525, lon:-4.723832203027283},
-  '3 IZQ LG10': {lat:41.650027923878525, lon:-4.723832203027283},
-  '3 DER LG10': {lat:41.650027923878525, lon:-4.723832203027283},
-  '4 IZQ LG10': {lat:41.650027923878525, lon:-4.723832203027283},
-  '4 DER LG10': {lat:41.650027923878525, lon:-4.723832203027283}
+<!-- =============================================================
+     MODAL: BLOQUEO GPS DENEGADO
+     ============================================================= -->
+<div id="gpsBlockModal" class="modal-backdrop hide">
+  <div class="modal-sheet">
+    <h3>Ubicación obligatoria <button class="close-x" id="gpsBlockClose">&times;</button></h3>
+    <div class="modal-body">
+      Para poder registrar tu fichaje es obligatorio compartir tu ubicación. Esta exigencia se basa en el Real Decreto-ley 8/2019, de 8 de marzo, de medidas urgentes de protección social y de lucha contra la precariedad laboral, y en el artículo 34.9 del Estatuto de los Trabajadores. Tu ubicación se registra únicamente en el momento del fichaje de entrada y salida, y se utiliza exclusivamente para verificar que te encuentras en la obra asignada. Estos datos quedan protegidos según la política LOPD de Industria Urbana Pisuerga SL.
+    </div>
+    <div class="modal-actions">
+      <button id="btnGpsHelp">Cómo activar GPS</button>
+      <button class="btn-secondary" id="btnGpsBlockClose2">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- =============================================================
+     MODAL: INSTRUCCIONES ACTIVAR GPS (Android Chrome)
+     ============================================================= -->
+<div id="gpsHelpModal" class="modal-backdrop hide">
+  <div class="modal-sheet">
+    <h3>Cómo activar GPS <button class="close-x" id="gpsHelpClose">&times;</button></h3>
+    <div class="modal-body">
+      <h4>1. Permiso del navegador al sitio</h4>
+      <ol>
+        <li>Toca el candado 🔒 o el icono a la izquierda de la dirección.</li>
+        <li>Toca <b>Permisos</b> (o <b>Configuración del sitio</b>).</li>
+        <li>Activa <b>Ubicación</b>.</li>
+        <li>Recarga la página.</li>
+      </ol>
+      <h4>2. Permiso de Android a Chrome</h4>
+      <ol>
+        <li>Abre <b>Ajustes</b> de Android.</li>
+        <li>Ve a <b>Aplicaciones → Chrome → Permisos → Ubicación</b>.</li>
+        <li>Elige <b>Permitir solo mientras se usa la app</b>.</li>
+        <li>Vuelve a esta aplicación y toca Entrada.</li>
+      </ol>
+    </div>
+    <div class="modal-actions">
+      <button id="btnGpsHelpClose2">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONSTANTES
+// ============================================================
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwXE6um7Rb9c_N-bO-TR2JEAsWpdX8zHBVjqERi3Ub20W8cE1c7vIhswucv2PlepH4JWQ/exec';
+var CACHE_KEY = 'iu_maestros_v1';
+var CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12h
+var GPS_TIMEOUTS = [10000, 15000];
+var MAX_FILAS = 5;
+
+// ============================================================
+// ESTADO GLOBAL
+// ============================================================
+var state = {
+  usuario: null,
+  maestros: null,
+  obraActual: '',
+  fichaje: {
+    abierto: false,
+    horaEntrada: '', horaSalida: '',
+    latEntrada: '', lonEntrada: '',
+    latSalida: '', lonSalida: '',
+    estado: null
+  },
+  contadorInterval: null,
+  loginEnCurso: false,
+  pinBuffer: '',
+  selectedWorkerId: '',
+  selectedWorkerNombre: '',
+  tareasGuardadas: [],
+  totalHoras: 0,
+  filasTareas: null
 };
 
-// ── API ──
+// ============================================================
+// API
+// ============================================================
 function api(data) {
   return fetch(SCRIPT_URL, {
-    method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body:JSON.stringify(data)
-  }).then(function(r){return r.json();});
+    method: 'POST',
+    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+    body: JSON.stringify(data)
+  }).then(function(r){ return r.json(); });
 }
 
-// ── LOGIN ──
-function selectWorker(id, nombre) {
-  selectedWorkerId = id;
-  var btns = document.querySelectorAll('.worker-btn');
-  for(var i=0;i<btns.length;i++) btns[i].classList.remove('selected');
-  event.target.classList.add('selected');
-  document.getElementById('pinBox').classList.remove('hide');
-  document.getElementById('pinLabel').textContent = 'PIN para ' + nombre;
-  document.getElementById('inputPin').value = '';
-  document.getElementById('inputPin').focus();
+// ============================================================
+// MAESTROS (cache sessionStorage + fetch)
+// ============================================================
+function loadMaestros(forceRefresh) {
+  if (!forceRefresh) {
+    try {
+      var raw = sessionStorage.getItem(CACHE_KEY);
+      if (raw) {
+        var obj = JSON.parse(raw);
+        if (obj && obj.ts && (Date.now() - obj.ts) < CACHE_TTL_MS && obj.data) {
+          state.maestros = obj.data;
+          return Promise.resolve(state.maestros);
+        }
+      }
+    } catch(e) {}
+  }
+  return api({action: 'getMaestros'}).then(function(r){
+    if (!r || !r.ok) throw new Error('getMaestros KO');
+    state.maestros = {
+      trabajadores: r.trabajadores || [],
+      obras: r.obras || [],
+      oficios: r.oficios || []
+    };
+    try {
+      sessionStorage.setItem(CACHE_KEY, JSON.stringify({data: state.maestros, ts: Date.now()}));
+    } catch(e) {}
+    return state.maestros;
+  });
+}
+
+function loadMaestrosFallbackCache() {
+  try {
+    var raw = sessionStorage.getItem(CACHE_KEY);
+    if (raw) {
+      var obj = JSON.parse(raw);
+      if (obj && obj.data) {
+        state.maestros = obj.data;
+        return true;
+      }
+    }
+  } catch(e) {}
+  return false;
+}
+
+// ============================================================
+// LOGIN (keypad numérico)
+// ============================================================
+function renderWorkerButtons() {
+  var grid = document.getElementById('workersGrid');
+  grid.innerHTML = '';
+  var trabajadores = (state.maestros && state.maestros.trabajadores) || [];
+  for (var i = 0; i < trabajadores.length; i++) {
+    var t = trabajadores[i];
+    if (t.admin) continue;
+    var btn = document.createElement('button');
+    btn.className = 'worker-btn';
+    btn.textContent = t.nombre;
+    btn.setAttribute('data-id', t.id);
+    btn.setAttribute('data-nombre', t.nombre);
+    btn.onclick = onWorkerClick;
+    grid.appendChild(btn);
+  }
+  if (!grid.children.length) {
+    grid.innerHTML = '<div style="color:#888;text-align:center;padding:20px;font-size:14px">No hay trabajadores disponibles</div>';
+  }
+}
+
+function onWorkerClick(e) {
+  var btn = e.currentTarget;
+  state.selectedWorkerId = btn.getAttribute('data-id');
+  state.selectedWorkerNombre = btn.getAttribute('data-nombre');
+  state.pinBuffer = '';
+  var all = document.querySelectorAll('.worker-btn');
+  for (var i = 0; i < all.length; i++) all[i].classList.remove('selected');
+  btn.classList.add('selected');
+  document.getElementById('pinLabel').textContent = 'PIN para ' + state.selectedWorkerNombre;
+  document.getElementById('pinPanel').classList.remove('hide');
+  document.getElementById('loginMsg').classList.add('hide');
+  updatePinDots();
+}
+
+function updatePinDots() {
+  var dots = document.querySelectorAll('.pin-dot');
+  for (var i = 0; i < dots.length; i++) {
+    if (i < state.pinBuffer.length) dots[i].classList.add('filled');
+    else dots[i].classList.remove('filled');
+  }
+}
+
+function onKeypadClick(e) {
+  var k = e.currentTarget.getAttribute('data-k');
+  if (k === 'borrar') {
+    state.pinBuffer = state.pinBuffer.slice(0, -1);
+    updatePinDots();
+    return;
+  }
+  if (k === 'cerrar') {
+    state.pinBuffer = '';
+    state.selectedWorkerId = '';
+    state.selectedWorkerNombre = '';
+    document.getElementById('pinPanel').classList.add('hide');
+    document.getElementById('loginMsg').classList.add('hide');
+    var all = document.querySelectorAll('.worker-btn');
+    for (var i = 0; i < all.length; i++) all[i].classList.remove('selected');
+    updatePinDots();
+    return;
+  }
+  if (state.pinBuffer.length >= 4) return;
+  state.pinBuffer += k;
+  updatePinDots();
+  if (state.pinBuffer.length === 4) doLogin();
 }
 
 function doLogin() {
-  var pin = document.getElementById('inputPin').value;
-  if(!selectedWorkerId||!pin) return showMsg('loginMsg','Selecciona trabajador e introduce PIN',true);
-  showMsg('loginMsg','Entrando...',false);
-  api({action:'login',id:selectedWorkerId,pin:pin}).then(function(r){
-    if(!r.ok) return showMsg('loginMsg',r.error,true);
-    usuario={id:r.id,nombre:r.nombre};
-    document.getElementById('loginScreen').classList.add('hide');
-    document.getElementById('appScreen').classList.remove('hide');
-    document.getElementById('userName').textContent=r.nombre;
-    cargarEstado();
-  }).catch(function(){showMsg('loginMsg','Error de conexión',true);});
+  if (state.loginEnCurso) return;
+  if (!state.selectedWorkerId || state.pinBuffer.length < 4) return;
+  state.loginEnCurso = true;
+  showMsg('loginMsg', 'Entrando...', false);
+  api({action: 'loginCompleto', id: state.selectedWorkerId, pin: state.pinBuffer}).then(function(r){
+    state.loginEnCurso = false;
+    if (!r.ok) {
+      state.pinBuffer = '';
+      updatePinDots();
+      return showMsg('loginMsg', (r.error && typeof r.error === 'string') ? r.error : 'PIN incorrecto', true);
+    }
+    state.usuario = {id: r.id, nombre: r.nombre};
+    state.obraActual = r.obra || '';
+    state.fichaje = {
+      abierto: r.fichaje === true,
+      horaEntrada: r.horaEntrada || '',
+      horaSalida: '',
+      latEntrada: r.fichaje ? (r.lat || '') : '',
+      lonEntrada: r.fichaje ? (r.lon || '') : '',
+      latSalida: '',
+      lonSalida: '',
+      estado: r.estado || null
+    };
+    state.tareasGuardadas = r.tareas || [];
+    state.totalHoras = r.totalHoras || 0;
+    resetFilasTareas();
+    showAppScreen();
+  }).catch(function(){
+    state.loginEnCurso = false;
+    state.pinBuffer = '';
+    updatePinDots();
+    showMsg('loginMsg', 'Error de conexión', true);
+  });
 }
 
 function doLogout() {
-  usuario=null;horaEntradaStr='';selectedWorkerId='';obraActual='';
-  if(contadorInterval)clearInterval(contadorInterval);
+  if (state.contadorInterval) clearInterval(state.contadorInterval);
+  state.usuario = null;
+  state.obraActual = '';
+  state.fichaje = {abierto:false, horaEntrada:'', horaSalida:'', latEntrada:'', lonEntrada:'', latSalida:'', lonSalida:'', estado:null};
+  state.contadorInterval = null;
+  state.pinBuffer = '';
+  state.selectedWorkerId = '';
+  state.selectedWorkerNombre = '';
+  state.tareasGuardadas = [];
+  state.totalHoras = 0;
+  state.filasTareas = null;
   document.getElementById('appScreen').classList.add('hide');
   document.getElementById('loginScreen').classList.remove('hide');
-  document.getElementById('inputPin').value='';
-  document.getElementById('pinBox').classList.add('hide');
+  document.getElementById('pinPanel').classList.add('hide');
   document.getElementById('loginMsg').classList.add('hide');
-  document.getElementById('obraActual').textContent='— Selecciona obra —';
-  document.getElementById('horaEntrada').textContent='—';
-  document.getElementById('horaSalida').textContent='—';
-  document.getElementById('contador').textContent='00:00:00';
-  document.getElementById('ubicacionEntrada').innerHTML='';
-  document.getElementById('ubicacionSalida').innerHTML='';
-  var btns=document.querySelectorAll('.worker-btn');
-  for(var i=0;i<btns.length;i++)btns[i].classList.remove('selected');
+  updatePinDots();
+  var all = document.querySelectorAll('.worker-btn');
+  for (var i = 0; i < all.length; i++) all[i].classList.remove('selected');
 }
 
-// ── ESTADO ──
-function cargarEstado() {
-  api({action:'getEstado',id:usuario.id}).then(function(r){
-    if(!r.ok) return;
-    if(r.fichaje){
-      horaEntradaStr=r.horaEntrada;
-      obraActual=r.obra;
-      document.getElementById('obraActual').textContent=obraActual||'—';
-      document.getElementById('horaEntrada').textContent=horaEntradaStr;
-      document.getElementById('btnEntrada').disabled=true;
-      document.getElementById('btnSalida').disabled=false;
-      iniciarContador();
-      if(r.lat&&r.lon) mostrarUbicacion('ubicacionEntrada',r.lat,r.lon,'Entrada');
+// ============================================================
+// APP SHELL (tras login)
+// ============================================================
+function showAppScreen() {
+  document.getElementById('loginScreen').classList.add('hide');
+  document.getElementById('appScreen').classList.remove('hide');
+  document.getElementById('userName').textContent = state.usuario.nombre;
+  renderFichajeInicial();
+  renderObraActual();
+  renderFilas();
+  renderTareasGuardadas();
+}
+
+function renderFichajeInicial() {
+  var btnE = document.getElementById('btnEntrada');
+  var btnS = document.getElementById('btnSalida');
+  btnE.textContent = '▶ Entrada';
+  btnS.textContent = '■ Salida';
+  document.getElementById('ubicacionEntrada').innerHTML = '';
+  document.getElementById('ubicacionSalida').innerHTML = '';
+  if (state.fichaje.abierto) {
+    btnE.disabled = true;
+    btnS.disabled = false;
+    document.getElementById('horaEntrada').textContent = state.fichaje.horaEntrada || '—';
+    document.getElementById('horaSalida').textContent = '—';
+    if (state.fichaje.latEntrada && state.fichaje.lonEntrada) {
+      mostrarUbicacion('ubicacionEntrada', state.fichaje.latEntrada, state.fichaje.lonEntrada, 'Entrada');
     }
-    cargarTareas();
-  });
-}
-
-// ── OBRA ──
-function mostrarCambioObra(){document.getElementById('cambioObra').classList.toggle('hide');}
-function cambiarObra(){
-  var sel=document.getElementById('selObra').value;
-  if(sel){obraActual=sel;document.getElementById('obraActual').textContent=sel;document.getElementById('cambioObra').classList.add('hide');}
-}
-
-// ── DISTANCIA GPS ──
-function distanciaMetros(lat1,lon1,lat2,lon2){
-  var R=6371000,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;
-  var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
-  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
-
-function validarUbicacion(lat,lon){
-  if(!obraActual) return {ok:false,msg:'Selecciona una obra primero'};
-  var coords=obrasCoords[obraActual];
-  if(!coords) return {ok:true}; // Sin coordenadas = no validar
-  if(!lat||!lon) return {ok:true}; // Sin GPS = dejar pasar
-  var dist=distanciaMetros(lat,lon,coords.lat,coords.lon);
-  if(dist>200) return {ok:false,msg:'⚠ Ubicación no coincide con '+obraActual+' ('+Math.round(dist)+'m). Selecciona la obra correcta o acércate a la ubicación.'};
-  return {ok:true};
-}
-
-// ── FICHAR ──
-function fichar(tipo){
-  if(!obraActual&&tipo==='entrada') return alert('Selecciona una obra primero');
-  var btn=tipo==='entrada'?document.getElementById('btnEntrada'):document.getElementById('btnSalida');
-  btn.disabled=true;btn.textContent='Enviando...';
-
-  getUbicacion(function(lat,lon){
-    var check=validarUbicacion(lat,lon);
-    if(!check.ok){
-      alert(check.msg);btn.disabled=false;
-      btn.textContent=tipo==='entrada'?'▶ Entrada':'■ Salida';return;
-    }
-    api({action:'fichar',id:usuario.id,tipo:tipo,obra:obraActual,lat:lat,lon:lon}).then(function(r){
-      if(!r.ok){alert(r.error);btn.disabled=false;btn.textContent=tipo==='entrada'?'▶ Entrada':'■ Salida';return;}
-      if(tipo==='entrada'){
-        horaEntradaStr=r.horaEntrada;
-        document.getElementById('horaEntrada').textContent=horaEntradaStr;
-        document.getElementById('horaSalida').textContent='—';
-        document.getElementById('btnEntrada').textContent='▶ Entrada';
-        document.getElementById('btnEntrada').disabled=true;
-        document.getElementById('btnSalida').disabled=false;
-        iniciarContador();
-        mostrarUbicacion('ubicacionEntrada',lat,lon,'Entrada');
-        document.getElementById('ubicacionSalida').innerHTML='';
-      } else {
-        document.getElementById('horaSalida').textContent=r.horaSalida;
-        document.getElementById('btnSalida').textContent='■ Salida';
-        document.getElementById('btnSalida').disabled=true;
-        document.getElementById('btnEntrada').disabled=false;
-        if(contadorInterval)clearInterval(contadorInterval);
-        mostrarUbicacion('ubicacionSalida',r.latSalida,r.lonSalida,'Salida');
-      }
-    }).catch(function(){alert('Error de conexión');btn.disabled=false;btn.textContent=tipo==='entrada'?'▶ Entrada':'■ Salida';});
-  });
-}
-
-// ── CONTADOR ──
-function iniciarContador(){
-  if(contadorInterval)clearInterval(contadorInterval);
-  if(!horaEntradaStr)return;
-  var p=horaEntradaStr.split(':'),hE=parseInt(p[0]),mE=parseInt(p[1]);
-  function act(){
-    var a=new Date(),sT=(a.getHours()*3600+a.getMinutes()*60+a.getSeconds())-(hE*3600+mE*60);
-    if(sT<0)sT=0;
-    document.getElementById('contador').textContent=pad(Math.floor(sT/3600))+':'+pad(Math.floor((sT%3600)/60))+':'+pad(sT%60);
+    iniciarContador();
+  } else {
+    btnE.disabled = false;
+    btnS.disabled = true;
+    document.getElementById('horaEntrada').textContent = '—';
+    document.getElementById('horaSalida').textContent = '—';
+    document.getElementById('contador').textContent = '00:00:00';
   }
-  act();contadorInterval=setInterval(act,1000);
-}
-function pad(n){return n<10?'0'+n:''+n;}
-
-// ── UBICACIÓN ──
-function getUbicacion(cb){
-  if(!navigator.geolocation)return cb('','');
-  navigator.geolocation.getCurrentPosition(
-    function(pos){cb(pos.coords.latitude,pos.coords.longitude);},
-    function(){cb('','');},
-    {enableHighAccuracy:true,timeout:10000}
-  );
-}
-function mostrarUbicacion(elId,lat,lon,label){
-  if(!lat||!lon)return;
-  var latN=parseFloat(lat),lonN=parseFloat(lon);
-  if(Math.abs(latN)>1000){latN/=1000000;lonN/=1000000;}
-  document.getElementById(elId).innerHTML='📍 '+label+': <a href="https://www.google.com/maps?q='+latN+','+lonN+'" target="_blank">Ver en mapa</a>';
 }
 
-// ── GUARDAR TAREA ──
-function guardarTarea(){
-  var oficio=document.getElementById('selOficio').value;
-  var horas=document.getElementById('inputHoras').value;
-  var desc=document.getElementById('inputDesc').value;
-  var retrabajo=document.getElementById('chkRetrabajo').checked;
-  if(!oficio)return showMsg('tareaMsg','Selecciona un oficio',true);
-  if(!desc.trim())return showMsg('tareaMsg','Escribe una descripción',true);
-  document.getElementById('btnGuardar').disabled=true;
-  document.getElementById('btnGuardar').textContent='Guardando...';
-  api({action:'guardarTarea',id:usuario.id,obra:obraActual,oficio:oficio,horas:horas,descripcion:desc,retrabajo:retrabajo}).then(function(r){
-    document.getElementById('btnGuardar').disabled=false;
-    document.getElementById('btnGuardar').textContent='Guardar tarea';
-    if(r.ok){showMsg('tareaMsg','✅ Tarea guardada',false);document.getElementById('inputDesc').value='';document.getElementById('chkRetrabajo').checked=false;cargarTareas();}
-    else showMsg('tareaMsg',r.error,true);
-  }).catch(function(){
-    document.getElementById('btnGuardar').disabled=false;
-    document.getElementById('btnGuardar').textContent='Guardar tarea';
-    showMsg('tareaMsg','Error de conexión',true);
-  });
+// ============================================================
+// OBRA (barra 1-toque + modal con búsqueda)
+// ============================================================
+function renderObraActual() {
+  document.getElementById('obraActualLabel').textContent = state.obraActual || '— Selecciona obra —';
 }
 
-// ── CARGAR TAREAS HOY ──
-function cargarTareas(){
-  api({action:'getTareasHoy',id:usuario.id}).then(function(r){
-    if(!r.ok)return;
-    document.getElementById('totalHoras').textContent=r.totalHoras+'h';
-    var html='';
-    for(var i=0;i<r.tareas.length;i++){
-      var t=r.tareas[i];
-      html+='<div style="background:#2a2a2a;border-radius:6px;padding:10px;margin-bottom:6px;font-size:13px">'
-        +'<div style="display:flex;justify-content:space-between">'
-        +'<span style="color:#f90;font-weight:600">'+t.oficio+'</span>'
-        +'<span style="color:#fff;font-weight:700">'+t.horas+'h</span></div>'
-        +'<div style="color:#aaa;margin-top:4px">'+t.descripcion+'</div>'
-        +(t.retrabajo?'<span style="color:#ef5350;font-size:11px">⚠ Retrabajo</span>':'')
-        +'</div>';
+function openObraModal() {
+  document.getElementById('obraSearch').value = '';
+  renderObraList('');
+  document.getElementById('obraModal').classList.remove('hide');
+}
+
+function closeObraModal() {
+  document.getElementById('obraModal').classList.add('hide');
+}
+
+function renderObraList(filter) {
+  var obras = (state.maestros && state.maestros.obras) || [];
+  var filt = (filter || '').toLowerCase().trim();
+  var list = document.getElementById('obraList');
+  list.innerHTML = '';
+  var count = 0;
+  for (var i = 0; i < obras.length; i++) {
+    var nombre = obras[i].nombre;
+    if (filt && nombre.toLowerCase().indexOf(filt) === -1) continue;
+    var div = document.createElement('div');
+    div.className = 'modal-item';
+    div.textContent = nombre;
+    div.setAttribute('data-obra', nombre);
+    div.onclick = onObraPick;
+    list.appendChild(div);
+    count++;
+  }
+  if (!count) {
+    list.innerHTML = '<div class="modal-item" style="color:#666;text-align:center;cursor:default">Sin resultados</div>';
+  }
+}
+
+function onObraPick(e) {
+  var obra = e.currentTarget.getAttribute('data-obra');
+  if (!obra) return;
+  state.obraActual = obra;
+  renderObraActual();
+  // Solo actualiza obra de fila 0 si estaba vacía; respeta filas que el usuario haya editado.
+  if (state.filasTareas && !state.filasTareas[0].obra) {
+    state.filasTareas[0].obra = obra;
+    renderFilas();
+  }
+  closeObraModal();
+}
+
+// ============================================================
+// TAREAS — 5 filas con colapsado/expansión libre
+// ============================================================
+function resetFilasTareas() {
+  state.filasTareas = [];
+  for (var i = 0; i < MAX_FILAS; i++) {
+    state.filasTareas.push({
+      expanded: i === 0,
+      obra: i === 0 ? state.obraActual : '',
+      oficio: '',
+      horas: '',
+      desc: '',
+      retrabajo: false
+    });
+  }
+}
+
+function renderFilas() {
+  var cont = document.getElementById('filasContainer');
+  cont.innerHTML = '';
+  for (var i = 0; i < state.filasTareas.length; i++) {
+    cont.appendChild(renderFila(i));
+  }
+}
+
+function renderFila(idx) {
+  var f = state.filasTareas[idx];
+  var div = document.createElement('div');
+  div.className = 'fila-tarea ' + (f.expanded ? 'expanded' : 'collapsed');
+  if (f.expanded) {
+    div.appendChild(buildFilaExpanded(idx, f));
+  } else {
+    div.appendChild(buildFilaCollapsed(idx, f));
+    div.onclick = function(){ state.filasTareas[idx].expanded = true; renderFilas(); };
+  }
+  return div;
+}
+
+function buildFilaCollapsed(idx, f) {
+  var head = document.createElement('div');
+  head.className = 'fila-head';
+  var summary = document.createElement('div');
+  var hasData = f.oficio || (f.desc && f.desc.trim()) || (f.horas && parseFloat(f.horas) > 0);
+  if (hasData) {
+    summary.className = 'fila-summary';
+    var parts = [];
+    if (f.oficio) parts.push(f.oficio);
+    if (f.horas && parseFloat(f.horas) > 0) parts.push(f.horas + 'h');
+    if (f.obra) parts.push(f.obra);
+    summary.textContent = parts.join(' · ');
+  } else {
+    summary.className = 'fila-summary empty';
+    summary.textContent = '+ Fila ' + (idx + 1) + ' — Añadir tarea';
+  }
+  head.appendChild(summary);
+  return head;
+}
+
+function buildFilaExpanded(idx, f) {
+  var wrap = document.createElement('div');
+
+  var head = document.createElement('div');
+  head.className = 'fila-head';
+  var title = document.createElement('div');
+  title.className = 'fila-summary';
+  title.textContent = 'Fila ' + (idx + 1);
+  head.appendChild(title);
+  var btnCollapse = document.createElement('button');
+  btnCollapse.className = 'fila-collapse-btn';
+  btnCollapse.textContent = '▲';
+  btnCollapse.onclick = function(e){
+    e.stopPropagation();
+    state.filasTareas[idx].expanded = false;
+    renderFilas();
+  };
+  head.appendChild(btnCollapse);
+  wrap.appendChild(head);
+
+  var body = document.createElement('div');
+  body.className = 'fila-body';
+
+  // Obra
+  var lObra = document.createElement('label');
+  lObra.textContent = 'Obra';
+  var selObra = document.createElement('select');
+  var opt0 = document.createElement('option');
+  opt0.value = ''; opt0.textContent = '— Selecciona obra —';
+  selObra.appendChild(opt0);
+  var obras = (state.maestros && state.maestros.obras) || [];
+  for (var i = 0; i < obras.length; i++) {
+    var o = document.createElement('option');
+    o.value = obras[i].nombre;
+    o.textContent = obras[i].nombre;
+    if (obras[i].nombre === f.obra) o.selected = true;
+    selObra.appendChild(o);
+  }
+  selObra.onchange = function(){ state.filasTareas[idx].obra = this.value; };
+  lObra.appendChild(selObra);
+  body.appendChild(lObra);
+
+  // Oficio
+  var lOf = document.createElement('label');
+  lOf.textContent = 'Oficio';
+  var selOf = document.createElement('select');
+  var optOf0 = document.createElement('option');
+  optOf0.value = ''; optOf0.textContent = '— Selecciona oficio —';
+  selOf.appendChild(optOf0);
+  var oficios = (state.maestros && state.maestros.oficios) || [];
+  for (var j = 0; j < oficios.length; j++) {
+    var oo = document.createElement('option');
+    oo.value = oficios[j].nombre;
+    oo.textContent = oficios[j].nombre;
+    if (oficios[j].nombre === f.oficio) oo.selected = true;
+    selOf.appendChild(oo);
+  }
+  selOf.onchange = function(){ state.filasTareas[idx].oficio = this.value; };
+  lOf.appendChild(selOf);
+  body.appendChild(lOf);
+
+  // Horas
+  var lH = document.createElement('label');
+  lH.textContent = 'Horas';
+  var inpH = document.createElement('input');
+  inpH.type = 'number';
+  inpH.min = '0.5'; inpH.max = '12'; inpH.step = '0.5';
+  inpH.inputMode = 'decimal';
+  inpH.value = f.horas;
+  inpH.oninput = function(){ state.filasTareas[idx].horas = this.value; };
+  lH.appendChild(inpH);
+  body.appendChild(lH);
+
+  // Descripción
+  var lD = document.createElement('label');
+  lD.textContent = 'Descripción';
+  var inpD = document.createElement('textarea');
+  inpD.placeholder = '¿Qué has hecho?';
+  inpD.value = f.desc;
+  inpD.oninput = function(){ state.filasTareas[idx].desc = this.value; };
+  lD.appendChild(inpD);
+  body.appendChild(lD);
+
+  // Retrabajo
+  var rr = document.createElement('div');
+  rr.className = 'retrabajo-row';
+  var cb = document.createElement('input');
+  cb.type = 'checkbox';
+  cb.checked = f.retrabajo;
+  cb.onchange = function(){ state.filasTareas[idx].retrabajo = this.checked; };
+  var sp = document.createElement('span');
+  sp.textContent = 'Retrabajo';
+  rr.appendChild(cb); rr.appendChild(sp);
+  body.appendChild(rr);
+
+  wrap.appendChild(body);
+  return wrap;
+}
+
+// ============================================================
+// GUARDAR BATCH
+// ============================================================
+function guardarBatch() {
+  if (!state.usuario) return;
+  var btn = document.getElementById('btnGuardarBatch');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+  var tareas = [];
+  for (var i = 0; i < state.filasTareas.length; i++) {
+    var f = state.filasTareas[i];
+    tareas.push({
+      obra: f.obra,
+      oficio: f.oficio,
+      horas: parseFloat(f.horas) || 0,
+      descripcion: f.desc,
+      retrabajo: f.retrabajo === true
+    });
+  }
+  api({
+    action: 'guardarTareasBatch',
+    id: state.usuario.id,
+    obra: state.obraActual,
+    tareas: tareas
+  }).then(function(r){
+    btn.disabled = false;
+    btn.textContent = 'Guardar tareas';
+    if (r.ok) {
+      showMsg('tareaMsg', '✅ ' + r.guardadas + ' tarea(s) guardada(s)', false);
+      if (r.descartadas > 0) {
+        var mm = (r.motivos || []).map(function(m){ return 'Fila ' + (m.indice + 1) + ': ' + m.motivo; });
+        showMsgCustom('tareaMsgMotivos', 'Descartadas ' + r.descartadas + ' (' + mm.join(', ') + ')', 'warn');
+      }
+      state.totalHoras = (state.totalHoras || 0) + (r.totalHoras || 0);
+      document.getElementById('totalHoras').textContent = state.totalHoras + 'h';
+      resetFilasTareas();
+      renderFilas();
+      refrescarTareasHoy();
+    } else {
+      var mtxt = r.error || 'Error al guardar';
+      if (r.motivos && r.motivos.length) {
+        var mm2 = r.motivos.map(function(m){ return 'Fila ' + (m.indice + 1) + ': ' + m.motivo; });
+        mtxt += ' (' + mm2.join(', ') + ')';
+      }
+      showMsg('tareaMsg', mtxt, true);
     }
-    if(!r.tareas.length)html='<div style="color:#666;font-size:13px;text-align:center;padding:10px">Sin tareas registradas hoy</div>';
-    document.getElementById('tareasList').innerHTML=html;
+  }).catch(function(){
+    btn.disabled = false;
+    btn.textContent = 'Guardar tareas';
+    showMsg('tareaMsg', 'Error de conexión', true);
   });
 }
 
-// ── UTILS ──
-function showMsg(elId,text,isErr){
-  var el=document.getElementById(elId);
-  el.textContent=text;el.className='msg '+(isErr?'msg-err':'msg-ok');el.classList.remove('hide');
-  setTimeout(function(){el.classList.add('hide');},4000);
+function refrescarTareasHoy() {
+  api({action: 'getTareasHoy', id: state.usuario.id}).then(function(r){
+    if (!r.ok) return;
+    state.tareasGuardadas = r.tareas || [];
+    state.totalHoras = r.totalHoras || 0;
+    renderTareasGuardadas();
+  }).catch(function(){});
 }
+
+// ============================================================
+// LISTA DE TAREAS GUARDADAS
+// ============================================================
+function renderTareasGuardadas() {
+  document.getElementById('totalHoras').textContent = (state.totalHoras || 0) + 'h';
+  var cont = document.getElementById('tareasList');
+  cont.innerHTML = '';
+  if (!state.tareasGuardadas.length) {
+    cont.innerHTML = '<div class="sin-tareas">Sin tareas registradas hoy</div>';
+    return;
+  }
+  for (var i = 0; i < state.tareasGuardadas.length; i++) {
+    var t = state.tareasGuardadas[i];
+    var card = document.createElement('div');
+    card.className = 'tarea-card';
+    var head = document.createElement('div');
+    head.className = 'tc-head';
+    var of = document.createElement('span');
+    of.className = 'tc-oficio'; of.textContent = t.oficio || '';
+    var hh = document.createElement('span');
+    hh.className = 'tc-horas'; hh.textContent = (t.horas || 0) + 'h';
+    head.appendChild(of); head.appendChild(hh);
+    card.appendChild(head);
+    if (t.obra) {
+      var obra = document.createElement('div');
+      obra.className = 'tc-obra'; obra.textContent = t.obra;
+      card.appendChild(obra);
+    }
+    var desc = document.createElement('div');
+    desc.className = 'tc-desc'; desc.textContent = t.descripcion || '';
+    card.appendChild(desc);
+    if (t.retrabajo) {
+      var rt = document.createElement('span');
+      rt.className = 'tc-retrab'; rt.textContent = '⚠ Retrabajo';
+      card.appendChild(rt);
+    }
+    cont.appendChild(card);
+  }
+}
+
+// ============================================================
+// CONTADOR
+// ============================================================
+function iniciarContador() {
+  if (state.contadorInterval) clearInterval(state.contadorInterval);
+  var hhmm = state.fichaje.horaEntrada;
+  if (!hhmm) return;
+  var p = hhmm.split(':');
+  var hE = parseInt(p[0], 10), mE = parseInt(p[1], 10);
+  if (isNaN(hE) || isNaN(mE)) return;
+  function tick() {
+    var a = new Date();
+    var s = (a.getHours() * 3600 + a.getMinutes() * 60 + a.getSeconds()) - (hE * 3600 + mE * 60);
+    if (s < 0) s = 0;
+    document.getElementById('contador').textContent = pad(Math.floor(s / 3600)) + ':' + pad(Math.floor((s % 3600) / 60)) + ':' + pad(s % 60);
+  }
+  tick();
+  state.contadorInterval = setInterval(tick, 1000);
+}
+
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+// ============================================================
+// GPS — 3 casos (ok / denegado / sin coordenadas tras reintentos)
+// ============================================================
+function getUbicacionConReintentos(cb) {
+  if (!navigator.geolocation) return cb({ok: false, denied: false});
+  var attempt = 0;
+  function tryOnce() {
+    navigator.geolocation.getCurrentPosition(
+      function(pos){
+        cb({ok: true, lat: pos.coords.latitude, lon: pos.coords.longitude});
+      },
+      function(err){
+        if (err && err.code === 1) { cb({ok: false, denied: true}); return; }
+        attempt++;
+        if (attempt < GPS_TIMEOUTS.length) tryOnce();
+        else cb({ok: false, denied: false});
+      },
+      {enableHighAccuracy: true, timeout: GPS_TIMEOUTS[attempt], maximumAge: 0}
+    );
+  }
+  tryOnce();
+}
+
+function distanciaMetros(lat1, lon1, lat2, lon2) {
+  var R = 6371000;
+  var dLat = (lat2 - lat1) * Math.PI / 180;
+  var dLon = (lon2 - lon1) * Math.PI / 180;
+  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+        + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180)
+          * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function obraCoords(nombre) {
+  var obras = (state.maestros && state.maestros.obras) || [];
+  for (var i = 0; i < obras.length; i++) {
+    if (obras[i].nombre === nombre) {
+      if (obras[i].lat === null || obras[i].lon === null) return null;
+      return {lat: obras[i].lat, lon: obras[i].lon};
+    }
+  }
+  return null;
+}
+
+function validarUbicacionObra(lat, lon) {
+  if (!state.obraActual) return {ok: false, msg: 'Selecciona una obra primero'};
+  var coords = obraCoords(state.obraActual);
+  if (!coords) return {ok: true};
+  if (!lat || !lon) return {ok: true};
+  var dist = distanciaMetros(lat, lon, coords.lat, coords.lon);
+  if (dist > 200) {
+    return {ok: false, msg: '⚠ Ubicación no coincide con ' + state.obraActual + ' (' + Math.round(dist) + 'm). Selecciona la obra correcta o acércate.'};
+  }
+  return {ok: true};
+}
+
+// ============================================================
+// FICHAR (entrada / salida) — lógica GPS idéntica en ambos
+// ============================================================
+
+// Obtiene ubicación con los 3 casos GPS resueltos y la distancia
+// a la obra validada. Callback recibe null si hay que abortar
+// (error ya presentado al usuario), o {lat, lon, estadoGps, sinGps}.
+function _obtenerUbicacionValidada(btn, txtOrig, callback) {
+  if (!state.obraActual) {
+    showToast('Selecciona una obra primero', 5000, 'error');
+    callback(null);
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Obteniendo ubicación...';
+
+  getUbicacionConReintentos(function(g){
+    // Caso 1: permiso denegado → bloqueo total
+    if (g.denied) {
+      btn.disabled = false;
+      btn.textContent = txtOrig;
+      document.getElementById('gpsBlockModal').classList.remove('hide');
+      callback(null);
+      return;
+    }
+
+    var lat = g.ok ? g.lat : '';
+    var lon = g.ok ? g.lon : '';
+    var estadoGps = g.ok ? 'OK' : 'SIN_GPS';
+
+    // Caso 3: OK con coords → validar distancia a obra (entrada y salida)
+    if (g.ok) {
+      var chk = validarUbicacionObra(lat, lon);
+      if (!chk.ok) {
+        btn.disabled = false;
+        btn.textContent = txtOrig;
+        showToast(chk.msg, 5000, 'error');
+        callback(null);
+        return;
+      }
+    }
+
+    callback({lat: lat, lon: lon, estadoGps: estadoGps, sinGps: !g.ok});
+  });
+}
+
+function fichar(tipo) {
+  var btn = tipo === 'entrada' ? document.getElementById('btnEntrada') : document.getElementById('btnSalida');
+  var txtOrig = tipo === 'entrada' ? '▶ Entrada' : '■ Salida';
+
+  _obtenerUbicacionValidada(btn, txtOrig, function(ub){
+    if (!ub) return;
+    btn.textContent = 'Enviando...';
+    api({
+      action: 'fichar',
+      id: state.usuario.id,
+      tipo: tipo,
+      obra: state.obraActual,
+      lat: ub.lat, lon: ub.lon,
+      estadoGps: ub.estadoGps
+    }).then(function(r){
+      btn.disabled = false;
+      btn.textContent = txtOrig;
+      if (!r.ok) { showToast((r.error && typeof r.error === 'string') ? r.error : 'Error al fichar', 5000, 'error'); return; }
+
+      if (tipo === 'entrada') {
+        state.fichaje.abierto = true;
+        state.fichaje.horaEntrada = r.horaEntrada || '';
+        state.fichaje.latEntrada = ub.lat;
+        state.fichaje.lonEntrada = ub.lon;
+        state.fichaje.estado = 'ABIERTO';
+        document.getElementById('horaEntrada').textContent = state.fichaje.horaEntrada;
+        document.getElementById('horaSalida').textContent = '—';
+        document.getElementById('btnEntrada').disabled = true;
+        document.getElementById('btnSalida').disabled = false;
+        iniciarContador();
+        if (ub.lat && ub.lon) {
+          mostrarUbicacion('ubicacionEntrada', ub.lat, ub.lon, 'Entrada');
+        } else {
+          document.getElementById('ubicacionEntrada').innerHTML = '<span style="color:#ffd280">⚠ Fichaje sin coordenadas (marcado para revisión)</span>';
+        }
+        document.getElementById('ubicacionSalida').innerHTML = '';
+      } else {
+        state.fichaje.abierto = false;
+        state.fichaje.horaSalida = r.horaSalida || '';
+        state.fichaje.latSalida = r.latSalida || '';
+        state.fichaje.lonSalida = r.lonSalida || '';
+        state.fichaje.estado = 'CERRADO';
+        document.getElementById('horaSalida').textContent = state.fichaje.horaSalida;
+        document.getElementById('btnSalida').disabled = true;
+        document.getElementById('btnEntrada').disabled = false;
+        if (state.contadorInterval) clearInterval(state.contadorInterval);
+        if (state.fichaje.latSalida && state.fichaje.lonSalida) {
+          mostrarUbicacion('ubicacionSalida', state.fichaje.latSalida, state.fichaje.lonSalida, 'Salida');
+        } else {
+          document.getElementById('ubicacionSalida').innerHTML = '<span style="color:#ffd280">⚠ Salida sin coordenadas (marcada para revisión)</span>';
+        }
+      }
+
+      // Caso 2: SIN_GPS → toast temporal no-bloqueante
+      if (ub.sinGps) {
+        showToast('No se ha podido obtener tu ubicación. El fichaje queda marcado para revisión.', 5000);
+      }
+    }).catch(function(){
+      btn.disabled = false;
+      btn.textContent = txtOrig;
+      showToast('Error de conexión', 5000, 'error');
+    });
+  });
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function mostrarUbicacion(elId, lat, lon, label) {
+  if (!lat || !lon) { document.getElementById(elId).innerHTML = ''; return; }
+  var latN = parseFloat(lat), lonN = parseFloat(lon);
+  if (Math.abs(latN) > 1000) { latN /= 1000000; lonN /= 1000000; }
+  document.getElementById(elId).innerHTML = '📍 ' + label + ': <a href="https://www.google.com/maps?q=' + latN + ',' + lonN + '" target="_blank">Ver en mapa</a>';
+}
+
+function showMsg(elId, text, isErr) {
+  var el = document.getElementById(elId);
+  if (!el) return;
+  el.textContent = text;
+  el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok');
+  el.classList.remove('hide');
+  setTimeout(function(){ el.classList.add('hide'); }, 4000);
+}
+
+function showMsgCustom(elId, text, kind) {
+  var el = document.getElementById(elId);
+  if (!el) return;
+  var cls = kind === 'err' ? 'msg-err' : (kind === 'warn' ? 'msg-warn' : 'msg-ok');
+  el.textContent = text;
+  el.className = 'msg ' + cls;
+  el.classList.remove('hide');
+  setTimeout(function(){ el.classList.add('hide'); }, 6000);
+}
+
+var _toastTimer = null;
+function showToast(text, durationMs, tipo) {
+  var el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = text;
+  el.className = 'toast' + (tipo === 'error' ? ' toast-error' : '');
+  if (_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function(){ el.classList.add('hide'); _toastTimer = null; }, durationMs || 5000);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', function(){
+  // Wiring estático
+  document.getElementById('btnLogout').onclick = doLogout;
+  document.getElementById('btnEntrada').onclick = function(){ fichar('entrada'); };
+  document.getElementById('btnSalida').onclick = function(){ fichar('salida'); };
+  document.getElementById('obraBar').onclick = openObraModal;
+  document.getElementById('obraModalClose').onclick = closeObraModal;
+  document.getElementById('obraSearch').oninput = function(){ renderObraList(this.value); };
+  document.getElementById('btnGuardarBatch').onclick = guardarBatch;
+  document.getElementById('gpsBlockClose').onclick = function(){ document.getElementById('gpsBlockModal').classList.add('hide'); };
+  document.getElementById('btnGpsBlockClose2').onclick = function(){ document.getElementById('gpsBlockModal').classList.add('hide'); };
+  document.getElementById('btnGpsHelp').onclick = function(){
+    document.getElementById('gpsBlockModal').classList.add('hide');
+    document.getElementById('gpsHelpModal').classList.remove('hide');
+  };
+  document.getElementById('gpsHelpClose').onclick = function(){ document.getElementById('gpsHelpModal').classList.add('hide'); };
+  document.getElementById('btnGpsHelpClose2').onclick = function(){ document.getElementById('gpsHelpModal').classList.add('hide'); };
+  var keys = document.querySelectorAll('.key-btn');
+  for (var i = 0; i < keys.length; i++) keys[i].onclick = onKeypadClick;
+
+  // Carga maestros
+  document.getElementById('workersGrid').innerHTML = '<div style="color:#888;text-align:center;padding:20px;font-size:14px">Cargando...</div>';
+  loadMaestros(false).then(function(){
+    renderWorkerButtons();
+  }).catch(function(){
+    if (loadMaestrosFallbackCache()) {
+      renderWorkerButtons();
+      showMsg('loginMsg', 'Usando datos en caché (sin conexión)', true);
+    } else {
+      document.getElementById('workersGrid').innerHTML = '';
+      showMsg('loginMsg', 'No se pudieron cargar los datos. Recarga la página.', true);
+    }
+  });
+});
 </script>
 </body>
 </html>
