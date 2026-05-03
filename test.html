@@ -148,6 +148,29 @@ label{display:block;margin-top:10px;font-size:12px;color:#aaa}
 .modal-actions.tp-actions{flex-direction:row;gap:10px}
 .modal-actions.tp-actions button{flex:1;width:auto}
 .modal-actions.tp-actions button:disabled{opacity:.4;cursor:not-allowed}
+
+/* ========= HISTORIAL 3 DÍAS ========= */
+.historial-section{margin-top:14px;padding-top:14px;border-top:2px solid #2a2a2a}
+.historial-header{cursor:pointer;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1.5px;display:flex;justify-content:space-between;align-items:center;padding:8px 0}
+.historial-header .chevron{transition:transform .2s}
+.historial-header.open .chevron{transform:rotate(180deg)}
+.historial-body{padding-top:6px}
+.historial-loading{color:#888;font-size:12px;padding:16px;text-align:center}
+.historial-error{color:#ef9a9a;font-size:12px;padding:14px;text-align:center;cursor:pointer;background:#3a1414;border-radius:6px;margin:6px 0}
+.historial-empty-all{color:#666;font-size:12px;font-style:italic;padding:14px;text-align:center}
+.historial-total-3d{font-size:11px;color:#f90;font-weight:700;letter-spacing:.5px}
+.dia-block{margin-bottom:14px}
+.dia-header{font-size:11px;color:#f90;text-transform:uppercase;letter-spacing:1px;font-weight:700;padding:6px 0 4px 0;border-bottom:1px solid #333;margin-bottom:6px;display:flex;justify-content:space-between}
+.dia-block.hoy .dia-header{color:#5fb3ff}
+.parte-row{padding:5px 0;font-size:12px;display:grid;grid-template-columns:1fr auto;gap:8px;border-bottom:1px dashed #232323}
+.parte-row:last-child{border-bottom:0}
+.parte-meta{color:#ccc;line-height:1.3}
+.parte-meta .obra{font-weight:600;color:#fff}
+.parte-meta .oficio{color:#888;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.parte-meta .desc{color:#888;font-size:11px;font-style:italic;display:block;margin-top:2px}
+.parte-horas{color:#f90;font-weight:600;font-size:12px;white-space:nowrap}
+.retrabajo-tag{background:#7a1a1a;color:#ffb0b0;padding:1px 5px;border-radius:3px;font-size:9px;margin-left:5px;text-transform:uppercase}
+.empty-day{color:#555;font-style:italic;font-size:11px;padding:4px 0}
 </style>
 </head>
 <body>
@@ -247,6 +270,16 @@ label{display:block;margin-top:10px;font-size:12px;color:#aaa}
         <span class="total" id="totalHoras">0h</span>
       </div>
       <div id="tareasList" style="margin-top:6px"></div>
+    </div>
+  </div>
+
+  <div id="historial3dias" class="historial-section" style="display:none">
+    <div class="historial-header" id="historialHeader">
+      <span>📋 Últimos 3 días</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="historial-body" style="display:none">
+      <div class="historial-loading">Cargando...</div>
     </div>
   </div>
 
@@ -359,7 +392,9 @@ var state = {
   tareasGuardadas: [],
   totalHoras: 0,
   filasTareas: null,
-  _obraPickTarget: null
+  _obraPickTarget: null,
+  historial3dias: null,
+  historial3diasLoading: false
 };
 
 // ============================================================
@@ -545,6 +580,20 @@ function doLogout() {
   state.tareasGuardadas = [];
   state.totalHoras = 0;
   state.filasTareas = null;
+  state.historial3dias = null;
+  state.historial3diasLoading = false;
+  var secH = document.getElementById('historial3dias');
+  if (secH) {
+    secH.style.display = 'none';
+    var bodyH = secH.querySelector('.historial-body');
+    if (bodyH) { bodyH.style.display = 'none'; bodyH.innerHTML = '<div class="historial-loading">Cargando...</div>'; }
+    var hdrH = document.getElementById('historialHeader');
+    if (hdrH) {
+      hdrH.classList.remove('open');
+      var ptH = hdrH.querySelector('.historial-total-3d');
+      if (ptH) ptH.remove();
+    }
+  }
   document.getElementById('appScreen').classList.add('hide');
   document.getElementById('loginScreen').classList.remove('hide');
   document.getElementById('pinPanel').classList.add('hide');
@@ -566,6 +615,19 @@ function showAppScreen() {
   renderObraActual();
   renderFilas();
   renderTareasGuardadas();
+  // Historial visible solo tras login; cerrado por defecto y sin cargar.
+  var sec = document.getElementById('historial3dias');
+  if (sec) {
+    sec.style.display = 'block';
+    var body = sec.querySelector('.historial-body');
+    if (body) { body.style.display = 'none'; body.innerHTML = '<div class="historial-loading">Cargando...</div>'; }
+    var hdr = document.getElementById('historialHeader');
+    if (hdr) {
+      hdr.classList.remove('open');
+      var pt = hdr.querySelector('.historial-total-3d');
+      if (pt) pt.remove();
+    }
+  }
 }
 
 function renderFichajeInicial() {
@@ -1065,6 +1127,218 @@ function renderTareasGuardadas() {
 }
 
 // ============================================================
+// HISTORIAL 3 DÍAS (carga diferida)
+// ============================================================
+function toggleHistorial() {
+  var section = document.getElementById('historial3dias');
+  var header = document.getElementById('historialHeader');
+  var body = section.querySelector('.historial-body');
+  var visible = body.style.display !== 'none';
+
+  if (visible) {
+    body.style.display = 'none';
+    header.classList.remove('open');
+    return;
+  }
+
+  body.style.display = 'block';
+  header.classList.add('open');
+
+  if (state.historial3dias != null) return;
+  if (state.historial3diasLoading) return;
+
+  body.innerHTML = '<div class="historial-loading">Cargando...</div>';
+  state.historial3diasLoading = true;
+  api({action: 'getHistorial3Dias', id: state.usuario.id}).then(function(r){
+    state.historial3diasLoading = false;
+    if (!r || !r.ok) {
+      _renderHistorialError();
+      return;
+    }
+    state.historial3dias = r.historial || [];
+    renderHistorial3Dias();
+  }).catch(function(){
+    state.historial3diasLoading = false;
+    _renderHistorialError();
+  });
+}
+
+function _renderHistorialError() {
+  var body = document.querySelector('#historial3dias .historial-body');
+  if (!body) return;
+  body.innerHTML = '';
+  var err = document.createElement('div');
+  err.className = 'historial-error';
+  err.textContent = 'Error al cargar historial. Reintentar';
+  err.onclick = function(){
+    state.historial3dias = null;
+    state.historial3diasLoading = false;
+    body.innerHTML = '<div class="historial-loading">Cargando...</div>';
+    state.historial3diasLoading = true;
+    api({action: 'getHistorial3Dias', id: state.usuario.id}).then(function(r){
+      state.historial3diasLoading = false;
+      if (!r || !r.ok) { _renderHistorialError(); return; }
+      state.historial3dias = r.historial || [];
+      renderHistorial3Dias();
+    }).catch(function(){
+      state.historial3diasLoading = false;
+      _renderHistorialError();
+    });
+  };
+  body.appendChild(err);
+}
+
+var DIAS_ABREV_ES = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+var MESES_ABREV_ES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+function _todayMadridParts() {
+  // Devuelve {y,m,d} para "hoy" en zona Europe/Madrid usando Intl.
+  try {
+    var fmt = new Intl.DateTimeFormat('en-CA', {timeZone:'Europe/Madrid', year:'numeric', month:'2-digit', day:'2-digit'});
+    var s = fmt.format(new Date()); // "YYYY-MM-DD"
+    var p = s.split('-');
+    return {y: parseInt(p[0],10), m: parseInt(p[1],10), d: parseInt(p[2],10)};
+  } catch(e) {
+    var n = new Date();
+    return {y: n.getFullYear(), m: n.getMonth()+1, d: n.getDate()};
+  }
+}
+
+function _isoFromYMD(y, m, d) {
+  return y + '-' + (m<10?'0'+m:''+m) + '-' + (d<10?'0'+d:''+d);
+}
+
+function _shiftDays(y, m, d, deltaDays) {
+  // Desplaza una fecha (día calendario) usando UTC para evitar saltos por DST.
+  var dt = new Date(Date.UTC(y, m-1, d));
+  dt.setUTCDate(dt.getUTCDate() + deltaDays);
+  return {y: dt.getUTCFullYear(), m: dt.getUTCMonth()+1, d: dt.getUTCDate(), dow: dt.getUTCDay()};
+}
+
+function _fechaFmtEs(y, m, d) {
+  var dt = new Date(Date.UTC(y, m-1, d));
+  var dow = dt.getUTCDay();
+  return DIAS_ABREV_ES[dow] + ' ' + d + ' ' + MESES_ABREV_ES[m-1];
+}
+
+function renderHistorial3Dias() {
+  var body = document.querySelector('#historial3dias .historial-body');
+  if (!body) return;
+  body.innerHTML = '';
+
+  var partes = state.historial3dias || [];
+
+  // Si total = 0 partes en los 3 días → mensaje único.
+  if (partes.length === 0) {
+    var empty = document.createElement('div');
+    empty.className = 'historial-empty-all';
+    empty.textContent = 'No has registrado tareas estos días';
+    body.appendChild(empty);
+    return;
+  }
+
+  // Total 3 días arriba a la derecha (cabecera principal del historial).
+  var totalDec = 0;
+  for (var k = 0; k < partes.length; k++) totalDec += parseFloat(partes[k].horas) || 0;
+  var header = document.getElementById('historialHeader');
+  // Limpiar total previo si existe
+  var prevTotal = header.querySelector('.historial-total-3d');
+  if (prevTotal) prevTotal.remove();
+  var totalSpan = document.createElement('span');
+  totalSpan.className = 'historial-total-3d';
+  totalSpan.textContent = formatHorasMinDisplay(totalDec) || '0h';
+  // Insertar antes del chevron
+  var chevron = header.querySelector('.chevron');
+  header.insertBefore(totalSpan, chevron);
+
+  // Calcular los 3 días esperados (hoy, hoy-1, hoy-2)
+  var hoy = _todayMadridParts();
+  var dias = [];
+  for (var i = 0; i < 3; i++) {
+    var dd = _shiftDays(hoy.y, hoy.m, hoy.d, -i);
+    dias.push({
+      iso: _isoFromYMD(dd.y, dd.m, dd.d),
+      fmt: _fechaFmtEs(dd.y, dd.m, dd.d),
+      esHoy: i === 0
+    });
+  }
+
+  // Agrupar partes por fechaIso
+  var grupos = {};
+  for (var p = 0; p < partes.length; p++) {
+    var pa = partes[p];
+    if (!grupos[pa.fechaIso]) grupos[pa.fechaIso] = [];
+    grupos[pa.fechaIso].push(pa);
+  }
+
+  for (var d = 0; d < dias.length; d++) {
+    var dia = dias[d];
+    var bloque = document.createElement('div');
+    bloque.className = 'dia-block' + (dia.esHoy ? ' hoy' : '');
+
+    var dh = document.createElement('div');
+    dh.className = 'dia-header';
+    var lbl = document.createElement('span');
+    lbl.textContent = dia.fmt.toUpperCase();
+    dh.appendChild(lbl);
+
+    var grupo = grupos[dia.iso] || [];
+    var totalDia = 0;
+    for (var gi = 0; gi < grupo.length; gi++) totalDia += parseFloat(grupo[gi].horas) || 0;
+    var totLbl = document.createElement('span');
+    totLbl.textContent = formatHorasMinDisplay(totalDia) || '0h';
+    dh.appendChild(totLbl);
+    bloque.appendChild(dh);
+
+    if (grupo.length === 0) {
+      var empt = document.createElement('div');
+      empt.className = 'empty-day';
+      empt.textContent = 'Sin partes registrados';
+      bloque.appendChild(empt);
+    } else {
+      for (var x = 0; x < grupo.length; x++) {
+        var pr = grupo[x];
+        var row = document.createElement('div');
+        row.className = 'parte-row';
+
+        var meta = document.createElement('div');
+        meta.className = 'parte-meta';
+        var line1 = document.createElement('div');
+        var obraS = document.createElement('span');
+        obraS.className = 'obra'; obraS.textContent = pr.obra || '—';
+        line1.appendChild(obraS);
+        line1.appendChild(document.createTextNode(' · '));
+        var ofS = document.createElement('span');
+        ofS.className = 'oficio'; ofS.textContent = pr.oficio || '';
+        line1.appendChild(ofS);
+        if (pr.retrabajo) {
+          var tag = document.createElement('span');
+          tag.className = 'retrabajo-tag';
+          tag.textContent = 'Retrabajo';
+          line1.appendChild(tag);
+        }
+        meta.appendChild(line1);
+        if (pr.descripcion && pr.descripcion.toString().trim()) {
+          var ds = document.createElement('span');
+          ds.className = 'desc'; ds.textContent = pr.descripcion;
+          meta.appendChild(ds);
+        }
+        row.appendChild(meta);
+
+        var hs = document.createElement('div');
+        hs.className = 'parte-horas';
+        hs.textContent = formatHorasMinDisplay(pr.horas) || '0h';
+        row.appendChild(hs);
+
+        bloque.appendChild(row);
+      }
+    }
+
+    body.appendChild(bloque);
+  }
+}
+
+// ============================================================
 // CONTADOR
 // ============================================================
 function iniciarContador() {
@@ -1315,6 +1589,7 @@ document.addEventListener('DOMContentLoaded', function(){
   document.getElementById('timePickerClose').onclick = closeTimePicker;
   document.getElementById('tpCancel').onclick = closeTimePicker;
   document.getElementById('tpAccept').onclick = acceptTimePicker;
+  document.getElementById('historialHeader').onclick = toggleHistorial;
   document.getElementById('timePickerModal').onclick = function(e){
     if (e.target === this) closeTimePicker();
   };
