@@ -127,6 +127,27 @@ label{display:block;margin-top:10px;font-size:12px;color:#aaa}
 /* ========= TOAST (top floating) ========= */
 .toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#6d4c00;color:#ffd280;padding:11px 16px;border-radius:8px;font-size:13px;z-index:200;max-width:92%;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.5);line-height:1.4}
 .toast-error{background:#8b1a1a;color:#ffb0b0}
+
+/* ========= TIME PICKER ========= */
+.fila-row .cell-horas{cursor:pointer}
+.fila-row .cell-horas.empty{color:#555;font-style:italic}
+.fila-row .cell-horas.filled{background:#2a2018;border-color:#f90;color:#f90;font-weight:600}
+#timePickerModal{align-items:center;background:rgba(0,0,0,.6)}
+#timePickerModal .modal-sheet{max-width:340px;width:calc(100% - 32px);border-radius:14px;max-height:none;background:#1a1a1a;border:1px solid #2e2e2e}
+.tp-cols{display:flex;align-items:center;justify-content:center;gap:10px;margin:14px 0 6px}
+.tp-col{display:flex;flex-direction:column;background:#0d0d0d;border:1px solid #2e2e2e;border-radius:8px;width:90px;height:160px;overflow-y:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:y proximity}
+.tp-col::-webkit-scrollbar{width:6px}
+.tp-col::-webkit-scrollbar-thumb{background:#444;border-radius:3px}
+.tp-opt{padding:11px 0;text-align:center;font-size:18px;color:#e0e0e0;cursor:pointer;border-bottom:1px solid #1a1a1a;font-weight:600;scroll-snap-align:center;flex-shrink:0;user-select:none}
+.tp-opt:last-child{border-bottom:0}
+.tp-opt:active{background:#2a2a2a}
+.tp-opt.selected{background:#f90;color:#000;font-weight:700}
+.tp-sep{font-size:26px;color:#f90;font-weight:700;line-height:1}
+.tp-display{text-align:center;font-size:16px;color:#f90;font-weight:700;margin:8px 0 4px;min-height:20px}
+.tp-display.placeholder{color:#666;font-weight:400}
+.modal-actions.tp-actions{flex-direction:row;gap:10px}
+.modal-actions.tp-actions button{flex:1;width:auto}
+.modal-actions.tp-actions button:disabled{opacity:.4;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -283,6 +304,25 @@ label{display:block;margin-top:10px;font-size:12px;color:#aaa}
     </div>
     <div class="modal-actions">
       <button id="btnGpsHelpClose2">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- =============================================================
+     MODAL: TIME PICKER (horas:minutos)
+     ============================================================= -->
+<div id="timePickerModal" class="modal-backdrop hide">
+  <div class="modal-sheet">
+    <h3>Cuánto tiempo <button class="close-x" id="timePickerClose">&times;</button></h3>
+    <div class="tp-cols">
+      <div class="tp-col" id="tpColHoras"></div>
+      <div class="tp-sep">:</div>
+      <div class="tp-col" id="tpColMinutos"></div>
+    </div>
+    <div class="tp-display" id="tpDisplay">—</div>
+    <div class="modal-actions tp-actions">
+      <button class="btn-secondary" id="tpCancel">Cancelar</button>
+      <button id="tpAccept">Aceptar</button>
     </div>
   </div>
 </div>
@@ -619,6 +659,121 @@ function onObraPick(e) {
 }
 
 // ============================================================
+// TIME PICKER (horas:minutos)
+// ============================================================
+var _tpState = {idx: -1, h: 0, m: 0};
+
+function openTimePicker(idx) {
+  var f = state.filasTareas[idx];
+  var totalMin = 0;
+  if (f && typeof f.horasMin === 'number' && f.horasMin > 0) {
+    totalMin = f.horasMin;
+  } else if (f && f.horas) {
+    var d = parseFloat(f.horas);
+    if (!isNaN(d) && d > 0) totalMin = Math.round(d * 60);
+  }
+  _tpState.idx = idx;
+  _tpState.h = Math.floor(totalMin / 60);
+  _tpState.m = totalMin % 60;
+  // Si el valor de minutos no encaja en las opciones (00/15/30/45), redondear.
+  if (TP_MINUTOS.indexOf(_tpState.m) === -1) {
+    _tpState.m = TP_MINUTOS.reduce(function(prev, cur){
+      return Math.abs(cur - _tpState.m) < Math.abs(prev - _tpState.m) ? cur : prev;
+    }, TP_MINUTOS[0]);
+  }
+  if (_tpState.h > 8) _tpState.h = 8;
+  renderTimePicker();
+  document.getElementById('timePickerModal').classList.remove('hide');
+  // Auto-scroll a la opción seleccionada
+  setTimeout(function(){
+    _tpScrollToSelected('tpColHoras');
+    _tpScrollToSelected('tpColMinutos');
+  }, 0);
+}
+
+function closeTimePicker() {
+  document.getElementById('timePickerModal').classList.add('hide');
+  _tpState.idx = -1;
+}
+
+function renderTimePicker() {
+  var colH = document.getElementById('tpColHoras');
+  var colM = document.getElementById('tpColMinutos');
+  colH.innerHTML = '';
+  colM.innerHTML = '';
+  for (var i = 0; i < TP_HORAS.length; i++) {
+    var opt = document.createElement('div');
+    opt.className = 'tp-opt' + (TP_HORAS[i] === _tpState.h ? ' selected' : '');
+    opt.textContent = TP_HORAS[i];
+    opt.setAttribute('data-val', TP_HORAS[i]);
+    opt.onclick = _tpPickHora;
+    colH.appendChild(opt);
+  }
+  for (var j = 0; j < TP_MINUTOS.length; j++) {
+    var opm = document.createElement('div');
+    opm.className = 'tp-opt' + (TP_MINUTOS[j] === _tpState.m ? ' selected' : '');
+    opm.textContent = TP_MINUTOS[j] < 10 ? '0' + TP_MINUTOS[j] : '' + TP_MINUTOS[j];
+    opm.setAttribute('data-val', TP_MINUTOS[j]);
+    opm.onclick = _tpPickMin;
+    colM.appendChild(opm);
+  }
+  _tpUpdateDisplay();
+}
+
+function _tpPickHora(e) {
+  _tpState.h = parseInt(e.currentTarget.getAttribute('data-val'), 10) || 0;
+  var opts = document.querySelectorAll('#tpColHoras .tp-opt');
+  for (var i = 0; i < opts.length; i++) {
+    opts[i].classList.toggle('selected', parseInt(opts[i].getAttribute('data-val'), 10) === _tpState.h);
+  }
+  _tpUpdateDisplay();
+}
+
+function _tpPickMin(e) {
+  _tpState.m = parseInt(e.currentTarget.getAttribute('data-val'), 10) || 0;
+  var opts = document.querySelectorAll('#tpColMinutos .tp-opt');
+  for (var i = 0; i < opts.length; i++) {
+    opts[i].classList.toggle('selected', parseInt(opts[i].getAttribute('data-val'), 10) === _tpState.m);
+  }
+  _tpUpdateDisplay();
+}
+
+function _tpUpdateDisplay() {
+  var disp = document.getElementById('tpDisplay');
+  var btn = document.getElementById('tpAccept');
+  var totalMin = _tpState.h * 60 + _tpState.m;
+  if (totalMin <= 0) {
+    disp.textContent = 'Selecciona un tiempo';
+    disp.classList.add('placeholder');
+    btn.disabled = true;
+  } else {
+    disp.textContent = formatHorasMinDisplay(totalMin / 60);
+    disp.classList.remove('placeholder');
+    btn.disabled = false;
+  }
+}
+
+function _tpScrollToSelected(colId) {
+  var col = document.getElementById(colId);
+  if (!col) return;
+  var sel = col.querySelector('.tp-opt.selected');
+  if (sel) col.scrollTop = Math.max(0, sel.offsetTop - col.clientHeight / 2 + sel.offsetHeight / 2);
+}
+
+function acceptTimePicker() {
+  var idx = _tpState.idx;
+  if (idx < 0 || !state.filasTareas[idx]) { closeTimePicker(); return; }
+  var totalMin = _tpState.h * 60 + _tpState.m;
+  if (totalMin <= 0) return;
+  var decimal = totalMin / 60;
+  // Mantener formato decimal compatible con backend (sin cambios en payload).
+  state.filasTareas[idx].horas = (Math.round(decimal * 100) / 100).toString();
+  state.filasTareas[idx].horasMin = totalMin;
+  closeTimePicker();
+  renderFilas();
+}
+
+// ============================================================
 // TAREAS — 5 filas con colapsado/expansión libre
 // ============================================================
 function resetFilasTareas() {
@@ -628,6 +783,7 @@ function resetFilasTareas() {
       obra: '',
       oficio: i === 0 ? 'LIMPIEZA' : '',
       horas: '',
+      horasMin: 0,
       desc: '',
       retrabajo: false
     });
@@ -642,7 +798,18 @@ function renderFilas() {
   }
 }
 
-var HORAS_OPTS = ['0.25','0.5','0.75','1','1.25','1.5','1.75','2'];
+var TP_HORAS = [0,1,2,3,4,5,6,7,8];
+var TP_MINUTOS = [0,15,30,45];
+
+function formatHorasMinDisplay(decimal) {
+  var d = parseFloat(decimal);
+  if (!d || isNaN(d) || d <= 0) return '';
+  var totalMin = Math.round(d * 60);
+  var h = Math.floor(totalMin / 60);
+  var m = totalMin % 60;
+  if (m === 0) return h + 'h';
+  return h + 'h ' + (m < 10 ? '0' + m : m) + 'min';
+}
 
 function renderFila(idx) {
   var f = state.filasTareas[idx];
@@ -679,25 +846,14 @@ function renderFila(idx) {
   };
   row.appendChild(selOf);
 
-  // --- cell horas (select restringido) ---
-  var selH = document.createElement('select');
-  selH.className = 'cell cell-horas';
-  selH.setAttribute('data-campo', 'horas');
-  var optH0 = document.createElement('option');
-  optH0.value = ''; optH0.textContent = '—';
-  selH.appendChild(optH0);
-  for (var k = 0; k < HORAS_OPTS.length; k++) {
-    var oh = document.createElement('option');
-    oh.value = HORAS_OPTS[k];
-    oh.textContent = HORAS_OPTS[k];
-    if (f.horas && String(f.horas) === HORAS_OPTS[k]) oh.selected = true;
-    selH.appendChild(oh);
-  }
-  selH.onchange = function(){
-    state.filasTareas[idx].horas = this.value;
-    renderFilas();
-  };
-  row.appendChild(selH);
+  // --- cell horas (time picker) ---
+  var cellH = document.createElement('div');
+  var horasTxt = formatHorasMinDisplay(f.horas);
+  cellH.className = 'cell cell-horas' + (horasTxt ? ' filled' : ' empty');
+  cellH.setAttribute('data-campo', 'horas');
+  cellH.textContent = horasTxt || 'Horas';
+  cellH.onclick = function(){ openTimePicker(idx); };
+  row.appendChild(cellH);
 
   // --- cell descripción ---
   var inpD = document.createElement('input');
@@ -741,19 +897,52 @@ function _filaTocada(f) {
   ));
 }
 
+function _hhmmToMin(hhmm) {
+  if (!hhmm || typeof hhmm !== 'string') return null;
+  var p = hhmm.split(':');
+  if (p.length < 2) return null;
+  var h = parseInt(p[0], 10);
+  var m = parseInt(p[1], 10);
+  if (isNaN(h) || isNaN(m)) return null;
+  return h * 60 + m;
+}
+
+function _calcularHorasFichadasDecimal() {
+  var entradaMin = _hhmmToMin(state.fichaje.horaEntrada);
+  if (entradaMin == null) return null;
+  var finMin;
+  if (state.fichaje.abierto === false && state.fichaje.horaSalida) {
+    finMin = _hhmmToMin(state.fichaje.horaSalida);
+    if (finMin == null) return null;
+  } else if (state.fichaje.abierto === true) {
+    var now = new Date();
+    finMin = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+  } else {
+    // abierto=false sin horaSalida (estado tras login con día cerrado pero sin dato): usar ahora
+    var now2 = new Date();
+    finMin = now2.getHours() * 60 + now2.getMinutes() + now2.getSeconds() / 60;
+  }
+  var diff = finMin - entradaMin;
+  if (diff < 0) return 0;
+  return diff / 60;
+}
+
 function guardarBatch() {
   if (!state.usuario) return;
 
   // Filtrar solo filas tocadas y construir mapa idxBackend → idxUI
   var tareas = [];
   var mapaIndices = [];
+  var horasReportadas = 0;
   for (var i = 0; i < state.filasTareas.length; i++) {
     var f = state.filasTareas[i];
     if (!_filaTocada(f)) continue;
+    var hDec = parseFloat(f.horas) || 0;
+    horasReportadas += hDec;
     tareas.push({
       obra: f.obra,
       oficio: f.oficio,
-      horas: parseFloat(f.horas) || 0,
+      horas: hDec,
       descripcion: f.desc,
       retrabajo: f.retrabajo === true
     });
@@ -762,6 +951,23 @@ function guardarBatch() {
 
   if (tareas.length === 0) {
     showToast('No has añadido ninguna tarea', 5000, 'error');
+    return;
+  }
+
+  // ---- Tope de horas: no reportar más de las fichadas ----
+  if (!state.fichaje.horaEntrada) {
+    showToast('Primero ficha tu entrada del día', 7000, 'error');
+    return;
+  }
+  var fichadasDec = _calcularHorasFichadasDecimal();
+  if (fichadasDec == null) {
+    showToast('Primero ficha tu entrada del día', 7000, 'error');
+    return;
+  }
+  if (horasReportadas > fichadasDec + 0.25) {
+    var fichadasTxt = formatHorasMinDisplay(fichadasDec);
+    if (!fichadasTxt) fichadasTxt = '0h';
+    showToast('No puedes reportar más horas de las trabajadas, ' + fichadasTxt + '.', 7000, 'error');
     return;
   }
 
@@ -1106,6 +1312,12 @@ document.addEventListener('DOMContentLoaded', function(){
   };
   document.getElementById('gpsHelpClose').onclick = function(){ document.getElementById('gpsHelpModal').classList.add('hide'); };
   document.getElementById('btnGpsHelpClose2').onclick = function(){ document.getElementById('gpsHelpModal').classList.add('hide'); };
+  document.getElementById('timePickerClose').onclick = closeTimePicker;
+  document.getElementById('tpCancel').onclick = closeTimePicker;
+  document.getElementById('tpAccept').onclick = acceptTimePicker;
+  document.getElementById('timePickerModal').onclick = function(e){
+    if (e.target === this) closeTimePicker();
+  };
   var keys = document.querySelectorAll('.key-btn');
   for (var i = 0; i < keys.length; i++) keys[i].onclick = onKeypadClick;
 
