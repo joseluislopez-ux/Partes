@@ -103,6 +103,7 @@
     </div>
   </div>
   <button class="btn-pedir" id="btnNew">+ Pedir material</button>
+  <div id="matLoading" class="empty hidden"><span class="spinner"></span> Cargando...</div>
   <div id="matList" class="mat-list"></div>
   <div id="matEmpty" class="empty hidden">No hay materiales pendientes 👍</div>
 </div>
@@ -160,6 +161,35 @@
   };
 
   var loginEnCurso = false;
+
+  var SESSION_KEY = 'iu_materiales_sesion';
+  var SESSION_TTL_MS = 86400000; // 24h
+
+  function loadSession(){
+    try {
+      var raw = localStorage.getItem(SESSION_KEY);
+      if (!raw) return null;
+      var s = JSON.parse(raw);
+      if (!s || !s.id || typeof s.expira !== 'number') {
+        localStorage.removeItem(SESSION_KEY);
+        return null;
+      }
+      if (s.expira <= Date.now()) {
+        localStorage.removeItem(SESSION_KEY);
+        return null;
+      }
+      return s;
+    } catch (e) {
+      try { localStorage.removeItem(SESSION_KEY); } catch (_) {}
+      return null;
+    }
+  }
+  function saveSession(s){
+    try { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); } catch (e) {}
+  }
+  function clearSession(){
+    try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
+  }
 
   // -------- helpers --------
   function $(id){ return document.getElementById(id); }
@@ -246,6 +276,12 @@
       state.nombre = res.nombre;
       state.puede_cerrar = !!res.puede_cerrar;
       state.obras = res.obras || [];
+      saveSession({
+        id: res.id,
+        nombre: res.nombre,
+        puede_cerrar: !!res.puede_cerrar,
+        expira: Date.now() + SESSION_TTL_MS
+      });
       setLoginMsg('', '');
       $('listTitle').textContent = 'Materiales · ' + res.nombre;
       $('btnAccionComprado').classList.toggle('hidden', !state.puede_cerrar);
@@ -260,10 +296,13 @@
   }
 
   function logout(){
+    clearSession();
     state = { id:null, nombre:null, puede_cerrar:false, obras:[], materiales:[], seleccion:{} };
     $('pinInput').value = '';
     $('userSelect').value = '';
+    $('matLoading').classList.add('hidden');
     setLoginMsg('', '');
+    loadTrabajadores();
     show('view-login');
   }
 
@@ -271,9 +310,27 @@
   function reloadMateriales(){
     if (!state.id) return;
     api('getMateriales', { id: state.id }).then(function(res){
-      if (!res.ok){ toast(res.error || 'Error cargando', 'error'); return; }
+      $('matLoading').classList.add('hidden');
+      if (!res.ok){
+        if (/no encontrado/i.test(res.error || '')) {
+          clearSession();
+          toast('Sesión inválida, vuelve a entrar', 'error');
+          logout();
+          return;
+        }
+        toast(res.error || 'Error cargando', 'error');
+        return;
+      }
       state.materiales = res.items || [];
       state.puede_cerrar = !!(res.permisos && res.permisos.puede_cerrar);
+      if (res.nombre) {
+        state.nombre = res.nombre;
+        $('listTitle').textContent = 'Materiales · ' + res.nombre;
+      }
+      if (res.obras) {
+        state.obras = res.obras;
+        populateObras();
+      }
       $('btnAccionComprado').classList.toggle('hidden', !state.puede_cerrar);
       // limpiar selección de items que ya no estén
       var validos = {};
@@ -282,7 +339,10 @@
         if (!validos[id]) delete state.seleccion[id];
       });
       renderList();
-    }).catch(function(){ toast('Error de red', 'error'); });
+    }).catch(function(){
+      $('matLoading').classList.add('hidden');
+      toast('Error de red', 'error');
+    });
   }
 
   function renderList(){
@@ -441,7 +501,20 @@
 
   // -------- wire up --------
   document.addEventListener('DOMContentLoaded', function(){
-    loadTrabajadores();
+    var sess = loadSession();
+    if (sess) {
+      // entrada directa con sesión persistente: pintar lo que sabemos y pedir datos frescos
+      state.id = sess.id;
+      state.nombre = sess.nombre || '';
+      state.puede_cerrar = !!sess.puede_cerrar;
+      $('listTitle').textContent = 'Materiales · ' + (sess.nombre || '');
+      $('btnAccionComprado').classList.toggle('hidden', !state.puede_cerrar);
+      $('matLoading').classList.remove('hidden');
+      show('view-list');
+      reloadMateriales();
+    } else {
+      loadTrabajadores();
+    }
 
     $('userSelect').addEventListener('change', function(){
       $('pinInput').value = '';

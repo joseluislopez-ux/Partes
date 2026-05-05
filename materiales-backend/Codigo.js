@@ -1,4 +1,4 @@
-// IU Materiales · v1.0 · 5 mayo 2026
+// IU Materiales · v1.1 · 5 mayo 2026 · sesion persistente
 // Subprograma de lista de la compra colaborativa.
 // Backend autocontenido. Lectura compartida de IU Gestion.
 // NO toca proyecto Gestion ni Gestion TEST.
@@ -113,7 +113,21 @@ function handleGetMateriales(body) {
   items.sort(function (a, b) { return b._ts - a._ts; });
   for (var j = 0; j < items.length; j++) delete items[j]._ts;
 
-  return { ok: true, items: items, permisos: { puede_cerrar: puedeCerrar } };
+  var obrasSh = _sheet(SS_GESTION, 'OBRAS');
+  var obrasData = _readObjects(obrasSh);
+  var obras = [];
+  for (var o = 0; o < obrasData.rows.length; o++) {
+    var n = String(obrasData.rows[o]['Nombre'] || '').trim();
+    if (n) obras.push(n);
+  }
+
+  return {
+    ok: true,
+    items: items,
+    permisos: { puede_cerrar: puedeCerrar },
+    nombre: String(user['Nombre'] || '').trim(),
+    obras: obras
+  };
 }
 
 function handleCrearMaterial(body) {
