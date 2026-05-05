@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>IU Materiales</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#1a1a1a;color:#fff;-webkit-tap-highlight-color:transparent;font-size:14px;min-height:100vh}
+  button{cursor:pointer;border:none;border-radius:8px;font-size:15px;padding:11px 18px;font-weight:600;font-family:inherit;color:#fff;background:#2a2a2a}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  input,select,textarea{width:100%;padding:11px;border-radius:8px;border:1px solid #444;background:#2a2a2a;color:#fff;font-size:15px;font-family:inherit}
+  textarea{resize:vertical;min-height:84px}
+  label{display:block;margin-top:12px;font-size:12px;color:#aaa}
+
+  /* layout */
+  .view{padding:14px;max-width:520px;margin:0 auto;padding-bottom:120px}
+  .header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px}
+  .header h1{font-size:17px;color:#f90;font-weight:700}
+  .header .h-actions{display:flex;gap:6px}
+  .header .h-actions button{background:transparent;color:#f90;border:1px solid #f90;font-size:12px;padding:6px 10px}
+  .header .back-btn{background:transparent;color:#f90;border:none;font-size:18px;padding:4px 8px}
+
+  /* login */
+  #view-login{display:flex;flex-direction:column;justify-content:flex-start;align-items:center;padding-top:48px}
+  #view-login h1{color:#f90;font-size:22px;margin-bottom:24px;letter-spacing:1px}
+  .login-card{width:100%;max-width:340px;background:#222;padding:18px;border-radius:14px}
+  #pinInput{letter-spacing:8px;text-align:center;font-size:22px;font-weight:700}
+  #loginMsg{margin-top:10px;text-align:center;font-size:13px;min-height:18px}
+  .msg-err{color:#ef9a9a}
+  .msg-ok{color:#a5d6a7}
+
+  /* list */
+  .btn-pedir{background:#2e7d32;color:#fff;width:100%;padding:14px;font-size:16px;font-weight:700;margin-bottom:14px;border-radius:10px}
+  .empty{text-align:center;color:#888;padding:30px 16px;font-size:14px}
+  .mat-list{display:flex;flex-direction:column;gap:8px}
+  .mat-item{display:flex;align-items:flex-start;gap:10px;background:#222;border-radius:10px;padding:10px 12px;border-left:3px solid #3a3a3a}
+  .mat-item.nave{border-left-color:#2ecc71}
+  .mat-item .check-wrap{padding-top:2px}
+  .mat-item input[type=checkbox]{width:18px;height:18px;accent-color:#f90;cursor:pointer}
+  .mat-item input[type=checkbox]:disabled{cursor:not-allowed;opacity:.4}
+  .mat-body{flex:1;min-width:0}
+  .mat-line1{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .mat-articulo{font-weight:600;color:#fff;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+  .mat-cantidad{font-size:12px;color:#bbb;flex-shrink:0}
+  .mat-line2{display:flex;gap:8px;align-items:baseline;margin-top:3px;font-size:10px}
+  .mat-obra{color:#6a9bd1;font-weight:600;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0}
+  .mat-coment{color:#888;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+  .mat-meta{font-size:10px;color:#666;margin-top:4px}
+  .mat-item.expanded .mat-coment{white-space:normal;overflow:visible;text-overflow:initial}
+
+  /* bottom action bar */
+  .actionbar{position:fixed;left:0;right:0;bottom:0;background:#0f0f0f;border-top:1px solid #2a2a2a;padding:10px 14px;display:flex;align-items:center;gap:8px;z-index:50}
+  .actionbar .ab-count{flex:1;font-size:13px;color:#aaa}
+  .actionbar .btn-cancel{background:#5a2a2a;color:#fff}
+  .actionbar .btn-comprado{background:#2a5a2a;color:#fff}
+
+  /* form */
+  .form-card{background:#222;border-radius:12px;padding:14px}
+  .btn-enviar{background:#2e7d32;color:#fff;width:100%;padding:14px;font-size:16px;font-weight:700;margin-top:18px;border-radius:10px}
+
+  /* modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;display:flex;align-items:center;justify-content:center;padding:14px}
+  .modal-sheet{background:#222;width:100%;max-width:360px;border-radius:14px;padding:18px;text-align:center}
+  .modal-sheet h3{color:#f90;font-size:16px;margin-bottom:14px}
+  .modal-actions{display:flex;gap:10px;margin-top:6px}
+  .modal-actions button{flex:1}
+  .modal-actions .btn-no{background:#444;color:#fff}
+  .modal-actions .btn-yes{background:#f90;color:#000}
+
+  /* toast */
+  .toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:#6d4c00;color:#ffd280;padding:11px 16px;border-radius:8px;font-size:13px;z-index:300;max-width:92%;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+  .toast.toast-error{background:#8b1a1a;color:#ffb0b0}
+  .toast.toast-ok{background:#1b5e20;color:#a5d6a7}
+
+  .hidden{display:none !important}
+  .spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="view-login" class="view">
+  <h1>IU MATERIALES</h1>
+  <div class="login-card">
+    <label for="userSelect">Trabajador</label>
+    <select id="userSelect"><option value="">Cargando...</option></select>
+    <label for="pinInput">PIN</label>
+    <input id="pinInput" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off">
+    <div id="loginMsg"></div>
+  </div>
+</div>
+
+<!-- ============ LIST ============ -->
+<div id="view-list" class="view hidden">
+  <div class="header">
+    <h1 id="listTitle">Materiales</h1>
+    <div class="h-actions">
+      <button id="btnReload" title="Recargar">&#x21bb;</button>
+      <button id="btnLogout">Salir</button>
+    </div>
+  </div>
+  <button class="btn-pedir" id="btnNew">+ Pedir material</button>
+  <div id="matList" class="mat-list"></div>
+  <div id="matEmpty" class="empty hidden">No hay materiales pendientes 👍</div>
+</div>
+
+<!-- bottom action bar (lista) -->
+<div id="actionBar" class="actionbar hidden">
+  <div class="ab-count" id="abCount">0 seleccionada(s)</div>
+  <button class="btn-cancel" id="btnAccionCancelar">✕ Cancelar</button>
+  <button class="btn-comprado hidden" id="btnAccionComprado">✓ Comprado</button>
+</div>
+
+<!-- ============ FORM ============ -->
+<div id="view-form" class="view hidden">
+  <div class="header">
+    <button class="back-btn" id="btnFormBack">&#x2039; Pedir material</button>
+  </div>
+  <div class="form-card">
+    <label for="fArticulo">Artículo *</label>
+    <input id="fArticulo" type="text" autocomplete="off">
+
+    <label for="fCantidad">Cantidad *</label>
+    <input id="fCantidad" type="text" placeholder="ej. 1, 5 sacos, 20 m²" autocomplete="off">
+
+    <label for="fObra">Obra destino</label>
+    <select id="fObra"><option value="">— Sin obra —</option></select>
+
+    <label for="fComentario">Comentario</label>
+    <textarea id="fComentario" placeholder="nave → fila verde"></textarea>
+
+    <button class="btn-enviar" id="btnEnviar">Enviar solicitud</button>
+  </div>
+</div>
+
+<!-- ============ MODAL ============ -->
+<div id="modalConfirm" class="modal-backdrop hidden">
+  <div class="modal-sheet">
+    <h3 id="modalTitle">¿Confirmar?</h3>
+    <div class="modal-actions">
+      <button class="btn-no" id="modalNo">No</button>
+      <button class="btn-yes" id="modalYes">Sí</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  var SCRIPT_URL = 'PENDING_MATERIALES_DEPLOY_URL';  // TODO: sustituir por URL .../exec del deployment de IU Materiales
+
+  var state = {
+    id: null,
+    nombre: null,
+    puede_cerrar: false,
+    obras: [],
+    materiales: [],
+    seleccion: {}     // id_solicitud -> true
+  };
+
+  var loginEnCurso = false;
+
+  // -------- helpers --------
+  function $(id){ return document.getElementById(id); }
+
+  function show(viewId){
+    ['view-login','view-list','view-form'].forEach(function(v){
+      $(v).classList.toggle('hidden', v !== viewId);
+    });
+    if (viewId !== 'view-list') $('actionBar').classList.add('hidden');
+  }
+
+  function toast(msg, kind){
+    var el = document.createElement('div');
+    el.className = 'toast' + (kind === 'error' ? ' toast-error' : kind === 'ok' ? ' toast-ok' : '');
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(function(){ el.remove(); }, 2600);
+  }
+
+  function setLoginMsg(msg, kind){
+    var el = $('loginMsg');
+    el.className = kind === 'err' ? 'msg-err' : kind === 'ok' ? 'msg-ok' : '';
+    el.textContent = msg || '';
+  }
+
+  function btnLoading(btn, loading, defaultLabel){
+    if (loading){
+      btn.dataset._lbl = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>' + (defaultLabel || 'Enviando...');
+    } else {
+      btn.disabled = false;
+      btn.innerHTML = btn.dataset._lbl || defaultLabel || 'OK';
+      delete btn.dataset._lbl;
+    }
+  }
+
+  function api(action, payload){
+    var body = Object.assign({ action: action }, payload || {});
+    return fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(body)
+    }).then(function(r){ return r.json(); });
+  }
+
+  function escapeHtml(s){
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  // -------- login --------
+  function loadTrabajadores(){
+    api('getTrabajadores').then(function(res){
+      var sel = $('userSelect');
+      sel.innerHTML = '<option value="">— Selecciona —</option>';
+      if (!res.ok){ setLoginMsg(res.error || 'Error', 'err'); return; }
+      res.trabajadores.forEach(function(t){
+        var o = document.createElement('option');
+        o.value = t.id_url; o.textContent = t.nombre;
+        sel.appendChild(o);
+      });
+    }).catch(function(){ setLoginMsg('Error de red', 'err'); });
+  }
+
+  function tryLogin(){
+    if (loginEnCurso) return;
+    var id = $('userSelect').value;
+    var pin = $('pinInput').value;
+    if (!id){ setLoginMsg('Selecciona trabajador', 'err'); return; }
+    if (pin.length !== 4) return;
+
+    loginEnCurso = true;
+    setLoginMsg('Entrando...', '');
+    api('login', { id: id, pin: pin }).then(function(res){
+      loginEnCurso = false;
+      if (!res.ok){
+        $('pinInput').value = '';
+        setLoginMsg(res.error || 'PIN incorrecto', 'err');
+        return;
+      }
+      state.id = res.id;
+      state.nombre = res.nombre;
+      state.puede_cerrar = !!res.puede_cerrar;
+      state.obras = res.obras || [];
+      setLoginMsg('', '');
+      $('listTitle').textContent = 'Materiales · ' + res.nombre;
+      $('btnAccionComprado').classList.toggle('hidden', !state.puede_cerrar);
+      populateObras();
+      reloadMateriales();
+      show('view-list');
+    }).catch(function(){
+      loginEnCurso = false;
+      setLoginMsg('Error de red', 'err');
+      $('pinInput').value = '';
+    });
+  }
+
+  function logout(){
+    state = { id:null, nombre:null, puede_cerrar:false, obras:[], materiales:[], seleccion:{} };
+    $('pinInput').value = '';
+    $('userSelect').value = '';
+    setLoginMsg('', '');
+    show('view-login');
+  }
+
+  // -------- list --------
+  function reloadMateriales(){
+    if (!state.id) return;
+    api('getMateriales', { id: state.id }).then(function(res){
+      if (!res.ok){ toast(res.error || 'Error cargando', 'error'); return; }
+      state.materiales = res.items || [];
+      state.puede_cerrar = !!(res.permisos && res.permisos.puede_cerrar);
+      $('btnAccionComprado').classList.toggle('hidden', !state.puede_cerrar);
+      // limpiar selección de items que ya no estén
+      var validos = {};
+      state.materiales.forEach(function(it){ validos[it.id_solicitud] = true; });
+      Object.keys(state.seleccion).forEach(function(id){
+        if (!validos[id]) delete state.seleccion[id];
+      });
+      renderList();
+    }).catch(function(){ toast('Error de red', 'error'); });
+  }
+
+  function renderList(){
+    var list = $('matList');
+    var empty = $('matEmpty');
+    list.innerHTML = '';
+    if (!state.materiales.length){
+      empty.classList.remove('hidden');
+      updateActionBar();
+      return;
+    }
+    empty.classList.add('hidden');
+
+    state.materiales.forEach(function(it){
+      var nave = /nave/i.test(it.comentario || '');
+      var puedeMarcar = state.puede_cerrar || it.es_propia;
+      var checked = !!state.seleccion[it.id_solicitud];
+
+      var div = document.createElement('div');
+      div.className = 'mat-item' + (nave ? ' nave' : '');
+      div.dataset.id = it.id_solicitud;
+
+      div.innerHTML =
+        '<div class="check-wrap"><input type="checkbox" data-id="' + escapeHtml(it.id_solicitud) + '"' +
+          (puedeMarcar ? '' : ' disabled') + (checked ? ' checked' : '') + '></div>' +
+        '<div class="mat-body">' +
+          '<div class="mat-line1">' +
+            '<div class="mat-articulo">' + escapeHtml(it.articulo) + '</div>' +
+            '<div class="mat-cantidad">' + escapeHtml(it.cantidad) + '</div>' +
+          '</div>' +
+          '<div class="mat-line2">' +
+            (it.obra_destino ? '<span class="mat-obra">' + escapeHtml(it.obra_destino) + '</span>' : '') +
+            '<span class="mat-coment">' + escapeHtml(it.comentario || '') + '</span>' +
+          '</div>' +
+          '<div class="mat-meta">' + escapeHtml(it.id_solicitud) + ' · ' +
+            escapeHtml(it.solicitante) + ' · ' + escapeHtml(it.fecha_solicitud) + '</div>' +
+        '</div>';
+
+      // toggle expanded al tocar texto
+      div.querySelector('.mat-body').addEventListener('click', function(){
+        div.classList.toggle('expanded');
+      });
+      // selección checkbox
+      div.querySelector('input[type=checkbox]').addEventListener('change', function(ev){
+        ev.stopPropagation();
+        var id = this.dataset.id;
+        if (this.checked) state.seleccion[id] = true;
+        else delete state.seleccion[id];
+        updateActionBar();
+      });
+
+      list.appendChild(div);
+    });
+    updateActionBar();
+  }
+
+  function updateActionBar(){
+    var ids = Object.keys(state.seleccion);
+    var bar = $('actionBar');
+    if (!ids.length){ bar.classList.add('hidden'); return; }
+    bar.classList.remove('hidden');
+    $('abCount').textContent = ids.length + ' seleccionada' + (ids.length === 1 ? '' : 's');
+  }
+
+  // -------- form --------
+  function populateObras(){
+    var sel = $('fObra');
+    sel.innerHTML = '<option value="">— Sin obra —</option>';
+    state.obras.forEach(function(o){
+      var op = document.createElement('option');
+      op.value = o; op.textContent = o;
+      sel.appendChild(op);
+    });
+  }
+
+  function openForm(){
+    $('fArticulo').value = '';
+    $('fCantidad').value = '';
+    $('fObra').value = '';
+    $('fComentario').value = '';
+    show('view-form');
+    setTimeout(function(){ $('fArticulo').focus(); }, 50);
+  }
+
+  function enviarForm(){
+    var articulo = $('fArticulo').value.trim();
+    var cantidad = $('fCantidad').value.trim();
+    if (!articulo){ toast('Falta artículo', 'error'); return; }
+    if (!cantidad){ toast('Falta cantidad', 'error'); return; }
+
+    var btn = $('btnEnviar');
+    btnLoading(btn, true, 'Enviando...');
+    api('crearMaterial', {
+      id: state.id,
+      articulo: articulo,
+      cantidad: cantidad,
+      obra_destino: $('fObra').value,
+      comentario: $('fComentario').value
+    }).then(function(res){
+      btnLoading(btn, false, 'Enviar solicitud');
+      if (!res.ok){ toast(res.error || 'Error', 'error'); return; }
+      toast('Solicitud creada', 'ok');
+      show('view-list');
+      reloadMateriales();
+    }).catch(function(){
+      btnLoading(btn, false, 'Enviar solicitud');
+      toast('Error de red', 'error');
+    });
+  }
+
+  // -------- modal --------
+  var modalCallback = null;
+  function openModal(title, yesLabel, cb){
+    $('modalTitle').textContent = title;
+    $('modalYes').textContent = yesLabel;
+    modalCallback = cb;
+    $('modalConfirm').classList.remove('hidden');
+  }
+  function closeModal(){
+    $('modalConfirm').classList.add('hidden');
+    modalCallback = null;
+  }
+
+  // -------- cerrar (comprado / cancelar) --------
+  function pedirCerrar(accion){
+    var ids = Object.keys(state.seleccion);
+    if (!ids.length) return;
+    var n = ids.length;
+    var titulo, yes;
+    if (accion === 'COMPLETADO'){
+      titulo = n === 1 ? '¿Marcar como comprado?' : '¿Marcar ' + n + ' como compradas?';
+      yes = 'Sí, marcar';
+    } else {
+      titulo = n === 1 ? '¿Cancelar la solicitud?' : '¿Cancelar ' + n + ' solicitudes?';
+      yes = 'Sí, cancelar';
+    }
+    openModal(titulo, yes, function(){
+      ejecutarCerrar(accion, ids);
+    });
+  }
+
+  function ejecutarCerrar(accion, ids){
+    api('cerrarMateriales', { id: state.id, ids: ids, accion: accion })
+      .then(function(res){
+        if (!res.ok){ toast(res.error || 'Error', 'error'); return; }
+        if (res.errores && res.errores.length){
+          toast('Cerradas: ' + res.cerrados + ' · errores: ' + res.errores.length, 'error');
+        } else {
+          toast(accion === 'COMPLETADO' ? 'Marcadas como compradas' : 'Canceladas', 'ok');
+        }
+        state.seleccion = {};
+        reloadMateriales();
+      })
+      .catch(function(){ toast('Error de red', 'error'); });
+  }
+
+  // -------- wire up --------
+  document.addEventListener('DOMContentLoaded', function(){
+    loadTrabajadores();
+
+    $('userSelect').addEventListener('change', function(){
+      $('pinInput').value = '';
+      setLoginMsg('', '');
+      $('pinInput').focus();
+    });
+
+    $('pinInput').addEventListener('input', function(){
+      this.value = this.value.replace(/\D/g, '').slice(0, 4);
+      setLoginMsg('', '');
+      if (this.value.length === 4) tryLogin();
+    });
+
+    $('btnReload').addEventListener('click', reloadMateriales);
+    $('btnLogout').addEventListener('click', logout);
+    $('btnNew').addEventListener('click', openForm);
+    $('btnFormBack').addEventListener('click', function(){ show('view-list'); });
+    $('btnEnviar').addEventListener('click', enviarForm);
+
+    $('btnAccionCancelar').addEventListener('click', function(){ pedirCerrar('CANCELADO'); });
+    $('btnAccionComprado').addEventListener('click', function(){ pedirCerrar('COMPLETADO'); });
+
+    $('modalNo').addEventListener('click', closeModal);
+    $('modalYes').addEventListener('click', function(){
+      var cb = modalCallback;
+      closeModal();
+      if (cb) cb();
+    });
+  });
+</script>
+</body>
+</html>

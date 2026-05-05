@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>IU Gestión</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#1a1a1a;color:#fff;-webkit-tap-highlight-color:transparent;font-size:14px;display:flex;flex-direction:column;align-items:center;padding:48px 16px 24px}
+  h1{color:#f90;font-size:22px;letter-spacing:1px;margin-bottom:32px}
+  .hub{width:100%;max-width:360px;display:flex;flex-direction:column;gap:14px}
+  a.tile, .tile{display:block;background:#222;color:#fff;text-decoration:none;border-radius:14px;padding:22px 18px;font-size:18px;font-weight:700;border:2px solid #2e2e2e;transition:border-color .15s, background .15s;text-align:left}
+  a.tile:active{border-color:#f90;background:#2a2a1a}
+  .tile .ico{display:inline-block;width:30px;font-size:22px;margin-right:10px;vertical-align:middle}
+  .tile .lbl{vertical-align:middle}
+  .tile.disabled{opacity:.45;cursor:not-allowed;color:#888;background:#1f1f1f;border-color:#262626}
+  .tile.disabled .lbl-sub{display:block;font-size:11px;color:#666;font-weight:400;margin-top:4px;margin-left:40px;letter-spacing:.5px;text-transform:uppercase}
+  .legal{margin-top:32px;font-size:11px;color:#666;text-align:center}
+</style>
+</head>
+<body>
+  <h1>IU GESTIÓN</h1>
+  <nav class="hub">
+    <a class="tile" href="https://joseluislopez-ux.github.io/Partes/">
+      <span class="ico">🕐</span><span class="lbl">Fichar / Reportar</span>
+    </a>
+    <a class="tile" href="https://joseluislopez-ux.github.io/Partes/materiales">
+      <span class="ico">🧰</span><span class="lbl">Materiales</span>
+    </a>
+    <div class="tile disabled">
+      <span class="ico">🏖</span><span class="lbl">Vacaciones</span>
+      <span class="lbl-sub">próximamente</span>
+    </div>
+  </nav>
+  <div class="legal">v1.0 · 5 mayo 2026</div>
+</body>
+</html>
