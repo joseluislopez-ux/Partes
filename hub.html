@@ -17,10 +17,19 @@
   .tile.disabled{opacity:.45;cursor:not-allowed;color:#888;background:#1f1f1f;border-color:#262626}
   .tile.disabled .lbl-sub{display:block;font-size:11px;color:#666;font-weight:400;margin-top:4px;margin-left:40px;letter-spacing:.5px;text-transform:uppercase}
   .legal{margin-top:32px;font-size:11px;color:#666;text-align:center}
+  .user-banner{display:none;width:100%;max-width:360px;background:#222;border:1px solid #2e2e2e;border-radius:10px;padding:10px 14px;margin-bottom:18px;align-items:center;justify-content:space-between;gap:10px}
+  .user-banner.show{display:flex}
+  .user-banner .greet{font-size:14px;color:#e0e0e0}
+  .user-banner .greet strong{color:#f90;font-weight:700}
+  .user-banner button{background:transparent;color:#f90;border:1px solid #f90;border-radius:8px;font-size:12px;padding:5px 10px;font-weight:600;cursor:pointer;font-family:inherit}
 </style>
 </head>
 <body>
   <h1>IU GESTIÓN</h1>
+  <div id="userBanner" class="user-banner">
+    <div class="greet">Hola, <strong id="userName"></strong></div>
+    <button id="logoutBtn" type="button">Salir</button>
+  </div>
   <nav class="hub">
     <a class="tile" href="https://joseluislopez-ux.github.io/Partes/">
       <span class="ico">🕐</span><span class="lbl">Fichar / Reportar</span>
@@ -33,6 +42,29 @@
       <span class="lbl-sub">próximamente</span>
     </div>
   </nav>
-  <div class="legal">v1.0 · 5 mayo 2026</div>
+  <div class="legal">v1.1 · 5 mayo 2026</div>
+<script>
+  (function(){
+    var KEY = 'iu_materiales_sesion';
+    var raw = null;
+    try { raw = localStorage.getItem(KEY); } catch (e) { return; }
+    if (!raw) return;
+    var s = null;
+    try { s = JSON.parse(raw); } catch (e) {
+      try { localStorage.removeItem(KEY); } catch (_) {}
+      return;
+    }
+    if (!s || !s.id || typeof s.expira !== 'number' || s.expira <= Date.now()) {
+      try { localStorage.removeItem(KEY); } catch (_) {}
+      return;
+    }
+    document.getElementById('userName').textContent = s.nombre || s.id;
+    document.getElementById('userBanner').classList.add('show');
+    document.getElementById('logoutBtn').addEventListener('click', function(){
+      try { localStorage.removeItem(KEY); } catch (_) {}
+      location.reload();
+    });
+  })();
+</script>
 </body>
 </html>
